@@ -45,11 +45,19 @@ type (
 
 	Rows []Row
 	Row  struct {
+		Konpo []Konpo
+		Syuka []Syuka
+		Noki  []Noki
 	}
 )
 
-func (d *Data) toRows() Rows {
-	return Rows{}
+func (d *Data) toRows() ( rows Rows ) {
+	for _, date := range dates(){
+		for _,datum := range d{
+			if datum.Konpo
+		}
+	}
+	return 
 }
 
 func main() {
