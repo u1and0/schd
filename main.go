@@ -44,6 +44,13 @@ type (
 		Misc string    `json:"備考"`
 	}
 
+	Cal map[time.Time]IDs
+	IDs struct {
+		Konpo []string `json:"梱包ID"`
+		Syuka []string `json:"出荷ID"`
+		Noki  []string `json:"納期ID"`
+	}
+
 	Rows []Row
 	Row  struct {
 		Date        time.Time `json:"日付"`
@@ -72,7 +79,8 @@ type (
 
 // ToCalendar : Rowsのテーブルを返す
 // JavaScriptでHTML テーブル
-func (d *Data) ToCalendar() (rows Rows) {
+func (d *Data) ToCalendar() Cal {
+	cal := Cal{}
 	dates := []time.Time{
 		time.Date(2022, 4, 4, 0, 0, 0, 0, time.UTC),
 		time.Date(2022, 4, 14, 0, 0, 0, 0, time.UTC),
@@ -81,47 +89,23 @@ func (d *Data) ToCalendar() (rows Rows) {
 	}
 	for _, date := range dates {
 		var (
-			i   int  // Added row
-			a   bool // Pass fallthrough
-			row Row
+			ids IDs
 		)
+
 		for id, datum := range *d {
-			fmt.Println("date: ", date)
 			if date.Equal(datum.Konpo.Date) {
-				fmt.Printf("Konpo date 追加: %s,%s\n", id, datum.Konpo.Date)
-				fmt.Println("date: ", date)
-				row.KonpoID = id
-				row.KonpoName = datum.Name
-				row.KonpoAssign = datum.Assign
-				row.WDH = datum.WDH
-				a = true
+				ids.Konpo = append(ids.Konpo, id)
 			}
 			if date.Equal(datum.Syuka.Date) {
-				fmt.Printf("Syuka date 追加: %s,%s\n", id, datum.Syuka.Date)
-				fmt.Println("date: ", date)
-				row.SyukaID = id
-				row.SyukaName = datum.Name
-				row.SyukaAssign = datum.Assign
-				a = true
+				ids.Syuka = append(ids.Syuka, id)
 			}
 			if date.Equal(datum.Noki.Date) {
-				fmt.Printf("Noki date 追加: %s,%s\n", id, datum.Noki.Date)
-				fmt.Println("date: ", date)
-				row.NokiID = id
-				row.NokiName = datum.Name
-				row.NokiAssign = datum.Assign
-				a = true
+				ids.Noki = append(ids.Noki, id)
 			}
-			row.Date = date
-			// fallthrough を通過してRowに追加したらa==true
-			// fallthrough 通過しなくても、date==0であれば、空の行追加
 		}
-		if a || i < 1 {
-			rows = append(rows, row)
-			i++ // added row
-		}
+		cal[date] = ids
 	}
-	return
+	return cal
 }
 
 func main() {
