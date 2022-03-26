@@ -80,32 +80,45 @@ func (d *Data) ToCalendar() (rows Rows) {
 		time.Date(2022, 4, 24, 0, 0, 0, 0, time.UTC),
 	}
 	for _, date := range dates {
-		row := Row{}
+		var (
+			i   int  // Added row
+			a   bool // Pass fallthrough
+			row Row
+		)
 		for id, datum := range *d {
-			switch date {
-			case datum.Konpo.Date:
-				fmt.Printf("Konpo date 追加: %s,%s\n", id, date)
+			fmt.Println("date: ", date)
+			if date.Equal(datum.Konpo.Date) {
+				fmt.Printf("Konpo date 追加: %s,%s\n", id, datum.Konpo.Date)
+				fmt.Println("date: ", date)
 				row.KonpoID = id
 				row.KonpoName = datum.Name
 				row.KonpoAssign = datum.Assign
 				row.WDH = datum.WDH
-				fallthrough
-			case datum.Syuka.Date:
-				fmt.Printf("Syuka date 追加: %s,%s\n", id, date)
+				a = true
+			}
+			if date.Equal(datum.Syuka.Date) {
+				fmt.Printf("Syuka date 追加: %s,%s\n", id, datum.Syuka.Date)
+				fmt.Println("date: ", date)
 				row.SyukaID = id
 				row.SyukaName = datum.Name
 				row.SyukaAssign = datum.Assign
-				fallthrough
-			case datum.Noki.Date:
-				fmt.Printf("Noki date 追加: %s,%s\n", id, date)
+				a = true
+			}
+			if date.Equal(datum.Noki.Date) {
+				fmt.Printf("Noki date 追加: %s,%s\n", id, datum.Noki.Date)
+				fmt.Println("date: ", date)
 				row.NokiID = id
 				row.NokiName = datum.Name
 				row.NokiAssign = datum.Assign
-				fallthrough
-			default:
-				row.Date = date
+				a = true
 			}
+			row.Date = date
+			// fallthrough を通過してRowに追加したらa==true
+			// fallthrough 通過しなくても、date==0であれば、空の行追加
+		}
+		if a || i < 1 {
 			rows = append(rows, row)
+			i++ // added row
 		}
 	}
 	return
