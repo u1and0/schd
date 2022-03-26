@@ -108,6 +108,41 @@ func (d *Data) ToCalendar() Cal {
 	return cal
 }
 
+func max(s ...int) (x int) {
+	for _, i := range s {
+		if x < i {
+			x = i
+		}
+	}
+	return
+}
+
+func (c Cal) ToRows() (rows Rows) {
+	for date, ids := range c {
+		r := Row{Date: date}
+		col := max(len(ids.Konpo), len(ids.Syuka), len(ids.Noki))
+		for i := 0; i < col; i++ {
+			if len(ids.Konpo) > i {
+				r.KonpoID = ids.Konpo[i]
+			} else {
+				r.KonpoID = ""
+			}
+			if len(ids.Syuka) > i {
+				r.SyukaID = ids.Syuka[i]
+			} else {
+				r.SyukaID = ""
+			}
+			if len(ids.Noki) > i {
+				r.NokiID = ids.Noki[i]
+			} else {
+				r.NokiID = ""
+			}
+			rows = append(rows, r)
+		}
+	}
+	return
+}
+
 func main() {
 	r := gin.Default()
 
@@ -128,6 +163,10 @@ func main() {
 
 	// API
 	r.GET("/list", func(c *gin.Context) {
+		rows := data.ToCalendar().ToRows()
+		c.JSON(http.StatusOK, rows)
+	})
+	r.GET("/cal", func(c *gin.Context) {
 		rows := data.ToCalendar()
 		c.JSON(http.StatusOK, rows)
 	})
