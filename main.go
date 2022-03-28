@@ -44,12 +44,13 @@ type (
 		Misc string    `json:"備考"`
 	}
 
-	Cal map[time.Time]IDs
-	IDs struct {
-		Konpo []string `json:"梱包ID"`
-		Syuka []string `json:"出荷ID"`
-		Noki  []string `json:"納期ID"`
+	Cal   map[time.Time]IDmap
+	IDmap struct {
+		Konpo IDs `json:"梱包ID"`
+		Syuka IDs `json:"出荷ID"`
+		Noki  IDs `json:"納期ID"`
 	}
+	IDs []string
 
 	Rows []Row
 	Row  struct {
@@ -89,21 +90,21 @@ func (d *Data) ToCalendar() Cal {
 	}
 	for _, date := range dates {
 		var (
-			ids IDs
+			idmap IDmap
 		)
 
 		for id, datum := range *d {
 			if date.Equal(datum.Konpo.Date) {
-				ids.Konpo = append(ids.Konpo, id)
+				idmap.Konpo = append(idmap.Konpo, id)
 			}
 			if date.Equal(datum.Syuka.Date) {
-				ids.Syuka = append(ids.Syuka, id)
+				idmap.Syuka = append(idmap.Syuka, id)
 			}
 			if date.Equal(datum.Noki.Date) {
-				ids.Noki = append(ids.Noki, id)
+				idmap.Noki = append(idmap.Noki, id)
 			}
 		}
-		cal[date] = ids
+		cal[date] = idmap
 	}
 	return cal
 }
@@ -136,11 +137,9 @@ func (c Cal) ToRows() (rows Rows) {
 	return
 }
 
-func main() {
-	r := gin.Default()
-
+func readJSON(f string) []byte {
 	// Open file
-	jsonfile, err := os.Open(FILE)
+	jsonfile, err := os.Open(f)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -151,6 +150,13 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	return b
+}
+
+func main() {
+	r := gin.Default()
+
+	b := readJSON("sample.json")
 	data := Data{}
 	json.Unmarshal(b, &data)
 
@@ -160,8 +166,8 @@ func main() {
 		c.JSON(http.StatusOK, rows)
 	})
 	r.GET("/cal", func(c *gin.Context) {
-		rows := data.ToCalendar()
-		c.JSON(http.StatusOK, rows)
+		cal := data.ToCalendar()
+		c.JSON(http.StatusOK, cal)
 	})
 	r.GET("/:id", func(c *gin.Context) {
 		id := c.Param("id")

@@ -2,27 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"os"
 	"testing"
 )
-
-func readJSON(f string) []byte {
-	// Open file
-	jsonfile, err := os.Open(f)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer jsonfile.Close()
-
-	// Read data
-	b, err := ioutil.ReadAll(jsonfile)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return b
-}
 
 func TestData_ToCalendar(t *testing.T) {
 	b := readJSON("sample.json")
@@ -30,7 +11,7 @@ func TestData_ToCalendar(t *testing.T) {
 	json.Unmarshal(b, &data)
 	actual := data.ToCalendar()
 
-	b = readJSON("ToCalendar.json")
+	b = readJSON("calendar.json")
 	expected := Rows{}
 	json.Unmarshal(b, &expected)
 
