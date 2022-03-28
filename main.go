@@ -53,27 +53,27 @@ type (
 
 	Rows []Row
 	Row  struct {
-		Date        time.Time `json:"日付"`
-		KonpoID     string    `json:"梱包-生産番号"`
-		KonpoName   string    `json:"梱包-機器名"`
-		KonpoAssign string    `json:"梱包-担当者"`
-		KonpoIrai   bool      `json:"梱包会社依頼要否"`
-		WDH         string    `json:"外寸法"`
-		Mass        int       `json:"質量"`
-		Yuso        string    `json:"輸送手段"`
-		Chaku       string    `json:"到着予定日"`
-		ToiawaseNo  string    `json:"問合わせ番号"`
-		KonpoMisc   string    `json:"梱包-備考"`
+		Date    time.Time `json:"日付"`
+		KonpoID string    `json:"梱包-生産番号"`
+		// KonpoName   string    `json:"梱包-機器名"`
+		// KonpoAssign string    `json:"梱包-担当者"`
+		// KonpoIrai   bool      `json:"梱包会社依頼要否"`
+		// WDH         string    `json:"外寸法"`
+		// Mass        int       `json:"質量"`
+		// Yuso        string    `json:"輸送手段"`
+		// Chaku       string    `json:"到着予定日"`
+		// ToiawaseNo  string    `json:"問合わせ番号"`
+		// KonpoMisc   string    `json:"梱包-備考"`
 
-		SyukaID     string `json:"出荷-生産番号"`
-		SyukaName   string `json:"出荷-機器名"`
-		SyukaAssign string `json:"出荷-担当者"`
-		SyukaMisc   string `json:"出荷-備考"`
+		SyukaID string `json:"出荷-生産番号"`
+		// SyukaName   string `json:"出荷-機器名"`
+		// SyukaAssign string `json:"出荷-担当者"`
+		// SyukaMisc   string `json:"出荷-備考"`
 
-		NokiID     string `json:"納期-生産番号"`
-		NokiName   string `json:"納期-機器名"`
-		NokiAssign string `json:"納期-担当者"`
-		NokiMisc   string `json:"納期-備考"`
+		NokiID string `json:"納期-生産番号"`
+		// NokiName   string `json:"納期-機器名"`
+		// NokiAssign string `json:"納期-担当者"`
+		// NokiMisc   string `json:"納期-備考"`
 	}
 )
 
@@ -119,23 +119,16 @@ func max(s ...int) (x int) {
 
 func (c Cal) ToRows() (rows Rows) {
 	for date, ids := range c {
-		r := Row{Date: date}
 		col := max(len(ids.Konpo), len(ids.Syuka), len(ids.Noki))
-		for i := 0; i < col; i++ {
-			if len(ids.Konpo) > i {
+		for i := 0; i <= col; i++ {
+			r := Row{Date: date}
+			switch {
+			case len(ids.Konpo) > i:
 				r.KonpoID = ids.Konpo[i]
-			} else {
-				r.KonpoID = ""
-			}
-			if len(ids.Syuka) > i {
+			case len(ids.Syuka) > i:
 				r.SyukaID = ids.Syuka[i]
-			} else {
-				r.SyukaID = ""
-			}
-			if len(ids.Noki) > i {
+			case len(ids.Noki) > i:
 				r.NokiID = ids.Noki[i]
-			} else {
-				r.NokiID = ""
 			}
 			rows = append(rows, r)
 		}
