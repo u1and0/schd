@@ -18,7 +18,7 @@
     <tbody>
     {{range .a}}
     <tr>
-      <td>{{.Date.Format "2006-01-02" }}</td>
+      <td>{{.Date.Format "2006-01-02"}} {{ .Date.Weekday }}</td>
       <td>{{.KonpoID}}</td>
       <td>{{.SyukaID}}</td>
       <td>{{.NokiID}}</td>
