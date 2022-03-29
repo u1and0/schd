@@ -1,0 +1,19 @@
+<html>
+
+  {{/* コメント*/}}
+  <h1>Sample</h1>
+
+  {{/* ループはrange, ドットで要素にアクセス, endで終了 */}}
+  <table>
+    <tr>
+      {{range .a}}
+      <td>{{.Date}}</td>
+      <td>{{.KonpoID}}</td>
+      <td>{{.SyukaID}}</td>
+      <td>{{.NokiID}}</td>
+    </tr>
+    {{end}}
+  </table>
+
+
+</html>

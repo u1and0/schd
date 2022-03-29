@@ -15,6 +15,7 @@ const (
 
 func main() {
 	r := gin.Default()
+	r.LoadHTMLGlob("static/*.tmpl")
 
 	// Read data
 	b := ksn.ReadJSON(FILE)
@@ -22,21 +23,27 @@ func main() {
 	json.Unmarshal(b, &data)
 
 	// API
-	r.GET("/list", func(c *gin.Context) {
-		rows := data.ToCalendar().ToRows()
-		c.JSON(http.StatusOK, rows)
-	})
-	r.GET("/cal", func(c *gin.Context) {
-		cal := data.ToCalendar()
-		c.JSON(http.StatusOK, cal)
+	r.GET("/all", func(c *gin.Context) {
+		c.JSON(http.StatusOK, data)
 	})
 	r.GET("/:id", func(c *gin.Context) {
 		s := c.Param("id")
 		id := ksn.ID(s) // Cast
 		c.JSON(http.StatusOK, data[id])
 	})
-	r.GET("/all", func(c *gin.Context) {
-		c.JSON(http.StatusOK, data)
+	r.GET("/cal", func(c *gin.Context) {
+		cal := data.ToCalendar()
+		c.JSON(http.StatusOK, cal)
+	})
+	r.GET("/list-json", func(c *gin.Context) {
+		rows := data.ToCalendar().ToRows()
+		c.JSON(http.StatusOK, rows)
+	})
+	r.GET("/list", func(c *gin.Context) {
+		rows := data.ToCalendar().ToRows()
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"a": rows,
+		})
 	})
 
 	r.Run(PORT)
