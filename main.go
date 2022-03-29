@@ -15,7 +15,7 @@ const (
 
 func main() {
 	r := gin.Default()
-	r.LoadHTMLGlob("static/*.tmpl")
+	r.LoadHTMLGlob("template/*.tmpl")
 
 	// Read data
 	b := ksn.ReadJSON(FILE)

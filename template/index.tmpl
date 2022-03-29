@@ -1,18 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
 <html>
-
-  {{/* コメント*/}}
   <h1>Sample</h1>
-
-  {{/* ループはrange, ドットで要素にアクセス, endで終了 */}}
-  <table>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>梱包</th>
+        <th>出荷</th>
+        <th>納期</th>
+      <tr>
+    </thead>
+    <tbody>
+    {{range .a}}
     <tr>
-      {{range .a}}
-      <td>{{.Date}}</td>
+      <td>{{.Date.Format "2006-01-02" }}</td>
       <td>{{.KonpoID}}</td>
       <td>{{.SyukaID}}</td>
       <td>{{.NokiID}}</td>
     </tr>
     {{end}}
+    <tbody>
   </table>
 
 

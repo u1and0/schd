@@ -1,7 +1,6 @@
 package ksn
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -88,15 +87,12 @@ func (d *Data) ToCalendar() Cal {
 		var idt IDt
 		for id, datum := range *d {
 			if date.Equal(datum.Konpo.Date) {
-				fmt.Println(date, datum.Konpo.Date)
 				idt.Konpo = append(idt.Konpo, id)
 			}
 			if date.Equal(datum.Syuka.Date) {
-				fmt.Println(date, datum.Syuka.Date)
 				idt.Syuka = append(idt.Syuka, id)
 			}
 			if date.Equal(datum.Noki.Date) {
-				fmt.Println(date, datum.Noki.Date)
 				idt.Noki = append(idt.Noki, id)
 			}
 		}
