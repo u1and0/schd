@@ -17,7 +17,7 @@ const (
 )
 
 type (
-	Data  map[string]Datum
+	Data  map[ID]Datum
 	Datum struct {
 		Name   string `json:"機器名"`
 		Assign string `json:"担当者"`
@@ -44,18 +44,19 @@ type (
 		Misc string    `json:"備考"`
 	}
 
-	Cal   map[time.Time]IDmap
-	IDmap struct {
+	Cal map[time.Time]IDt
+	IDt struct {
 		Konpo IDs `json:"梱包ID"`
 		Syuka IDs `json:"出荷ID"`
 		Noki  IDs `json:"納期ID"`
 	}
-	IDs []string
+	IDs []ID
+	ID  string // [6]int
 
 	Rows []Row
 	Row  struct {
 		Date    time.Time `json:"日付"`
-		KonpoID string    `json:"梱包-生産番号"`
+		KonpoID ID        `json:"梱包-生産番号"`
 		// KonpoName   string    `json:"梱包-機器名"`
 		// KonpoAssign string    `json:"梱包-担当者"`
 		// KonpoIrai   bool      `json:"梱包会社依頼要否"`
@@ -66,17 +67,21 @@ type (
 		// ToiawaseNo  string    `json:"問合わせ番号"`
 		// KonpoMisc   string    `json:"梱包-備考"`
 
-		SyukaID string `json:"出荷-生産番号"`
+		SyukaID ID `json:"出荷-生産番号"`
 		// SyukaName   string `json:"出荷-機器名"`
 		// SyukaAssign string `json:"出荷-担当者"`
 		// SyukaMisc   string `json:"出荷-備考"`
 
-		NokiID string `json:"納期-生産番号"`
+		NokiID ID `json:"納期-生産番号"`
 		// NokiName   string `json:"納期-機器名"`
 		// NokiAssign string `json:"納期-担当者"`
 		// NokiMisc   string `json:"納期-備考"`
 	}
 )
+
+func (ids *IDs) Append(id ID) {
+	*ids = append(*ids, id)
+}
 
 // ToCalendar : Rowsのテーブルを返す
 // JavaScriptでHTML テーブル
@@ -89,22 +94,20 @@ func (d *Data) ToCalendar() Cal {
 		time.Date(2022, 4, 24, 0, 0, 0, 0, time.UTC),
 	}
 	for _, date := range dates {
-		var (
-			idmap IDmap
-		)
-
+		var idt IDt
 		for id, datum := range *d {
-			if date.Equal(datum.Konpo.Date) {
-				idmap.Konpo = append(idmap.Konpo, id)
-			}
-			if date.Equal(datum.Syuka.Date) {
-				idmap.Syuka = append(idmap.Syuka, id)
-			}
-			if date.Equal(datum.Noki.Date) {
-				idmap.Noki = append(idmap.Noki, id)
+			switch {
+			case datum.Konpo.Date.Equal(date):
+				idt.Konpo = append(idt.Konpo, id)
+				fallthrough
+			case datum.Syuka.Date.Equal(date):
+				idt.Syuka = append(idt.Syuka, id)
+				fallthrough
+			case datum.Noki.Date.Equal(date):
+				idt.Noki = append(idt.Noki, id)
 			}
 		}
-		cal[date] = idmap
+		cal[date] = idt
 	}
 	return cal
 }
@@ -170,7 +173,8 @@ func main() {
 		c.JSON(http.StatusOK, cal)
 	})
 	r.GET("/:id", func(c *gin.Context) {
-		id := c.Param("id")
+		s := c.Param("id")
+		id := ID(s)
 		c.JSON(http.StatusOK, data[id])
 	})
 	r.GET("/all", func(c *gin.Context) {
