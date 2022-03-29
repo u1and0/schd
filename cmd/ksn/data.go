@@ -113,7 +113,13 @@ func max(s ...int) (x int) {
 func (c Cal) ToRows() (rows Rows) {
 	for date, idt := range c {
 		l := max(len(idt.Konpo), len(idt.Syuka), len(idt.Noki))
-		for i := 0; i <= l; i++ {
+		// 何もない日でも一行は空行出力
+		if l == 0 {
+			r := Row{Date: date}
+			rows = append(rows, r)
+			continue
+		}
+		for i := 0; i < l; i++ {
 			r := Row{Date: date}
 			if len(idt.Konpo) > i {
 				r.KonpoID = idt.Konpo[i]
