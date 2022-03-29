@@ -1,6 +1,7 @@
 package ksn
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -86,14 +87,16 @@ func (d *Data) ToCalendar() Cal {
 	for _, date := range dates {
 		var idt IDt
 		for id, datum := range *d {
-			switch {
-			case datum.Konpo.Date.Equal(date):
+			if date.Equal(datum.Konpo.Date) {
+				fmt.Println(date, datum.Konpo.Date)
 				idt.Konpo = append(idt.Konpo, id)
-				fallthrough
-			case datum.Syuka.Date.Equal(date):
+			}
+			if date.Equal(datum.Syuka.Date) {
+				fmt.Println(date, datum.Syuka.Date)
 				idt.Syuka = append(idt.Syuka, id)
-				fallthrough
-			case datum.Noki.Date.Equal(date):
+			}
+			if date.Equal(datum.Noki.Date) {
+				fmt.Println(date, datum.Noki.Date)
 				idt.Noki = append(idt.Noki, id)
 			}
 		}
@@ -112,17 +115,24 @@ func max(s ...int) (x int) {
 }
 
 func (c Cal) ToRows() (rows Rows) {
-	for date, ids := range c {
-		col := max(len(ids.Konpo), len(ids.Syuka), len(ids.Noki))
-		for i := 0; i <= col; i++ {
+	for date, idt := range c {
+		l := max(len(idt.Konpo), len(idt.Syuka), len(idt.Noki))
+		for i := 0; i <= l; i++ {
 			r := Row{Date: date}
-			switch {
-			case len(ids.Konpo) > i:
-				r.KonpoID = ids.Konpo[i]
-			case len(ids.Syuka) > i:
-				r.SyukaID = ids.Syuka[i]
-			case len(ids.Noki) > i:
-				r.NokiID = ids.Noki[i]
+			if len(idt.Konpo) > i {
+				r.KonpoID = idt.Konpo[i]
+			} else {
+				r.KonpoID = ""
+			}
+			if len(idt.Syuka) > i {
+				r.SyukaID = idt.Syuka[i]
+			} else {
+				r.SyukaID = ""
+			}
+			if len(idt.Noki) > i {
+				r.NokiID = idt.Noki[i]
+			} else {
+				r.NokiID = ""
 			}
 			rows = append(rows, r)
 		}
