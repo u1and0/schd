@@ -24,20 +24,20 @@ func main() {
 
 	// API
 	r.GET("/all", func(c *gin.Context) {
-		c.JSON(http.StatusOK, data)
+		c.IndentedJSON(http.StatusOK, data)
 	})
 	r.GET("/:id", func(c *gin.Context) {
 		s := c.Param("id")
 		id := ksn.ID(s) // Cast
-		c.JSON(http.StatusOK, data[id])
+		c.IndentedJSON(http.StatusOK, data[id])
 	})
 	r.GET("/cal", func(c *gin.Context) {
 		cal := data.ToCalendar()
-		c.JSON(http.StatusOK, cal)
+		c.IndentedJSON(http.StatusOK, cal)
 	})
 	r.GET("/list-json", func(c *gin.Context) {
 		rows := data.ToCalendar().ToRows()
-		c.JSON(http.StatusOK, rows)
+		c.IndentedJSON(http.StatusOK, rows)
 	})
 	r.GET("/list", func(c *gin.Context) {
 		rows := data.ToCalendar().ToRows()
