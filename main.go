@@ -8,24 +8,24 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	ksn "github.com/u1and0/schd/cmd/ksn"
+	"github.com/u1and0/schd/cmd/ksn"
 )
 
 const (
-	FILE = "sample.json"
+	FILE = "test/sample.json"
 	PORT = ":8080"
 )
 
-func readJSON(f string) []byte {
+func readJSON(fs string) []byte {
 	// Open file
-	jsonfile, err := os.Open(f)
+	f, err := os.Open(fs)
 	if err != nil {
 		fmt.Println(err)
 	}
-	defer jsonfile.Close()
+	defer f.Close()
 
 	// Read data
-	b, err := ioutil.ReadAll(jsonfile)
+	b, err := ioutil.ReadAll(f)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -38,6 +38,7 @@ func main() {
 	b := readJSON(FILE)
 	data := ksn.Data{}
 	json.Unmarshal(b, &data)
+	fmt.Printf("%v", data)
 
 	// API
 	r.GET("/list", func(c *gin.Context) {
@@ -50,7 +51,7 @@ func main() {
 	})
 	r.GET("/:id", func(c *gin.Context) {
 		s := c.Param("id")
-		id := data.ID(s)
+		id := ksn.ID(s) // Cast
 		c.JSON(http.StatusOK, data[id])
 	})
 	r.GET("/all", func(c *gin.Context) {

@@ -5,7 +5,9 @@ import (
 )
 
 type (
-	Data  map[ID]Datum
+	// Data : map of Datum
+	Data map[ID]Datum
+	// Datum : date info
 	Datum struct {
 		Name   string `json:"機器名"`
 		Assign string `json:"担当者"`
@@ -39,7 +41,7 @@ type (
 		Noki  IDs `json:"納期ID"`
 	}
 	IDs []ID
-	ID  string // [6]int
+	ID  string
 
 	Rows []Row
 	Row  struct {
@@ -70,7 +72,6 @@ type (
 func (ids *IDs) Append(id ID) {
 	*ids = append(*ids, id)
 }
-)
 
 // ToCalendar : Rowsのテーブルを返す
 // JavaScriptでHTML テーブル
@@ -128,4 +129,3 @@ func (c Cal) ToRows() (rows Rows) {
 	}
 	return
 }
-
