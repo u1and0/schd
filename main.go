@@ -23,24 +23,24 @@ func main() {
 	json.Unmarshal(b, &data)
 
 	// API
-	r.GET("/all", func(c *gin.Context) {
+	r.GET("/data/all", func(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, data)
 	})
-	r.GET("/:id", func(c *gin.Context) {
+	r.GET("/data/:id", func(c *gin.Context) {
 		s := c.Param("id")
 		id := ksn.ID(s) // Cast
 		c.IndentedJSON(http.StatusOK, data[id])
 	})
-	r.GET("/cal", func(c *gin.Context) {
-		cal := data.ToCalendar()
+	r.GET("/data/cal", func(c *gin.Context) {
+		cal := data.Stack()
 		c.IndentedJSON(http.StatusOK, cal)
 	})
-	r.GET("/list-json", func(c *gin.Context) {
-		rows := data.ToCalendar().ToRows()
+	r.GET("/data/list", func(c *gin.Context) {
+		rows := data.Stack().Unstack()
 		c.IndentedJSON(http.StatusOK, rows)
 	})
-	r.GET("/list", func(c *gin.Context) {
-		rows := data.ToCalendar().ToRows()
+	r.GET("/view/list", func(c *gin.Context) {
+		rows := data.Stack().Unstack()
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"a": rows,
 		})

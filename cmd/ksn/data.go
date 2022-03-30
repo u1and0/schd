@@ -69,13 +69,10 @@ type (
 	}
 )
 
-func (ids *IDs) Append(id ID) {
-	*ids = append(*ids, id)
-}
-
-// ToCalendar : Rowsのテーブルを返す
-// JavaScriptでHTML テーブル
-func (d *Data) ToCalendar() Cal {
+// Stack : 製番jsonを走査し、
+// 日付をキーに、項目ごとに製番リストを保持する
+// Cal構造体を返す
+func (d *Data) Stack() Cal {
 	cal := Cal{}
 	dates := []time.Time{
 		time.Date(2022, 4, 4, 0, 0, 0, 0, time.UTC),
@@ -110,7 +107,9 @@ func max(s ...int) (x int) {
 	return
 }
 
-func (c Cal) ToRows() (rows Rows) {
+// Unstack : Cal構造体から
+// 日付をプライマリキーとするテーブル形式のRowsを返す
+func (c Cal) Unstack() (rows Rows) {
 	for date, idt := range c {
 		l := max(len(idt.Konpo), len(idt.Syuka), len(idt.Noki))
 		// 何もない日でも一行は空行出力
