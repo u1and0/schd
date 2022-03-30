@@ -49,7 +49,7 @@ func main() {
 				rows := data.Stack().Unstack()
 				c.IndentedJSON(http.StatusOK, rows)
 			})
-			d.POST("/post", func(c *gin.Context) {
+			d.POST("/add", func(c *gin.Context) {
 				var addData ksn.Data
 				if err := c.ShouldBindJSON(&addData); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -85,6 +85,24 @@ func main() {
 				msg := fmt.Sprintf("ID: %v を削除しました。", id)
 				c.JSON(http.StatusOK, gin.H{"msg": msg})
 				return
+			})
+			d.PUT("/:id", func(c *gin.Context) {
+				id := ksn.ID(c.Param("id"))
+				var upData ksn.Data
+				if err := c.ShouldBindJSON(&upData); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				// Data exist check
+				if _, ok := data[id]; !ok {
+					msg := fmt.Sprintf("ID: %v データが存在しません。/postを試してください。", id)
+					c.JSON(http.StatusBadRequest, gin.H{"error": msg})
+					return
+				}
+				// Update data
+				for k, v := range upData {
+					data[k] = v
+				}
+				c.IndentedJSON(http.StatusOK, upData)
 			})
 		}
 
