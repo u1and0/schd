@@ -9,13 +9,13 @@
 
 ## Quick Start
 1. schd を実行する
-1. ブラウザアドレス欄に [](localhost:8080/view/list) を打ち込み、テーブル表示を確認する。
-1. ブラウザアドレス欄に [](localhost:8080/data/list) を打ち込み、JSONを確認する。
-1. ブラウザアドレス欄に [](localhost:8080/data/cal) を打ち込み、JSONを確認する。
-1. ブラウザアドレス欄に [](localhost:8080/data) を打ち込み、JSONを確認する。 このJSONはtest/sample.json の中身と同一。
-1. ブラウザアドレス欄に [](localhost:8080/data/741744) を打ち込み、JSONを確認する。
+1. ブラウザアドレス欄に http://localhost:8080/view/list を打ち込み、テーブル表示を確認する。
+1. ブラウザアドレス欄に http://localhost:8080/data/list を打ち込み、JSONを確認する。
+1. ブラウザアドレス欄に http://localhost:8080/data/cal を打ち込み、JSONを確認する。
+1. ブラウザアドレス欄に http://localhost:8080/data を打ち込み、JSONを確認する。 このJSONはtest/sample.json の中身と同一。
+1. ブラウザアドレス欄に http://localhost:8080/data/741744 を打ち込み、JSONを確認する。
 このJSONはtest/sample.json の中身のキー=741744 オブジェクトと同一。
-また、[](localhost:8080/view/list) に表示されるリンクの遷移先。
+また、http://localhost:8080/view/list に表示されるリンクの遷移先。
 
 
 ## API
