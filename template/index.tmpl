@@ -19,9 +19,9 @@
     {{range .a}}
     <tr>
       <td>{{.Date.Format "2006-01-02"}} {{ .Date.Weekday }}</td>
-      <td><a href=http://localhost:8080/data/{{.KonpoID}}>{{.KonpoID}}</a></td>
-      <td><a href=http://localhost:8080/data/{{.SyukaID}}>{{.SyukaID}}</a></td>
-      <td><a href=http://localhost:8080/data/{{.NokiID}}>{{.NokiID}}</a></td>
+      <td><a href=http://localhost:8080/api/v1/data/{{.KonpoID}}>{{.KonpoID}}</a></td>
+      <td><a href=http://localhost:8080/api/v1/data/{{.SyukaID}}>{{.SyukaID}}</a></td>
+      <td><a href=http://localhost:8080/api/v1/data/{{.NokiID}}>{{.NokiID}}</a></td>
     </tr>
     {{end}}
     <tbody>
