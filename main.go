@@ -23,7 +23,7 @@ func main() {
 	json.Unmarshal(b, &data)
 
 	// API
-	r.GET("/data/all", func(c *gin.Context) {
+	r.GET("/data", func(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, data)
 	})
 	r.GET("/data/:id", func(c *gin.Context) {
