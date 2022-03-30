@@ -23,7 +23,6 @@
 | 説明 | メソッド | URI | パラメータ | パラメータ例 |
 |----|------|-----|-------|-------|
 | 保存されているJSONの中身を出力 | GET | /data |  数字6桁 | http://localhost:8080/data/000000 |
-| 日付をキーに、項目ごとに製番リストを保持するCal構造体をJSONで返す | GET | /data/cal |  なし | http://localhost:8080/data/cal |
 | Cal構造体から日付をプライマリキーとするテーブル形式のRowsをJSONで返す | GET | /data/list |  なし |  http://localhost:8080/data/list |
 | Cal構造体から日付をプライマリキーとするテーブル形式のRowsをHTMLで返す | GET | /view/list |  なし |  http://localhost:8080/view/list |
 
