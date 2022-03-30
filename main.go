@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/u1and0/schd/cmd/ksn"
+	"github.com/u1and0/schd/cmd/ctrl"
 )
 
 const (
@@ -16,8 +16,8 @@ const (
 
 func main() {
 	// Read data
-	b := ksn.ReadJSON(FILE)
-	data := ksn.Data{}
+	b := ctrl.ReadJSON(FILE)
+	data := ctrl.Data{}
 	json.Unmarshal(b, &data)
 
 	// Router
@@ -33,7 +33,7 @@ func main() {
 				c.IndentedJSON(http.StatusOK, data)
 			})
 			d.GET("/:id", func(c *gin.Context) {
-				id := ksn.ID(c.Param("id"))
+				id := ctrl.ID(c.Param("id"))
 				if datum, ok := data[id]; ok { // Cast
 					c.IndentedJSON(http.StatusOK, datum)
 					return
@@ -50,7 +50,7 @@ func main() {
 				c.IndentedJSON(http.StatusOK, rows)
 			})
 			d.POST("/add", func(c *gin.Context) {
-				var addData ksn.Data
+				var addData ctrl.Data
 				if err := c.ShouldBindJSON(&addData); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
@@ -62,14 +62,14 @@ func main() {
 						return
 					}
 				}
-				// Append data
+				// Set data
 				for k, v := range addData {
 					data[k] = v
 				}
 				c.IndentedJSON(http.StatusOK, addData)
 			})
 			d.DELETE("/:id", func(c *gin.Context) {
-				id := ksn.ID(c.Param("id"))
+				id := ctrl.ID(c.Param("id"))
 				if _, ok := data[id]; !ok {
 					msg := fmt.Sprintf("ID: %v が見つかりません。別のIDを指定してください。", id)
 					c.JSON(http.StatusBadRequest, gin.H{"error": msg})
@@ -87,8 +87,8 @@ func main() {
 				return
 			})
 			d.PUT("/:id", func(c *gin.Context) {
-				id := ksn.ID(c.Param("id"))
-				var upData ksn.Data
+				id := ctrl.ID(c.Param("id"))
+				var upData ctrl.Data
 				if err := c.ShouldBindJSON(&upData); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
