@@ -185,3 +185,16 @@ func (c Cal) Unstack() (rows Rows) {
 	}
 	return
 }
+
+func (d *Rows) ReadJSON(fs string) error {
+	// Open file
+	f, err := os.Open(fs)
+	defer f.Close()
+	if err != nil {
+		return err
+	}
+	// Read data
+	b, err := ioutil.ReadAll(f)
+	json.Unmarshal(b, &d)
+	return err
+}
