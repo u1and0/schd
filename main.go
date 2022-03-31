@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	// PORT : url port num
 	PORT = ":8080"
 )
 
