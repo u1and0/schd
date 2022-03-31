@@ -1,25 +1,26 @@
 package ctrl
 
 import (
-	"encoding/json"
+	"reflect"
 	"testing"
 )
 
-func TestData_ToCalendar(t *testing.T) {
-	b := ReadJSON("sample.json")
-	data := Data{}
-	json.Unmarshal(b, &data)
-	actual := data.ToCalendar()
+var testdata = Data{}
 
-	b = ReadJSON("calendar.json")
+func init() {
+	if err := testdata.ReadJSON("../../test/sample.json"); err != nil {
+		panic(err)
+	}
+}
+
+func TestData_Stack(t *testing.T) {
+	actual := testdata.Stack()
 	expected := Cal{}
-	json.Unmarshal(b, &expected)
-
-	for date, idt := range actual {
-		for i, actual := range idt.Konpo {
-			if expected[date][i] != actual {
-				t.Fatalf("got: %v want: %v", actual, expected)
-			}
-		}
+	err := expected.ReadJSON("../../test/calendar.json")
+	if err != nil {
+		panic(err)
+	}
+	if !(reflect.DeepEqual(actual, expected)) {
+		t.Fatalf("got: %v\nwant: %v", actual, expected)
 	}
 }

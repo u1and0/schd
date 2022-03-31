@@ -70,6 +70,11 @@ type (
 		// NokiAssign string `json:"納期-担当者"`
 		// NokiMisc   string `json:"納期-備考"`
 	}
+
+	Marshaler interface {
+		ReadJSON(fs string)
+		WriteJSON(fs string)
+	}
 )
 
 func (d *Data) ReadJSON(fs string) error {
@@ -132,6 +137,19 @@ func max(s ...int) (x int) {
 		}
 	}
 	return
+}
+
+func (d *Cal) ReadJSON(fs string) error {
+	// Open file
+	f, err := os.Open(fs)
+	defer f.Close()
+	if err != nil {
+		return err
+	}
+	// Read data
+	b, err := ioutil.ReadAll(f)
+	json.Unmarshal(b, &d)
+	return err
 }
 
 // Unstack : Cal構造体から
