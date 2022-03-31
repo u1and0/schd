@@ -25,7 +25,7 @@ type (
 		WDH        string    `json:"外寸法"`
 		Mass       int       `json:"質量"`
 		Yuso       string    `json:"輸送手段"`
-		Chaku      string    `json:"到着予定日"`
+		Chaku      time.Time `json:"到着予定日"`
 		ToiawaseNo string    `json:"問合わせ番号"`
 		Misc       string    `json:"備考"`
 	}

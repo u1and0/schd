@@ -6,15 +6,19 @@ import (
 	"io/ioutil"
 	"net/http"
 	"reflect"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/u1and0/schd/cmd/ctrl"
 )
 
+const TESTFILE = "../../test/sample.json"
+
 var testdata ctrl.Data
 
 func init() {
-	if err := testdata.ReadJSON("../../test/sample.json"); err != nil {
+	if err := testdata.ReadJSON(TESTFILE); err != nil {
 		panic(err)
 	}
 }
@@ -58,6 +62,88 @@ func TestGet(t *testing.T) {
 	actual := ctrl.Datum{}
 	json.Unmarshal(b, &actual)
 	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got: %#v\nwant: %#v", actual, expected)
+		t.Errorf("got: %#v\nwant: %#v", actual, expected)
 	}
+}
+
+func TestPost(t *testing.T) {
+	// addData := ctrl.Data{}
+	// addData.ReadJSON("../../test/post.json")
+	// f, err := os.Open("../../test/post.json")
+	// defer f.Close()
+	// if err != nil {
+	// 	t.Fatal(err)
+	// }
+	// addBin, err := ioutil.ReadAll(f)
+	// expected := ctrl.Data{}
+	// json.Unmarshal(addBin, &expected)
+	konpo := ctrl.Konpo{
+		Date:       time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
+		KonpoIrai:  false,
+		WDH:        "2100x2190x1560",
+		Mass:       32,
+		Yuso:       "宅急便",
+		Chaku:      time.Date(2022, 4, 4, 0, 0, 0, 0, time.UTC),
+		ToiawaseNo: "123456",
+		Misc:       "備考欄",
+	}
+	syuka := ctrl.Syuka{
+		Date: time.Date(2022, 4, 14, 0, 0, 0, 0, time.UTC),
+		Misc: "",
+	}
+	noki := ctrl.Noki{
+		Date: time.Date(2022, 4, 14, 0, 0, 0, 0, time.UTC),
+		Misc: "",
+	}
+	datum := ctrl.Datum{
+		Name:   "B-GHT-222",
+		Assign: "Putin",
+		Konpo:  konpo,
+		Syuka:  syuka,
+		Noki:   noki,
+	}
+	expected := ctrl.Data{"990001": datum}
+
+	s := `{
+    "990001":{
+        "機器名": "B-GHT-222",
+        "担当者": "Putin",
+        "梱包": {
+            "日付": "2022-04-01T00:00:00Z",
+            "梱包会社依頼要否": false,
+            "外寸法": "2100x2190x1560",
+            "質量": 32,
+            "輸送手段": "宅急便",
+            "到着予定日": "2022-04-04T00:00:00Z",
+            "問合わせ番号": "123456",
+            "備考": "備考欄"
+        },
+        "出荷日": {
+            "日付": "2022-04-14T00:00:00Z",
+            "備考": ""
+        },
+        "納期": {
+            "日付": "2022-04-14T00:00:00Z",
+            "備考": ""
+        }
+    }
+}`
+	resBody := strings.NewReader(s)
+	resp, err := http.Post("http://localhost:8080/api/v1/data/add", "application/json", resBody)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code  200, got %v", resp.StatusCode)
+	}
+	b, _ := ioutil.ReadAll(resp.Body)
+	actual := ctrl.Data{}
+	json.Unmarshal(b, &actual)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Log(string(b))
+		t.Errorf("got: %#v\nwant: %#v", actual, expected)
+	}
+	// rollback test/sample.json
+	testdata.WriteJSON(TESTFILE)
 }
