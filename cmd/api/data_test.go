@@ -2,9 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os/exec"
 	"reflect"
 	"strings"
 	"testing"
@@ -13,12 +13,22 @@ import (
 	"github.com/u1and0/schd/cmd/ctrl"
 )
 
-const TESTFILE = "../../test/sample.json"
+const (
+	TESTFILE = "../../test/sample.json"
+	URL      = "http://localhost:8080/api/v1/data"
+	ID       = "741744"
+)
 
 var testdata ctrl.Data
 
 func init() {
 	if err := testdata.ReadJSON(TESTFILE); err != nil {
+		panic(err)
+	}
+}
+
+func rollbackTestfile() {
+	if _, err := exec.Command("cp", "../../test/sample_fix.json", TESTFILE).Output(); err != nil {
 		panic(err)
 	}
 }
@@ -30,7 +40,7 @@ httptest 使ったが、よくわからなかった...
 
 func TestIndex(t *testing.T) {
 	expected := testdata
-	resp, err := http.Get("http://localhost:8080/api/v1/data/all")
+	resp, err := http.Get(URL + "/all")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -47,9 +57,8 @@ func TestIndex(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	id := ctrl.ID("741744")
-	expected := testdata[id]
-	resp, err := http.Get(fmt.Sprintf("http://localhost:8080/api/v1/data/%s", id))
+	expected := testdata[ctrl.ID(ID)]
+	resp, err := http.Get(URL + "/" + ID)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -67,16 +76,6 @@ func TestGet(t *testing.T) {
 }
 
 func TestPost(t *testing.T) {
-	// addData := ctrl.Data{}
-	// addData.ReadJSON("../../test/post.json")
-	// f, err := os.Open("../../test/post.json")
-	// defer f.Close()
-	// if err != nil {
-	// 	t.Fatal(err)
-	// }
-	// addBin, err := ioutil.ReadAll(f)
-	// expected := ctrl.Data{}
-	// json.Unmarshal(addBin, &expected)
 	konpo := ctrl.Konpo{
 		Date:       time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
 		KonpoIrai:  false,
@@ -129,7 +128,7 @@ func TestPost(t *testing.T) {
     }
 }`
 	resBody := strings.NewReader(s)
-	resp, err := http.Post("http://localhost:8080/api/v1/data/add", "application/json", resBody)
+	resp, err := http.Post(URL+"/add", "application/json", resBody)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -144,6 +143,5 @@ func TestPost(t *testing.T) {
 		t.Log(string(b))
 		t.Errorf("got: %#v\nwant: %#v", actual, expected)
 	}
-	// rollback test/sample.json
-	testdata.WriteJSON(TESTFILE)
+	rollbackTestfile()
 }
