@@ -79,10 +79,20 @@ func (d *Data) ReadJSON(fs string) error {
 	if err != nil {
 		return err
 	}
-
 	// Read data
 	b, err := ioutil.ReadAll(f)
 	json.Unmarshal(b, &d)
+	return err
+}
+
+func (d *Data) WriteJSON(fs string) error {
+	// To binary
+	b, err := json.MarshalIndent(&d, "", "\t")
+	if err != nil {
+		return err
+	}
+	// Write file
+	err = ioutil.WriteFile(fs, b, 0644)
 	return err
 }
 

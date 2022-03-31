@@ -49,6 +49,9 @@ func Post(c *gin.Context) {
 	for k, v := range addData {
 		data[k] = v
 	}
+	if err := data.WriteJSON(FILE); err != nil {
+		panic(err)
+	}
 	c.IndentedJSON(http.StatusOK, addData)
 }
 
@@ -65,6 +68,9 @@ func Delete(c *gin.Context) {
 		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
 		return
+	}
+	if err := data.WriteJSON(FILE); err != nil {
+		panic(err)
 	}
 	msg := fmt.Sprintf("ID: %v を削除しました。", id)
 	c.JSON(http.StatusOK, gin.H{"msg": msg})
@@ -85,6 +91,9 @@ func Put(c *gin.Context) {
 	// Update data
 	for k, v := range upData {
 		data[k] = v
+	}
+	if err := data.WriteJSON(FILE); err != nil {
+		panic(err)
 	}
 	c.IndentedJSON(http.StatusOK, upData)
 }
