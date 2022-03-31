@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -14,9 +13,9 @@ const FILE = "test/sample.json"
 var data = ctrl.Data{}
 
 func init() {
-	// Read data
-	b := ctrl.ReadJSON(FILE)
-	json.Unmarshal(b, &data)
+	if err := data.ReadJSON(FILE); err != nil {
+		panic(err)
+	}
 }
 
 func Index(c *gin.Context) {

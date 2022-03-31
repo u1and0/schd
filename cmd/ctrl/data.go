@@ -1,6 +1,9 @@
 package ctrl
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"os"
 	"time"
 )
 
@@ -68,6 +71,20 @@ type (
 		// NokiMisc   string `json:"納期-備考"`
 	}
 )
+
+func (d *Data) ReadJSON(fs string) error {
+	// Open file
+	f, err := os.Open(fs)
+	defer f.Close()
+	if err != nil {
+		return err
+	}
+
+	// Read data
+	b, err := ioutil.ReadAll(f)
+	json.Unmarshal(b, &d)
+	return err
+}
 
 // Stack : 製番jsonを走査し、
 // 日付をキーに、項目ごとに製番リストを保持する
