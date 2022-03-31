@@ -8,9 +8,9 @@ import (
 )
 
 type (
-	// Data : map of Datum
+	// Data : 生産番号により分けられた物流情報
 	Data map[ID]Datum
-	// Datum : date info
+	// Datum : 生産番号ごとの物流情報
 	Datum struct {
 		Name   string `json:"機器名"`
 		Assign string `json:"担当者"`
@@ -18,6 +18,7 @@ type (
 		Syuka  `json:"出荷日"`
 		Noki   `json:"納期"`
 	}
+	// Konpo : 梱包列情報
 	Konpo struct {
 		Date       time.Time `json:"日付"`
 		KonpoIrai  bool      `json:"梱包会社依頼要否"`
@@ -28,26 +29,36 @@ type (
 		ToiawaseNo string    `json:"問合わせ番号"`
 		Misc       string    `json:"備考"`
 	}
+	// Syuka : 出荷列情報
 	Syuka struct {
 		Date time.Time `json:"日付"`
 		Misc string    `json:"備考"`
 	}
+	// Noki : 納期列情報
 	Noki struct {
 		Date time.Time `json:"日付"`
 		Misc string    `json:"備考"`
 	}
 
+	// Cal : Idtを日付ごとにまとめたmap
 	Cal map[time.Time]IDt
+	// IDt : 列情報
 	IDt struct {
 		Konpo IDs `json:"梱包ID"`
 		Syuka IDs `json:"出荷ID"`
 		Noki  IDs `json:"納期ID"`
 	}
+	// IDs : ID のスライス
 	IDs []ID
-	ID  string
+	// ID : 生産番号
+	// 数字6桁, ただしstring型
+	// JSON のキーがstringしか受け付けないため。
+	ID string
 
+	// Rows : HTMLテーブル形式表示用
 	Rows []Row
-	Row  struct {
+	// Row : Rowsの内の1行
+	Row struct {
 		Date    time.Time `json:"日付"`
 		KonpoID ID        `json:"梱包-生産番号"`
 		// KonpoName   string    `json:"梱包-機器名"`
@@ -71,12 +82,14 @@ type (
 		// NokiMisc   string `json:"納期-備考"`
 	}
 
+	// Marshaler : JSON reader/writer
 	Marshaler interface {
 		ReadJSON(fs string)
 		WriteJSON(fs string)
 	}
 )
 
+// ReadJSON : Read from json file to Data structure
 func (d *Data) ReadJSON(fs string) error {
 	// Open file
 	f, err := os.Open(fs)
@@ -90,6 +103,7 @@ func (d *Data) ReadJSON(fs string) error {
 	return err
 }
 
+// WriteJSON : Write to json file from Data structure
 func (d *Data) WriteJSON(fs string) error {
 	// To binary
 	b, err := json.MarshalIndent(&d, "", "\t")
@@ -139,6 +153,7 @@ func max(s ...int) (x int) {
 	return
 }
 
+// ReadJSON : Read from json file to Cal structure
 func (d *Cal) ReadJSON(fs string) error {
 	// Open file
 	f, err := os.Open(fs)
@@ -154,8 +169,8 @@ func (d *Cal) ReadJSON(fs string) error {
 
 // Unstack : Cal構造体から
 // 日付をプライマリキーとするテーブル形式のRowsを返す
-func (c Cal) Unstack() (rows Rows) {
-	for date, idt := range c {
+func (d Cal) Unstack() (rows Rows) {
+	for date, idt := range d {
 		l := max(len(idt.Konpo), len(idt.Syuka), len(idt.Noki))
 		// 何もない日でも一行は空行出力
 		if l == 0 {
@@ -186,6 +201,7 @@ func (c Cal) Unstack() (rows Rows) {
 	return
 }
 
+// ReadJSON : Read from json file to Rows structure
 func (d *Rows) ReadJSON(fs string) error {
 	// Open file
 	f, err := os.Open(fs)
