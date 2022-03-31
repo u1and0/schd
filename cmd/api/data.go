@@ -15,7 +15,8 @@ var data = ctrl.Data{}
 
 func init() {
 	if err := data.ReadJSON(FILE); err != nil {
-		panic(err)
+		// panic にするとgo test時にFILEが見つからないエラー
+		fmt.Println(err)
 	}
 }
 
