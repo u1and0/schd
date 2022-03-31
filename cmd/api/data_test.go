@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
@@ -28,7 +29,7 @@ func init() {
 }
 
 func rollbackTestfile() {
-	if _, err := exec.Command("cp", "../../test/sample_fix.json", TESTFILE).Output(); err != nil {
+	if _, err := exec.Command("cp", "-f", "../../test/sample_fix.json", TESTFILE).Output(); err != nil {
 		panic(err)
 	}
 }
@@ -129,6 +130,27 @@ func TestPost(t *testing.T) {
 }`
 	resBody := strings.NewReader(s)
 	resp, err := http.Post(URL+"/add", "application/json", resBody)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code  200, got %v", resp.StatusCode)
+	}
+	b, _ := ioutil.ReadAll(resp.Body)
+	actual := ctrl.Data{}
+	json.Unmarshal(b, &actual)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Log(string(b))
+		t.Errorf("got: %#v\nwant: %#v", actual, expected)
+	}
+	rollbackTestfile()
+}
+
+func TestDelete(t *testing.T) {
+	expected := fmt.Sprintf(`{"msg": "ID: %v を削除しました。"}`, ID)
+	resBody := strings.NewReader(s)
+	resp, err := http.Delete(URL+"/"+ID, "application/json", resBody)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
