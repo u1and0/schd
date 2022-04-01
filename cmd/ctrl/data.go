@@ -12,11 +12,17 @@ type (
 	Data map[ID]Datum
 	// Datum : 生産番号ごとの物流情報
 	Datum struct {
-		Name   string `json:"機器名"`
-		Assign string `json:"担当者"`
+		Name   string `json:"機器名" form:"name"`
+		Assign string `json:"担当者" form:"assign"`
 		Konpo  `json:"梱包"`
 		Syuka  `json:"出荷日"`
 		Noki   `json:"納期"`
+	}
+	Form struct {
+		ID0  string    `form:"id0"`
+		ID1  string    `form:"id1"`
+		Date time.Time `form:"date" time_format:"2006/01/02"`
+		Misc string    `form:"misc"`
 	}
 	// Konpo : 梱包列情報
 	Konpo struct {
