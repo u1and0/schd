@@ -30,7 +30,12 @@ func main() {
 
 		v := v1.Group("view")
 		{
-			v.GET("/list", api.ViewList)
+			v.GET("/list", api.View)         // 日付リスト
+			v.GET("/add", api.Create)        // Post
+			v.GET("/update", api.Update)     // Put
+			v.GET("/update/:id", api.Update) // Put
+			v.GET("/delete/", api.Remove)    // Delete
+			v.GET("/delete/:id", api.Remove) // Delete
 		}
 	}
 

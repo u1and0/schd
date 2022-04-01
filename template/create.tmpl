@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<html>
+  <h3>Create Sample</h3>
+  作成したい生産番号、納期を入力してください。
+  <form name="create-form" method="post" action="/add">
+    <table class="table table-striped">
+      <tbody>
+      <tr>
+        <td> 生産番号 </td>
+        <td>
+          <input type="text" id="id0" value="" size="3" maxlength="3" placeholder="000">
+          -
+          <input type="text" id="id1" value="" size="3" maxlength="3" placeholder="000">
+      </tr>
+      <tr>
+        <td> 生産名称 </td>
+        <td> <input type="text" id="name" value="" size="20" placeholder="製品の製作"> </td>
+      </tr>
+      <tr>
+        <td> 担当者名 </td>
+        <td> <input type="text" id="assign" value="" size="20" placeholder="担当者名"> </td>
+      </tr>
+      <tr>
+        <td> 納期 </td>
+        <td>
+          <input type="date" id="date" value="" size="10" >
+        </td>
+      </tr>
+      <tr>
+        <td> 備考 </td>
+        <td> <textarea rows="4" cols=20 id="misc" placeholder="備考"></textarea> </td>
+      </tr>
+      <tbody>
+    </table>
+    <input type="submit" id="submit" value="作成">
+  </form>
+</html>
