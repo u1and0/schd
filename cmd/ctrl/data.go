@@ -2,6 +2,8 @@ package ctrl
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -120,6 +122,20 @@ func (d *Data) WriteJSON(fs string) error {
 	// Write file
 	err = ioutil.WriteFile(fs, b, 0644)
 	return err
+}
+
+func (ad *Data) Add(data *Data) error {
+	// Data exist check
+	for k := range *ad {
+		if _, ok := (*data)[k]; ok {
+			msg := fmt.Sprintf("ID: %v データが既に存在しています。Updateを試してください。", k)
+			return errors.New(msg)
+		}
+	}
+	for k, v := range *ad {
+		(*data)[k] = v
+	}
+	return nil
 }
 
 // Stack : 製番jsonを走査し、

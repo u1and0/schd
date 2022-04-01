@@ -42,24 +42,14 @@ func Post(c *gin.Context) {
 	if err := c.ShouldBindJSON(&addData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	// Data exist check
-	for k := range addData {
-		if _, ok := data[k]; ok {
-			msg := fmt.Sprintf("ID: %v データが既に存在しています。Updateを試してください。", k)
-			c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-			return
-		}
-	}
-	// Set data
-	ids := ctrl.IDs{}
-	for k, v := range addData {
-		data[k] = v
-		ids = append(ids, k)
+	if err := addData.Add(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.IndentedJSON(http.StatusOK, gin.H{"IDs": ids})
+	c.IndentedJSON(http.StatusOK, addData)
 }
 
 // Delete : Delete 1 datum by id

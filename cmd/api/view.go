@@ -34,11 +34,19 @@ func CreateForm(c *gin.Context) {
 	datum.Noki.Date = form.Date
 	datum.Noki.Misc = form.Misc
 	addData := ctrl.Data{id: datum}
+	if err := addData.Add(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	if err := data.WriteJSON(FILE); err != nil {
+		panic(err)
+	}
 	c.IndentedJSON(http.StatusOK, addData)
 }
 
 // Update : Put method
 func Update(c *gin.Context) {
+	c.HTML(http.StatusOK, "update.tmpl", "")
 }
 
 // Remove : Delete method
