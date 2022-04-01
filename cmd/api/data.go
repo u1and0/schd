@@ -51,13 +51,15 @@ func Post(c *gin.Context) {
 		}
 	}
 	// Set data
+	ids := ctrl.IDs{}
 	for k, v := range addData {
 		data[k] = v
+		ids = append(ids, k)
 	}
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.IndentedJSON(http.StatusOK, addData)
+	c.IndentedJSON(http.StatusOK, gin.H{"IDs": ids})
 }
 
 // Delete : Delete 1 datum by id
@@ -78,8 +80,7 @@ func Delete(c *gin.Context) {
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	msg := fmt.Sprintf("ID: %v を削除しました。", id)
-	c.JSON(http.StatusOK, gin.H{"msg": msg})
+	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 // Put : Update 1 datum by ID
@@ -91,7 +92,7 @@ func Put(c *gin.Context) {
 	}
 	// Data exist check
 	if _, ok := data[id]; !ok {
-		msg := fmt.Sprintf("ID: %v データが存在しません。/postを試してください。", id)
+		msg := fmt.Sprintf("ID: %v データが存在しません。/api/v1/data/addを試してください。", id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
 		return
 	}
@@ -102,7 +103,7 @@ func Put(c *gin.Context) {
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.IndentedJSON(http.StatusOK, upData)
+	c.IndentedJSON(http.StatusOK, id)
 }
 
 // List : Show table like by date

@@ -20,13 +20,14 @@ func Create(c *gin.Context) {
 	c.HTML(http.StatusOK, "create.tmpl", "")
 }
 
+// CreateForm : Postするとフォームを読み取り実行
 func CreateForm(c *gin.Context) {
 	datum := ctrl.Datum{}
-	if err := c.Bind(&datum); err != nil {
+	if err := c.Bind(&datum); err != nil { // name, assign 取得
 		c.Status(http.StatusBadRequest)
 	}
 	form := ctrl.Form{}
-	if err := c.Bind(&form); err != nil {
+	if err := c.Bind(&form); err != nil { // id, noki-date, noki-misc 取得
 		c.Status(http.StatusBadRequest)
 	}
 	id := ctrl.ID(form.ID0 + form.ID1)
