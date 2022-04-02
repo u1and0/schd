@@ -70,7 +70,7 @@ func Delete(c *gin.Context) {
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.JSON(http.StatusOK, gin.H{"id": id})
+	c.JSON(http.StatusNoContent, gin.H{"id": id})
 }
 
 // Put : Update 1 datum by ID

@@ -148,22 +148,19 @@ func TestPost(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	expected := fmt.Sprintf(`{"msg": "ID: %v を削除しました。"}`, ID)
-	resBody := strings.NewReader(s)
+	expected := fmt.Sprintf(`{"id": %v"}`, ID)
+	resBody := strings.NewReader(expected)
 	resp, err := http.Delete(URL+"/"+ID, "application/json", resBody)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Expected status code  200, got %v", resp.StatusCode)
+	if resp.StatusCode != http.StatusNoContent {
+		t.Errorf("Expected status code  204, got %v", resp.StatusCode)
 	}
-	b, _ := ioutil.ReadAll(resp.Body)
-	actual := ctrl.Data{}
-	json.Unmarshal(b, &actual)
-	if !reflect.DeepEqual(actual, expected) {
-		t.Log(string(b))
-		t.Errorf("got: %#v\nwant: %#v", actual, expected)
+	actual, _ := ioutil.ReadAll(resp.Body)
+	if string(actual) != expected {
+		t.Errorf("got: %#v\nwant: %#v", string(actual), expected)
 	}
 	rollbackTestfile()
 }

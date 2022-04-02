@@ -5,11 +5,6 @@ import (
 	"github.com/u1and0/schd/cmd/api"
 )
 
-const (
-	// PORT : url port num
-	PORT = ":8080"
-)
-
 func main() {
 	// Router
 	r := gin.Default()
@@ -31,6 +26,7 @@ func main() {
 		v := v1.Group("view")
 		{
 			v.GET("/list", api.View) // 日付リスト
+			v.GET("/:id", api.Show)
 			v.GET("/add", api.Create)
 			v.POST("/add/form", api.CreateForm)
 			v.PUT("/update", api.Update)
@@ -40,5 +36,5 @@ func main() {
 		}
 	}
 
-	r.Run(PORT)
+	r.Run()
 }

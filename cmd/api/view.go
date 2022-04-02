@@ -15,6 +15,16 @@ func View(c *gin.Context) {
 	})
 }
 
+// Show : show 1 datum ID info
+func Show(c *gin.Context) {
+	id := ctrl.ID(c.Param("id"))
+	if datum, ok := data[id]; ok { // Cast
+		c.HTML(http.StatusOK, "get.tmpl", gin.H{"id": id, "a": datum})
+		return
+	}
+	c.HTML(http.StatusBadRequest, "get.tmpl", gin.H{"msg": "IDが見つかりません"})
+}
+
 // Create : Post
 func Create(c *gin.Context) {
 	c.HTML(http.StatusOK, "create.tmpl", "")
@@ -41,7 +51,8 @@ func CreateForm(c *gin.Context) {
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.IndentedJSON(http.StatusOK, addData)
+	// c.IndentedJSON(http.StatusOK, addData)
+	c.HTML(http.StatusOK, "get.tmpl", gin.H{"id": id, "a": data[id]})
 }
 
 // Update : Put method
