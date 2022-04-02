@@ -55,17 +55,8 @@ func Post(c *gin.Context) {
 // Delete : Delete 1 datum by id
 func Delete(c *gin.Context) {
 	id := ctrl.ID(c.Param("id"))
-	if _, ok := data[id]; !ok {
-		msg := fmt.Sprintf("ID: %v が見つかりません。別のIDを指定してください。", id)
-		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-		return
-	}
-	delete(data, id)
-	// Check deleted id
-	if _, ok := data[id]; ok {
-		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
-		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-		return
+	if err := id.Del(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 	}
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)

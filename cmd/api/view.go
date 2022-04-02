@@ -25,13 +25,13 @@ func Show(c *gin.Context) {
 	c.HTML(http.StatusBadRequest, "get.tmpl", gin.H{"msg": "IDが見つかりません"})
 }
 
-// Create : Post
-func Create(c *gin.Context) {
+// CreateForm : Post
+func CreateForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "create.tmpl", "")
 }
 
-// CreateForm : Postするとフォームを読み取り実行
-func CreateForm(c *gin.Context) {
+// Create : Postするとフォームを読み取り実行
+func Create(c *gin.Context) {
 	datum := ctrl.Datum{}
 	if err := c.Bind(&datum); err != nil { // name, assign 取得
 		c.Status(http.StatusBadRequest)
@@ -60,6 +60,20 @@ func Update(c *gin.Context) {
 	c.HTML(http.StatusOK, "update.tmpl", "")
 }
 
+// // RemoveForm : Delete method form
+// func RemoveForm(c *gin.Context) {
+// 	id := ctrl.ID(c.Param("id"))
+// 	c.HTML(http.StatusNoContent, "del.tmpl", gin.H{"id": id})
+// }
+
 // Remove : Delete method
 func Remove(c *gin.Context) {
+	id := ctrl.ID(c.Param("id"))
+	if err := id.Del(&data); err != nil {
+		c.HTML(http.StatusBadRequest, "del.tmpl", gin.H{"error": err})
+	}
+	if err := data.WriteJSON(FILE); err != nil {
+		panic(err)
+	}
+	c.HTML(http.StatusOK, "del.tmpl", gin.H{"id": c.Param("id")})
 }

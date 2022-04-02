@@ -138,6 +138,20 @@ func (ad *Data) Add(data *Data) error {
 	return nil
 }
 
+func (id ID) Del(data *Data) error {
+	if _, ok := (*data)[id]; !ok {
+		msg := fmt.Sprintf("ID: %v が見つかりません。別のIDを指定してください。", id)
+		return errors.New(msg)
+	}
+	delete((*data), id)
+	// Check deleted id
+	if _, ok := (*data)[id]; ok {
+		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
+		return errors.New(msg)
+	}
+	return nil
+}
+
 // Stack : 製番jsonを走査し、
 // 日付をキーに、項目ごとに製番リストを保持する
 // Cal構造体を返す

@@ -27,12 +27,11 @@ func main() {
 		{
 			v.GET("/list", api.View) // 日付リスト
 			v.GET("/:id", api.Show)
-			v.GET("/add", api.Create)
-			v.POST("/add/form", api.CreateForm)
-			v.PUT("/update", api.Update)
+			v.GET("/add/form", api.CreateForm)
+			v.POST("/add", api.Create)
 			v.PUT("/update/:id", api.Update)
-			v.DELETE("/delete/", api.Remove)
-			v.DELETE("/delete/:id", api.Remove)
+			// v.GET("/update/form/:id", api.UpdateForm)
+			v.GET("/delete/:id", api.Remove)
 		}
 	}
 
