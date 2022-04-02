@@ -31,7 +31,7 @@ func main() {
 			v.POST("/add", api.Create)
 			v.PUT("/update/:id", api.Update)
 			// v.GET("/update/form/:id", api.UpdateForm)
-			v.GET("/delete/:id", api.Remove)
+			v.GET("/:id/delete", api.Remove)
 		}
 	}
 
