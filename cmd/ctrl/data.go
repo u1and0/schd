@@ -2,6 +2,8 @@ package ctrl
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -12,41 +14,48 @@ type (
 	Data map[ID]Datum
 	// Datum : 生産番号ごとの物流情報
 	Datum struct {
-		Name   string `json:"機器名"`
-		Assign string `json:"担当者"`
+		Name   string `json:"機器名" form:"name"`
+		Assign string `json:"担当者" form:"assign"`
 		Konpo  `json:"梱包"`
 		Syuka  `json:"出荷日"`
 		Noki   `json:"納期"`
 	}
+	// Form : Post, Update, Deleteで使うForm情報
+	Form struct {
+		ID0  string    `form:"id0"`
+		ID1  string    `form:"id1"`
+		Date time.Time `form:"noki-date" time_format:"2006/01/02"`
+		Misc string    `form:"noki-misc"`
+	}
 	// Konpo : 梱包列情報
 	Konpo struct {
-		Date       time.Time `json:"日付"`
-		KonpoIrai  bool      `json:"梱包会社依頼要否"`
-		WDH        string    `json:"外寸法"`
-		Mass       int       `json:"質量"`
-		Yuso       string    `json:"輸送手段"`
-		Chaku      time.Time `json:"到着予定日"`
-		ToiawaseNo string    `json:"問合わせ番号"`
-		Misc       string    `json:"備考"`
+		Date       time.Time `json:"日付" form:"konpo-date" time_format:"2006/01/02"`
+		KonpoIrai  bool      `json:"梱包会社依頼要否" form:"irai"`
+		WDH        string    `json:"外寸法" form:"wdh"`
+		Mass       int       `json:"質量" form:"mass"`
+		Yuso       string    `json:"輸送手段" form:"yuso"`
+		Chaku      time.Time `json:"到着予定日" form:"chaku" time_format:"2006/01/02"`
+		ToiawaseNo string    `json:"問合わせ番号" form:"toiawase-no"`
+		Misc       string    `json:"備考" form:"konpo-misc"`
 	}
 	// Syuka : 出荷列情報
 	Syuka struct {
-		Date time.Time `json:"日付"`
-		Misc string    `json:"備考"`
+		Date time.Time `json:"日付" form:"syuka-date" time_format:"2006/01/02"`
+		Misc string    `json:"備考" form:"syuka-misc"`
 	}
 	// Noki : 納期列情報
 	Noki struct {
-		Date time.Time `json:"日付"`
-		Misc string    `json:"備考"`
+		Date time.Time `json:"日付" form:"noki-date" time_format:"2006/01/02"`
+		Misc string    `json:"備考" form:"noki-misc"`
 	}
 
 	// Cal : Idtを日付ごとにまとめたmap
 	Cal map[time.Time]IDt
 	// IDt : 列情報
 	IDt struct {
-		Konpo IDs `json:"梱包ID"`
-		Syuka IDs `json:"出荷ID"`
-		Noki  IDs `json:"納期ID"`
+		Konpo IDs
+		Syuka IDs
+		Noki  IDs
 	}
 	// IDs : ID のスライス
 	IDs []ID
@@ -113,6 +122,34 @@ func (d *Data) WriteJSON(fs string) error {
 	// Write file
 	err = ioutil.WriteFile(fs, b, 0644)
 	return err
+}
+
+func (ad *Data) Add(data *Data) error {
+	// Data exist check
+	for k := range *ad {
+		if _, ok := (*data)[k]; ok {
+			msg := fmt.Sprintf("ID: %v データが既に存在しています。Updateを試してください。", k)
+			return errors.New(msg)
+		}
+	}
+	for k, v := range *ad {
+		(*data)[k] = v
+	}
+	return nil
+}
+
+func (id ID) Del(data *Data) error {
+	if _, ok := (*data)[id]; !ok {
+		msg := fmt.Sprintf("ID: %v が見つかりません。別のIDを指定してください。", id)
+		return errors.New(msg)
+	}
+	delete((*data), id)
+	// Check deleted id
+	if _, ok := (*data)[id]; ok {
+		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
+		return errors.New(msg)
+	}
+	return nil
 }
 
 // Stack : 製番jsonを走査し、
