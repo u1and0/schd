@@ -23,7 +23,7 @@ func main() {
 			d.GET("/list", api.List)
 		}
 
-		v := v1.Group("view")
+		v := v1.Group("/view")
 		{
 			v.GET("/list", api.View) // 日付リスト
 			v.GET("/:id", api.Show)
@@ -33,6 +33,7 @@ func main() {
 			v.POST("/:id/update", api.Refresh)
 			v.GET("/:id/delete", api.Remove)
 		}
+
 	}
 
 	r.Run()
