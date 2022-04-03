@@ -67,19 +67,12 @@ func Delete(c *gin.Context) {
 // Put : Update 1 datum by ID
 func Put(c *gin.Context) {
 	id := ctrl.ID(c.Param("id"))
-	var upData ctrl.Data
+	var upData ctrl.Datum
 	if err := c.ShouldBindJSON(&upData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	// Data exist check
-	if _, ok := data[id]; !ok {
-		msg := fmt.Sprintf("ID: %v データが存在しません。/api/v1/data/addを試してください。", id)
-		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-		return
-	}
-	// Update data
-	for k, v := range upData {
-		data[k] = v
+	if err := upData.Update(id, &data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)

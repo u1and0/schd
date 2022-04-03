@@ -22,10 +22,11 @@ type (
 	}
 	// Form : Post, Update, Deleteで使うForm情報
 	Form struct {
-		ID0  string    `form:"id0"`
-		ID1  string    `form:"id1"`
-		Date time.Time `form:"noki-date" time_format:"2006/01/02"`
-		Misc string    `form:"noki-misc"`
+		ID0   string `form:"id0"`
+		ID1   string `form:"id1"`
+		Konpo `json:"梱包"`
+		Syuka `json:"出荷"`
+		Noki  `json:"納期"`
 	}
 	// Konpo : 梱包列情報
 	Konpo struct {
@@ -149,6 +150,17 @@ func (id ID) Del(data *Data) error {
 		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
 		return errors.New(msg)
 	}
+	return nil
+}
+
+func (up *Datum) Update(id ID, data *Data) error {
+	// Data exist check
+	if _, ok := (*data)[id]; !ok {
+		msg := fmt.Sprintf("ID: %v データが存在しません。/api/v1/data/addを試してください。", id)
+		return errors.New(msg)
+	}
+	// Update data
+	(*data)[id] = *up
 	return nil
 }
 

@@ -29,8 +29,8 @@ func main() {
 			v.GET("/:id", api.Show)
 			v.GET("/add/form", api.CreateForm)
 			v.POST("/add", api.Create)
-			v.PUT("/update/:id", api.Update)
-			// v.GET("/update/form/:id", api.UpdateForm)
+			v.GET("/:id/update/form", api.RefreshForm)
+			v.POST("/:id/update", api.Refresh)
 			v.GET("/:id/delete", api.Remove)
 		}
 	}
