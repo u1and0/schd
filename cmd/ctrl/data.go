@@ -12,78 +12,6 @@ import (
 type (
 	// Data : 生産番号により分けられた物流情報
 	Data map[ID]Datum
-	// Datum : 生産番号ごとの物流情報
-	Datum struct {
-		Name   string `json:"機器名" form:"name"`
-		Assign string `json:"担当者" form:"assign"`
-		Konpo  `json:"梱包"`
-		Syuka  `json:"出荷日"`
-		Noki   `json:"納期"`
-	}
-	// Konpo : 梱包列情報
-	Konpo struct {
-		Date       time.Time `json:"日付" form:"konpo-date" time_format:"2006/01/02"`
-		Irai       string    `json:"梱包会社依頼要否" form:"irai"`
-		WDH        string    `json:"外寸法" form:"wdh"`
-		Mass       int       `json:"質量" form:"mass"`
-		Yuso       string    `json:"輸送手段" form:"yuso"`
-		Chaku      time.Time `json:"到着予定日" form:"chaku" time_format:"2006/01/02"`
-		ToiawaseNo string    `json:"問合わせ番号" form:"toiawase-no"`
-		Misc       string    `json:"備考" form:"konpo-misc"`
-	}
-	// Syuka : 出荷列情報
-	Syuka struct {
-		Date time.Time `json:"日付" form:"syuka-date" time_format:"2006/01/02"`
-		Misc string    `json:"備考" form:"syuka-misc"`
-	}
-	// Noki : 納期列情報
-	Noki struct {
-		Date time.Time `json:"日付" form:"noki-date" time_format:"2006/01/02"`
-		Misc string    `json:"備考" form:"noki-misc"`
-	}
-
-	// Cal : Idtを日付ごとにまとめたmap
-	Cal map[time.Time]IDt
-	// IDt : 列情報
-	IDt struct {
-		Konpo IDs
-		Syuka IDs
-		Noki  IDs
-	}
-	// IDs : ID のスライス
-	IDs []ID
-	// ID : 生産番号
-	// 数字6桁, ただしstring型
-	// JSON のキーがstringしか受け付けないため。
-	ID string
-
-	// Rows : HTMLテーブル形式表示用
-	Rows []Row
-	// Row : Rowsの内の1行
-	Row struct {
-		Date    time.Time `json:"日付"`
-		KonpoID ID        `json:"梱包-生産番号"`
-		// KonpoName   string    `json:"梱包-機器名"`
-		// KonpoAssign string    `json:"梱包-担当者"`
-		// Irai   bool      `json:"梱包会社依頼要否"`
-		// WDH         string    `json:"外寸法"`
-		// Mass        int       `json:"質量"`
-		// Yuso        string    `json:"輸送手段"`
-		// Chaku       string    `json:"到着予定日"`
-		// ToiawaseNo  string    `json:"問合わせ番号"`
-		// KonpoMisc   string    `json:"梱包-備考"`
-
-		SyukaID ID `json:"出荷-生産番号"`
-		// SyukaName   string `json:"出荷-機器名"`
-		// SyukaAssign string `json:"出荷-担当者"`
-		// SyukaMisc   string `json:"出荷-備考"`
-
-		NokiID ID `json:"納期-生産番号"`
-		// NokiName   string `json:"納期-機器名"`
-		// NokiAssign string `json:"納期-担当者"`
-		// NokiMisc   string `json:"納期-備考"`
-	}
-
 	// Marshaler : JSON reader/writer
 	Marshaler interface {
 		ReadJSON(fs string)
@@ -145,17 +73,6 @@ func (id ID) Del(data *Data) error {
 	return nil
 }
 
-func (up *Datum) Update(id ID, data *Data) error {
-	// Data exist check
-	if _, ok := (*data)[id]; !ok {
-		msg := fmt.Sprintf("ID: %v データが存在しません。/api/v1/data/addを試してください。", id)
-		return errors.New(msg)
-	}
-	// Update data
-	(*data)[id] = *up
-	return nil
-}
-
 // Stack : 製番jsonを走査し、
 // 日付をキーに、項目ごとに製番リストを保持する
 // Cal構造体を返す
@@ -183,75 +100,4 @@ func (d *Data) Stack() Cal {
 		cal[date] = idt
 	}
 	return cal
-}
-
-func max(s ...int) (x int) {
-	for _, i := range s {
-		if x < i {
-			x = i
-		}
-	}
-	return
-}
-
-// ReadJSON : Read from json file to Cal structure
-func (d *Cal) ReadJSON(fs string) error {
-	// Open file
-	f, err := os.Open(fs)
-	defer f.Close()
-	if err != nil {
-		return err
-	}
-	// Read data
-	b, err := ioutil.ReadAll(f)
-	json.Unmarshal(b, &d)
-	return err
-}
-
-// Unstack : Cal構造体から
-// 日付をプライマリキーとするテーブル形式のRowsを返す
-func (d Cal) Unstack() (rows Rows) {
-	for date, idt := range d {
-		l := max(len(idt.Konpo), len(idt.Syuka), len(idt.Noki))
-		// 何もない日でも一行は空行出力
-		if l == 0 {
-			r := Row{Date: date}
-			rows = append(rows, r)
-			continue
-		}
-		for i := 0; i < l; i++ {
-			r := Row{Date: date}
-			if len(idt.Konpo) > i {
-				r.KonpoID = idt.Konpo[i]
-			} else {
-				r.KonpoID = ""
-			}
-			if len(idt.Syuka) > i {
-				r.SyukaID = idt.Syuka[i]
-			} else {
-				r.SyukaID = ""
-			}
-			if len(idt.Noki) > i {
-				r.NokiID = idt.Noki[i]
-			} else {
-				r.NokiID = ""
-			}
-			rows = append(rows, r)
-		}
-	}
-	return
-}
-
-// ReadJSON : Read from json file to Rows structure
-func (d *Rows) ReadJSON(fs string) error {
-	// Open file
-	f, err := os.Open(fs)
-	defer f.Close()
-	if err != nil {
-		return err
-	}
-	// Read data
-	b, err := ioutil.ReadAll(f)
-	json.Unmarshal(b, &d)
-	return err
 }
