@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -72,40 +71,37 @@ func Refresh(c *gin.Context) {
 	id := ctrl.ID(c.Param("id"))
 	upData := ctrl.Datum{}
 	if err := c.Bind(&upData); err != nil { // name, assign 取得
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+		// c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
-	// form := ctrl.Form{}
-	// if err := c.Bind(&form); err != nil { // id, noki-date, noki-misc 取得
-	// 	c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
-	// 	return
-	// }
-	// konpo := ctrl.Konpo{}
-	fmt.Printf("Datamu %#v\n", upData)
-	if err := c.Bind(&upData.Konpo); err != nil { // id, noki-date, noki-misc 取得
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+	if err := c.Bind(&upData.Konpo); err != nil {
+		// c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
-	fmt.Printf("Konpo %#v\n", upData)
-	if err := c.Bind(&upData.Syuka); err != nil { // id, noki-date, noki-misc 取得
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+	if err := c.Bind(&upData.Syuka); err != nil {
+		// c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
-	fmt.Printf("Syua %#v\n", upData)
-	if err := c.Bind(&upData.Noki); err != nil { // id, noki-date, noki-misc 取得
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+	if err := c.Bind(&upData.Noki); err != nil {
+		// c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
-	fmt.Printf("Noki %#v\n", upData)
+	upData.Name = data[id].Name // nameはreadonlyのためHTML <input> から読み取れない
+
 	if err := upData.Update(id, &data); err != nil {
 		// c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
-		c.JSON(http.StatusBadRequest, upData)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
+
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.HTML(http.StatusOK, "get.tmpl", gin.H{"a": data[id]})
+	c.HTML(http.StatusOK, "get.tmpl", gin.H{"id": id, "a": data[id]})
 }
 
 // Remove : Delete method

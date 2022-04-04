@@ -79,7 +79,7 @@ func TestGet(t *testing.T) {
 func TestPost(t *testing.T) {
 	konpo := ctrl.Konpo{
 		Date:       time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
-		KonpoIrai:  false,
+		Irai:       "否",
 		WDH:        "2100x2190x1560",
 		Mass:       32,
 		Yuso:       "宅急便",

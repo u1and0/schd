@@ -8,7 +8,7 @@
 <body>
   <h3>Update Sample</h3>
   生産番号: {{ .id }}の更新したい納期、梱包情報等を入力してください。
-  <form name="update-form" method="POST" action="/api/v1/view/{{ .id }}/update">
+  <form name="update-form" method="POST" action="/api/v1/view/{{ .id }}">
     <table class="table table-striped">
       <tbody>
       <tr>
@@ -25,17 +25,26 @@
       </tr>
       <tr>
         <td align="right"> 梱包日 </td>
-        <td>  <input type="text" name="noki-date" class="datepicker" value="{{ .a.Konpo.Date.Format "2006/01/02" }}"> </td>
+        <td>  <input type="text" name="konpo-date" class="datepicker" value="{{ .a.Konpo.Date.Format "2006/01/02" }}"> </td>
       </tr>
       <tr>
         <td align="right"> 梱包依頼 </td>
         <td>
-          {{ if .a.KonpoIrai }}
-          <input type="checkbox" name="irai" checked>
-          {{ else }}
-          <input type="checkbox" name="irai" >
-          {{ end }}
-          <label for="irai">梱包依頼要否</label>
+          <select name="irai">
+            {{if eq .a.Irai "要"}}
+              <option value="">--梱包依頼要否を選択してください--</option>
+              <option value="要" selected>要</option>
+              <option value="否">否</option>
+            {{else if eq .a.Yuso "否"}}
+              <option value="">--梱包依頼要否を選択してください--</option>
+              <option value="要">要</option>
+              <option value="否" selected>否</option>
+            {{else}}
+              <option value="" selected>--梱包依頼要否を選択してください--</option>
+              <option value="要">要</option>
+              <option value="否">否</option>
+            {{end}}
+          </select>
         </td>
       </tr>
       <tr>
@@ -49,7 +58,6 @@
       <tr>
         <td align="right"> 輸送手段 </td>
         <td>
-          <!-- <label for="yuso">輸送手段</label> -->
           <select name="yuso" id="yuso">
             {{if eq .a.Yuso "仕立便"}}
             <option value="">--輸送手段を選択してください--</option>
@@ -93,11 +101,15 @@
       </tr>
       <tr>
         <td align="right"> 備考 </td>
-        <td> <textarea rows="4" cols=20 name="syuka-misc" placeholder="備考"> {{ .a.Syuka.Misc }} </textarea> </td>
+        <td> <textarea rows="4" cols=20 name="syuka-misc" placeholder="備考">{{ .a.Syuka.Misc }}</textarea> </td>
       </tr>
       <tr>
-        <td align="right"> 納期 </td> <td>  <input type="text" name="noki-date" class="datepicker" value="{{ .a.Noki.Date.Format "2006/01/02" }}"> </td> </tr> <tr> <td align="right"> 備考 </td> <td> <textarea rows="4" cols=20 name="noki-misc" placeholder="備考"> {{ .a.Noki.Misc }} </textarea> </td>
-      </tr>
+        <td align="right"> 納期 </td>
+        <td> <input type="text" name="noki-date" class="datepicker" value="{{ .a.Noki.Date.Format "2006/01/02" }}">
+        <tr>
+          <td align="right"> 備考 </td>
+          <td> <textarea rows="4" cols=20 name="noki-misc" placeholder="備考">{{ .a.Noki.Misc }}</textarea> </td>
+        </tr>
       </tbody>
     </table>
     <input type="submit" id="submit" value="更新">

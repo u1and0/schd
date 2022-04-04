@@ -20,18 +20,10 @@ type (
 		Syuka  `json:"出荷日"`
 		Noki   `json:"納期"`
 	}
-	// Form : Post, Update, Deleteで使うForm情報
-	Form struct {
-		ID0   string `form:"id0"`
-		ID1   string `form:"id1"`
-		Konpo `json:"梱包"`
-		Syuka `json:"出荷"`
-		Noki  `json:"納期"`
-	}
 	// Konpo : 梱包列情報
 	Konpo struct {
 		Date       time.Time `json:"日付" form:"konpo-date" time_format:"2006/01/02"`
-		KonpoIrai  bool      `json:"梱包会社依頼要否" form:"irai"`
+		Irai       string    `json:"梱包会社依頼要否" form:"irai"`
 		WDH        string    `json:"外寸法" form:"wdh"`
 		Mass       int       `json:"質量" form:"mass"`
 		Yuso       string    `json:"輸送手段" form:"yuso"`
@@ -73,7 +65,7 @@ type (
 		KonpoID ID        `json:"梱包-生産番号"`
 		// KonpoName   string    `json:"梱包-機器名"`
 		// KonpoAssign string    `json:"梱包-担当者"`
-		// KonpoIrai   bool      `json:"梱包会社依頼要否"`
+		// Irai   bool      `json:"梱包会社依頼要否"`
 		// WDH         string    `json:"外寸法"`
 		// Mass        int       `json:"質量"`
 		// Yuso        string    `json:"輸送手段"`
