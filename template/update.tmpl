@@ -6,7 +6,7 @@
 </head>
 
 <body>
-  <h3>Update Sample</h3>
+  <h3>生産番号 更新</h3>
   生産番号: {{ .id }}の更新したい納期、梱包情報等を入力してください。
   <form name="update-form" method="POST" action="/api/v1/view/{{ .id }}">
     <table class="table table-striped">
@@ -93,7 +93,7 @@
       </tr>
       <tr>
         <td align="right"> 備考 </td>
-        <td> {{ .a.Konpo.Misc }} </td>
+        <td> <textarea rows="4" cols=20 name="konpo-misc" placeholder="備考">{{ .a.Konpo.Misc }}</textarea> </td>
       </tr>
       <tr>
         <td align="right"> 出荷日 </td>

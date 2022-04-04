@@ -38,6 +38,8 @@ type (
 	}
 )
 
+// Update : Datumの更新
+// UPDATEメソッドに使う
 func (up *Datum) Update(id ID, data *Data) error {
 	// Data exist check
 	if _, ok := (*data)[id]; !ok {

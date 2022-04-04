@@ -22,7 +22,7 @@ func Show(c *gin.Context) {
 		c.HTML(http.StatusOK, "get.tmpl", gin.H{"id": id, "a": datum})
 		return
 	}
-	c.HTML(http.StatusBadRequest, "get.tmpl", gin.H{"msg": "IDが見つかりません"})
+	c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"id": id})
 }
 
 // CreateForm : Post
@@ -47,7 +47,7 @@ func Create(c *gin.Context) {
 	datum.Noki.Misc = form.Noki.Misc
 	addData := ctrl.Data{id: datum}
 	if err := addData.Add(&data); err != nil {
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"error": err})
+		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"id": id, "error": err})
 		return
 	}
 	if err := data.WriteJSON(FILE); err != nil {
