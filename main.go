@@ -30,7 +30,7 @@ func main() {
 			v.GET("/add/form", api.CreateForm)
 			v.POST("/add", api.Create)
 			v.GET("/:id/update/form", api.RefreshForm)
-			v.POST("/:id", api.Refresh)
+			v.POST("/:id/update", api.Refresh)
 			v.GET("/:id/delete", api.Remove)
 		}
 
