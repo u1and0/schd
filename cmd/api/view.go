@@ -116,5 +116,5 @@ func Remove(c *gin.Context) {
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.HTML(http.StatusNoContent, "delete.tmpl", gin.H{"id": c.Param("id")})
+	c.HTML(http.StatusOK, "delete.tmpl", gin.H{"id": id})
 }
