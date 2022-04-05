@@ -15,7 +15,7 @@ func main() {
 	{
 		d := v1.Group("/data")
 		{
-			d.GET("/all", api.Index)
+			d.GET("/", api.Index)
 			d.GET("/:id", api.Get)
 			d.POST("/add", api.Post)
 			d.DELETE("/:id", api.Delete)
