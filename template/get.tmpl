@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+  <h3>生産番号 参照</h3>
+  {{ .msg }}
+  <table class="table table-striped">
+    <tbody>
+    <tr>
+      <td align="right"> 生産番号 </td>
+      <td> {{ .id }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 生産名称 </td>
+      <td>{{ .a.Name }}</td>
+    </tr>
+    <tr>
+      <td align="right"> 担当者名 </td>
+      <td>{{ .a.Assign }}</td>
+    </tr>
+      <td align="right"> 梱包日 </td>
+      <td> {{ .a.Konpo.Date.Format "2006/01/02" }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 梱包依頼 </td>
+      <td> {{ .a.Irai }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 外寸法 </td>
+      <td> {{ .a.WDH }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 質量 </td>
+      <td> {{ .a.Mass }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 輸送手段 </td>
+      <td> {{ .a.Yuso }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 到着予定日 </td>
+      <td> {{ .a.Chaku.Format "2006/01/02" }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 問合せ番号 </td>
+      <td> {{ .a.ToiawaseNo }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 備考 </td>
+      <td> {{ .a.Konpo.Misc }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 出荷日 </td>
+      <td> {{ .a.Syuka.Date.Format "2006/01/02" }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 備考 </td>
+      <td> {{ .a.Syuka.Misc }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 納期 </td>
+      <td> {{ .a.Noki.Date.Format "2006/01/02" }} </td>
+    </tr>
+    <tr>
+      <td align="right"> 備考 </td>
+      <td> {{ .a.Noki.Misc }} </td>
+    </tr>
+    </tbody>
+  </table>
+  <button type="button" class="create" onclick="location.href = '/api/v1/view/add/form'">作成する</button>
+  <button type="button" class="delete" onclick="if(window.confirm('{{ .id }}を削除します。この処理は元に戻せません。')) location.href = '/api/v1/view/{{ .id }}/delete'">削除する</button>
+  <button type="button" class="update" onclick="location.href = '/api/v1/view/{{ .id }}/update/form'">更新する</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

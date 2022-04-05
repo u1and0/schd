@@ -5,7 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
 <html>
-  <h1>Sample</h1>
+  <h3>生産番号 カレンダー表示</h3>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -19,9 +19,9 @@
     {{range .a}}
     <tr>
       <td>{{.Date.Format "2006-01-02"}} {{ .Date.Weekday }}</td>
-      <td><a href=http://localhost:8080/api/v1/data/{{.KonpoID}}>{{.KonpoID}}</a></td>
-      <td><a href=http://localhost:8080/api/v1/data/{{.SyukaID}}>{{.SyukaID}}</a></td>
-      <td><a href=http://localhost:8080/api/v1/data/{{.NokiID}}>{{.NokiID}}</a></td>
+      <td><a href=/api/v1/view/{{.KonpoID}}>{{.KonpoID}}</a></td>
+      <td><a href=/api/v1/view/{{.SyukaID}}>{{.SyukaID}}</a></td>
+      <td><a href=/api/v1/view/{{.NokiID}}>{{.NokiID}}</a></td>
     </tr>
     {{end}}
     <tbody>

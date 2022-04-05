@@ -42,17 +42,9 @@ func Post(c *gin.Context) {
 	if err := c.ShouldBindJSON(&addData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	// Data exist check
-	for k := range addData {
-		if _, ok := data[k]; ok {
-			msg := fmt.Sprintf("ID: %v データが既に存在しています。Updateを試してください。", k)
-			c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-			return
-		}
-	}
-	// Set data
-	for k, v := range addData {
-		data[k] = v
+	if err := addData.Add(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
@@ -63,46 +55,29 @@ func Post(c *gin.Context) {
 // Delete : Delete 1 datum by id
 func Delete(c *gin.Context) {
 	id := ctrl.ID(c.Param("id"))
-	if _, ok := data[id]; !ok {
-		msg := fmt.Sprintf("ID: %v が見つかりません。別のIDを指定してください。", id)
-		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-		return
-	}
-	delete(data, id)
-	// Check deleted id
-	if _, ok := data[id]; ok {
-		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
-		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-		return
+	if err := id.Del(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 	}
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	msg := fmt.Sprintf("ID: %v を削除しました。", id)
-	c.JSON(http.StatusOK, gin.H{"msg": msg})
+	c.JSON(http.StatusNoContent, gin.H{"id": id})
 }
 
 // Put : Update 1 datum by ID
 func Put(c *gin.Context) {
 	id := ctrl.ID(c.Param("id"))
-	var upData ctrl.Data
+	var upData ctrl.Datum
 	if err := c.ShouldBindJSON(&upData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	// Data exist check
-	if _, ok := data[id]; !ok {
-		msg := fmt.Sprintf("ID: %v データが存在しません。/postを試してください。", id)
-		c.JSON(http.StatusBadRequest, gin.H{"error": msg})
-		return
-	}
-	// Update data
-	for k, v := range upData {
-		data[k] = v
+	if err := upData.Update(id, &data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 	if err := data.WriteJSON(FILE); err != nil {
 		panic(err)
 	}
-	c.IndentedJSON(http.StatusOK, upData)
+	c.IndentedJSON(http.StatusOK, id)
 }
 
 // List : Show table like by date
