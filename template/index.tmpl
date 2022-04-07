@@ -36,17 +36,30 @@
     {{range .r}}
     <tr>
       <td>{{.Date.Format "2006-01-02"}} {{ .Date.Weekday }}</td>
-      <td></td>
+      <td>{{ .KonpoName }}</td>
       <td><a href=/api/v1/view/{{.KonpoID}}>{{.KonpoID}}</a></td>
+      <td>{{ .KonpoAssign }}</td>
+      <td>{{ .Irai }}</td>
+      <td>{{ .WDH }}</td>
+      <td>{{ .Mass }}</td>
+      <td>{{ .Yuso }}</td>
+      <td>{{ .Chaku.Format "2006-01-02" }}</td>
+      <td>{{ .ToiawaseNo }}</td>
+      <td>{{ .KonpoMisc }}</td>
 
+      <td>{{ .SyukaName }}</td>
       <td><a href=/api/v1/view/{{.SyukaID}}>{{.SyukaID}}</a></td>
+      <td>{{ .SyukaAssign }}</td>
+      <td>{{ .SyukaMisc }}</td>
 
+      <td>{{ .NokiName }}</td>
       <td><a href=/api/v1/view/{{.NokiID}}>{{.NokiID}}</a></td>
+      <td>{{ .NokiAssign }}</td>
+      <td>{{ .NokiMisc }}</td>
+
     </tr>
     {{end}}
     <tbody>
   </table>
-
-{{ index .a 741744 }}
 
 </html>

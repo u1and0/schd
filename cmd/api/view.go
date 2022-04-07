@@ -10,10 +10,9 @@ import (
 
 // View : 日付リスト
 func View(c *gin.Context) {
-	rows := data.Stack().Unstack()
+	rows := data.Stack().Unstack().Verbose(data)
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"r": rows,
-		"a": data,
 	})
 }
 

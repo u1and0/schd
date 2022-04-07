@@ -2,7 +2,6 @@ package ctrl
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -17,11 +16,11 @@ type (
 		KonpoID     ID        `json:"梱包-生産番号"`
 		KonpoName   string    `json:"梱包-機器名"`
 		KonpoAssign string    `json:"梱包-担当者"`
-		Irai        bool      `json:"梱包会社依頼要否"`
+		Irai        string    `json:"梱包会社依頼要否"`
 		WDH         string    `json:"外寸法"`
 		Mass        int       `json:"質量"`
 		Yuso        string    `json:"輸送手段"`
-		Chaku       string    `json:"到着予定日"`
+		Chaku       time.Time `json:"到着予定日" time_format:"2006/01/02"`
 		ToiawaseNo  string    `json:"問合わせ番号"`
 		KonpoMisc   string    `json:"梱包-備考"`
 
@@ -57,13 +56,24 @@ func (r *Rows) Verbose(d Data) Rows {
 	for i, row := range *r {
 		id := row.KonpoID
 		v[i].KonpoName = d[id].Name
+		v[i].KonpoAssign = d[id].Assign
+		v[i].Irai = d[id].Irai
+		v[i].WDH = d[id].WDH
+		v[i].Mass = d[id].Mass
+		v[i].Yuso = d[id].Yuso
+		v[i].Chaku = d[id].Chaku
+		v[i].ToiawaseNo = d[id].ToiawaseNo
+		v[i].KonpoMisc = d[id].Konpo.Misc
 
 		id = row.SyukaID
 		v[i].SyukaName = d[id].Name
+		v[i].SyukaAssign = d[id].Assign
+		v[i].SyukaMisc = d[id].Syuka.Misc
 
 		id = row.NokiID
 		v[i].NokiName = d[id].Name
-		fmt.Printf("---row---\n%#v\n", row)
+		v[i].NokiAssign = d[id].Assign
+		v[i].NokiMisc = d[id].Noki.Misc
 	}
 	return v
 }
