@@ -41,7 +41,7 @@ httptest 使ったが、よくわからなかった...
 
 func TestIndex(t *testing.T) {
 	expected := testdata
-	resp, err := http.Get(URL + "/all")
+	resp, err := http.Get(URL + "/")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -150,7 +150,7 @@ func TestPost(t *testing.T) {
 func TestDelete(t *testing.T) {
 	expected := fmt.Sprintf(`{"id": %v"}`, ID)
 	resBody := strings.NewReader(expected)
-	resp, err := http.Delete(URL+"/"+ID, "application/json", resBody)
+	resp, err := http.Post(URL+"/"+ID, "application/json", resBody)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}

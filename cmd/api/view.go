@@ -12,7 +12,8 @@ import (
 func View(c *gin.Context) {
 	rows := data.Stack().Unstack()
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-		"a": rows,
+		"r": rows,
+		"a": data,
 	})
 }
 

@@ -45,30 +45,17 @@ func (d *Data) WriteJSON(fs string) error {
 	return err
 }
 
-func (ad *Data) Add(data *Data) error {
+// Add : data add to master data
+func (d *Data) Add(master *Data) error {
 	// Data exist check
-	for k := range *ad {
-		if _, ok := (*data)[k]; ok {
+	for k := range *d {
+		if _, ok := (*master)[k]; ok {
 			msg := fmt.Sprintf("ID: %v データが既に存在しています。Updateを試してください。", k)
 			return errors.New(msg)
 		}
 	}
-	for k, v := range *ad {
-		(*data)[k] = v
-	}
-	return nil
-}
-
-func (id ID) Del(data *Data) error {
-	if _, ok := (*data)[id]; !ok {
-		msg := fmt.Sprintf("ID: %v が見つかりません。別のIDを指定してください。", id)
-		return errors.New(msg)
-	}
-	delete((*data), id)
-	// Check deleted id
-	if _, ok := (*data)[id]; ok {
-		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
-		return errors.New(msg)
+	for k, v := range *d {
+		(*master)[k] = v
 	}
 	return nil
 }

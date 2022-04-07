@@ -2,6 +2,8 @@ package ctrl
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -44,13 +46,12 @@ func (d Cal) Unstack() (rows Rows) {
 	for date, idt := range d {
 		l := max(len(idt.Konpo), len(idt.Syuka), len(idt.Noki))
 		// 何もない日でも一行は空行出力
+		r := Row{Date: date}
 		if l == 0 {
-			r := Row{Date: date}
 			rows = append(rows, r)
 			continue
 		}
 		for i := 0; i < l; i++ {
-			r := Row{Date: date}
 			if len(idt.Konpo) > i {
 				r.KonpoID = idt.Konpo[i]
 			} else {
@@ -79,4 +80,19 @@ func max(s ...int) (x int) {
 		}
 	}
 	return
+}
+
+// Del : delete datum from data by id
+func (id ID) Del(data *Data) error {
+	if _, ok := (*data)[id]; !ok {
+		msg := fmt.Sprintf("ID: %v が見つかりません。別のIDを指定してください。", id)
+		return errors.New(msg)
+	}
+	delete((*data), id)
+	// Check deleted id
+	if _, ok := (*data)[id]; ok {
+		msg := fmt.Sprintf("ID: %v を削除できませんでした。", id)
+		return errors.New(msg)
+	}
+	return nil
 }

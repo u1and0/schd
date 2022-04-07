@@ -10,22 +10,43 @@
     <thead>
       <tr>
         <th>日付</th>
-        <th>梱包</th>
-        <th>出荷</th>
-        <th>納期</th>
+        <th>梱包 機器名</th>
+        <th>梱包 生産番号</th>
+        <th>梱包 担当者</th>
+        <th>梱包 梱包会社依頼要否</th>
+        <th>梱包 外寸法(mm)</th>
+        <th>梱包 質量(kg)</th>
+        <th>梱包 輸送手段</th>
+        <th>梱包 到着予定日</th>
+        <th>梱包 問合わせ番号</th>
+        <th>梱包 備考</th>
+
+        <th>出荷 機器名</th>
+        <th>出荷 生産番号</th>
+        <th>出荷 担当者</th>
+        <th>出荷 備考</th>
+
+        <th>納期 機器名</th>
+        <th>納期 生産番号</th>
+        <th>納期 担当者</th>
+        <th>納期 備考</th>
       <tr>
     </thead>
     <tbody>
-    {{range .a}}
+    {{range .r}}
     <tr>
       <td>{{.Date.Format "2006-01-02"}} {{ .Date.Weekday }}</td>
+      <td></td>
       <td><a href=/api/v1/view/{{.KonpoID}}>{{.KonpoID}}</a></td>
+
       <td><a href=/api/v1/view/{{.SyukaID}}>{{.SyukaID}}</a></td>
+
       <td><a href=/api/v1/view/{{.NokiID}}>{{.NokiID}}</a></td>
     </tr>
     {{end}}
     <tbody>
   </table>
 
+{{ index .a 741744 }}
 
 </html>
