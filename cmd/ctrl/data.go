@@ -63,7 +63,7 @@ func (d *Data) Add(master *Data) error {
 // Stack : 製番jsonを走査し、
 // 日付をキーに、項目ごとに製番リストを保持する
 // Cal構造体を返す
-func (d *Data) Stack() Cal {
+func (d *Data) Stack() *Cal {
 	cal := Cal{}
 	dates := []time.Time{
 		time.Date(2022, 4, 4, 0, 0, 0, 0, time.UTC),
@@ -86,5 +86,5 @@ func (d *Data) Stack() Cal {
 		}
 		cal[date] = idt
 	}
-	return cal
+	return &cal
 }

@@ -42,8 +42,9 @@ func (d *Cal) ReadJSON(fs string) error {
 
 // Unstack : Cal構造体から
 // 日付をプライマリキーとするテーブル形式のRowsを返す
-func (d Cal) Unstack() (rows Rows) {
-	for date, idt := range d {
+func (d *Cal) Unstack() *Rows {
+	rows := Rows{}
+	for date, idt := range *d {
 		l := max(len(idt.Konpo), len(idt.Syuka), len(idt.Noki))
 		// 何もない日でも一行は空行出力
 		r := Row{Date: date}
@@ -70,7 +71,7 @@ func (d Cal) Unstack() (rows Rows) {
 			rows = append(rows, r)
 		}
 	}
-	return
+	return &rows
 }
 
 func max(s ...int) (x int) {

@@ -82,6 +82,7 @@ func Put(c *gin.Context) {
 
 // List : Show table like by date
 func List(c *gin.Context) {
-	rows := data.Stack().Unstack()
+	s := data.Stack().Unstack()
+	rows := s.Verbose(data)
 	c.IndentedJSON(http.StatusOK, rows)
 }
