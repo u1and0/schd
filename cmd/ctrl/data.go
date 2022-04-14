@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 	"time"
+
+	timerange "github.com/tejasmanohar/timerange-go"
 )
 
 type (
@@ -65,13 +67,19 @@ func (d *Data) Add(master *Data) error {
 // Cal構造体を返す
 func (d *Data) Stack() *Cal {
 	cal := Cal{}
-	dates := []time.Time{
-		time.Date(2022, 4, 4, 0, 0, 0, 0, time.UTC),
-		time.Date(2022, 4, 14, 0, 0, 0, 0, time.UTC),
-		time.Date(2022, 4, 20, 0, 0, 0, 0, time.UTC),
-		time.Date(2022, 4, 24, 0, 0, 0, 0, time.UTC),
-	}
-	for _, date := range dates {
+	y, m, _ := ToMonth("2204") // 22, 4
+	start, end := DayofFirstEnd(y, m)
+	// => time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC)
+	// => time.Date(2022, 4, 30, 0, 0, 0, 0, time.UTC)
+	iter := timerange.New(start, end, 24*time.Hour)
+	// dates := []time.Time{
+	// 	time.Date(2022, 4, 4, 0, 0, 0, 0, time.UTC),
+	// 	time.Date(2022, 4, 14, 0, 0, 0, 0, time.UTC),
+	// 	time.Date(2022, 4, 20, 0, 0, 0, 0, time.UTC),
+	// 	time.Date(2022, 4, 24, 0, 0, 0, 0, time.UTC),
+	// }
+	for iter.Next() {
+		date := iter.Current()
 		var idt IDt
 		for id, datum := range *d {
 			if date.Equal(datum.Konpo.Date) {
