@@ -8,6 +8,7 @@ import (
 func main() {
 	// Router
 	r := gin.Default()
+	r.Static("/static", "./static")
 	r.LoadHTMLGlob("template/*.tmpl")
 
 	// API
