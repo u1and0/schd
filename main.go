@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/api"
+	"github.com/u1and0/schd/cmd/paper"
 )
 
 func main() {
@@ -34,7 +35,11 @@ func main() {
 			v.POST("/:id/update", api.Refresh)
 			v.GET("/:id/delete", api.Remove)
 		}
-
+		p := v1.Group("paper")
+		{
+			p.GET("/add/form", paper.CreateForm)
+			p.POST("/add", paper.Create)
+		}
 	}
 
 	r.Run()
