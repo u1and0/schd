@@ -29,10 +29,12 @@ type (
 	}
 )
 
+// CreateForm : xlsxに転記するフォームの表示
 func CreateForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "label_create.tmpl", "")
 }
 
+// Create : POST メソッドによりフォームからの情報をxlsxに転記する
 func Create(c *gin.Context) {
 	// Parse query
 	o := new(Order)
@@ -49,21 +51,26 @@ func Create(c *gin.Context) {
 		fmt.Println(err)
 		return
 	}
-	// o := Order{"ZRA-16", "13333", 1, time.Date(2020, 1, 9, 0, 0, 0, 0, time.Local)}
 	sheetName := "外装表示(単品用)"
-	f.SetCellValue(sheetName, "D3", o.Title)
-	f.SetCellValue(sheetName, "D15", o.Title)
-	f.SetCellValue(sheetName, "D4", o.Order)
-	f.SetCellValue(sheetName, "D16", o.Order)
-	f.SetCellValue(sheetName, "D6", o.Name)
-	f.SetCellValue(sheetName, "D18", o.Name)
-	f.SetCellValue(sheetName, "D7", o.Type)
-	f.SetCellValue(sheetName, "D19", o.Type)
+	for _, cell := range []string{"D3", "D15"} {
+		f.SetCellValue(sheetName, cell, o.Title)
+	}
+	for _, cell := range []string{"D4", "D16"} {
+		f.SetCellValue(sheetName, cell, o.Order)
+	}
+	for _, cell := range []string{"D6", "D18"} {
+		f.SetCellValue(sheetName, cell, o.Name)
+	}
+	for _, cell := range []string{"D7", "D19"} {
+		f.SetCellValue(sheetName, cell, o.Name)
+	}
 	num := strconv.Itoa(o.Quantity) + "SE"
-	f.SetCellValue(sheetName, "D8", num)
-	f.SetCellValue(sheetName, "D20", num)
-	f.SetCellValue(sheetName, "D9", o.WrapDate.Format("2006/1/2"))
-	f.SetCellValue(sheetName, "D21", o.WrapDate.Format("2006/1/2"))
+	for _, cell := range []string{"D8", "D20"} {
+		f.SetCellValue(sheetName, cell, num)
+	}
+	for _, cell := range []string{"D9", "D21"} {
+		f.SetCellValue(sheetName, cell, o.WrapDate.Format("2006/1/2"))
+	}
 
 	// Save file
 	filepath := "result/result.xlsx"
@@ -71,9 +78,9 @@ func Create(c *gin.Context) {
 		fmt.Println(err)
 		return
 	}
+	defer os.Remove(filepath)
 
 	// Download file
-	// c.FileAttachment(filepath, "外装ラベル(単体用).xlsx")
 	buf, err := os.Open(filepath)
 	if err != nil {
 		fmt.Println(err)
@@ -87,8 +94,4 @@ func Create(c *gin.Context) {
 		io.Copy(f, buf)
 		return false
 	})
-
-	// HTML
-	// msg := fmt.Sprintf("ラベルを作成しました")
-	// c.HTML(http.StatusOK, "get.tmpl", gin.H{"msg": msg, "Order": o})
 }
