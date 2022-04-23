@@ -2,3 +2,5 @@ doc/mail.txt
 *.exe
 README.html
 *.lnk
+*.xlsx
+/result/
