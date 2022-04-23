@@ -13,6 +13,9 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+// LAYOUT for time format
+const LAYOUT = "2006/1/2"
+
 type (
 	Order struct {
 		Title string `json:"件名" form:"title"`
@@ -69,7 +72,7 @@ func Create(c *gin.Context) {
 		f.SetCellValue(sheetName, cell, num)
 	}
 	for _, cell := range []string{"D9", "D21"} {
-		f.SetCellValue(sheetName, cell, o.WrapDate.Format("2006/1/2"))
+		f.SetCellValue(sheetName, cell, o.WrapDate.Format(LAYOUT))
 	}
 
 	// Save file

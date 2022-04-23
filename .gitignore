@@ -3,4 +3,6 @@ doc/mail.txt
 README.html
 *.lnk
 *.xlsx
+*.xlsx#
 /result/
+/db/
