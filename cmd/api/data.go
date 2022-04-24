@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/ctrl"
@@ -13,15 +14,15 @@ import (
 
 // FILE : DB file path
 const (
-	FILE    = "test/sample.json"
-	ADDRESS = "db/住所録.json"
+	FILE        = "test/sample.json"
+	ADDRESSFILE = "db/住所録.json"
 )
 
 var data = ctrl.Data{}
 
 type (
 	AddressMap map[string]Address
-	Address    [5]string
+	Address    []string
 )
 
 func init() {
@@ -97,29 +98,33 @@ func List(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, rows)
 }
 
-// FetchAddress : 住所録をJSONで返す
-func FetchAddress(c *gin.Context) {
-	var m AddressMap
+func (m *AddressMap) Read() error {
 	// Open file
-	f, err := os.Open(ADDRESS)
+	f, err := os.Open(ADDRESSFILE)
 	defer f.Close()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return err
 	}
 	// Read file
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return err
 	}
-	fmt.Printf("%#v", b)
 	// As JSON
 	err = json.Unmarshal(b, &m)
-	if err != nil {
+	return err
+}
+
+// FetchAddress : 住所録をJSONで返す
+func FetchAddress(c *gin.Context) {
+	var m AddressMap
+	if err := m.Read(); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Printf("%#v", m)
 	c.IndentedJSON(http.StatusOK, m)
+}
+
+func (a *Address) String() string {
+	return strings.Join(*a, "\n")
 }
