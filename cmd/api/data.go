@@ -16,13 +16,17 @@ import (
 const (
 	FILE        = "test/sample.json"
 	ADDRESSFILE = "db/住所録.json"
+	SECTIONFILE = "db/課.json"
 )
 
 var data = ctrl.Data{}
 
 type (
+	// AddressMap : JSON ファイルから読み取った住所録
 	AddressMap map[string]Address
-	Address    []string
+	// Address : 1住所あたり5行まで, 1行あたり15文字まで
+	// Excelシートの枠の都合
+	Address []string
 )
 
 func init() {
@@ -98,27 +102,34 @@ func List(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, rows)
 }
 
-func (m *AddressMap) Read() error {
+// ReadFile : read filepath to binary
+func readFile(fs string) (b []byte, err error) {
 	// Open file
-	f, err := os.Open(ADDRESSFILE)
+	f, err := os.Open(fs)
 	defer f.Close()
 	if err != nil {
-		return err
+		return
 	}
 	// Read file
-	b, err := ioutil.ReadAll(f)
+	b, err = ioutil.ReadAll(f)
 	if err != nil {
-		return err
+		return
 	}
+	return
+}
+
+// UnmarshalJSON : some T type
+func UnmarshalJSON(T interface{}, fs string) error {
+	b, err := readFile(fs)
 	// As JSON
-	err = json.Unmarshal(b, &m)
+	err = json.Unmarshal(b, &T)
 	return err
 }
 
 // FetchAddress : 住所録をJSONで返す
 func FetchAddress(c *gin.Context) {
 	var m AddressMap
-	if err := m.Read(); err != nil {
+	if err := UnmarshalJSON(m, ADDRESSFILE); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

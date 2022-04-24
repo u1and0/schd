@@ -6,22 +6,30 @@
 </head>
 
 <body>
-  <h3>オーダー情報 登録</h3>
-  オーダー情報説明
-  <form name="create-form" method="POST" action="/api/v1/paper/label/post">
+  <h3>配車要求　作成</h3>
+  配車要求　作成 の説明
+  <form name="create-form" method="POST" action="/api/v1/paper/allocate/post">
     <table class="table table-striped">
       <tbody>
+        <!-- 要求番号はPOST時の所属選択を元にdirectory check -> file glob -> 要求番号確定 -->
+      <!-- <tr> -->
+      <!--   <td align="right"> 要求番号 </td> -->
+      <!--   <td> <input type="text" name="title" value="" size="20" placeholder="TA00-70001"> </td> -->
+      <!-- </tr> -->
       <tr>
-        <td align="right"> 件　名 </td>
-        <td> <input type="text" name="title" value="" size="20" placeholder="件　名"> </td>
+        <td align="right"> 要求年月日 </td>
+        <td> <input type="text" name="wrap-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
       </tr>
       <tr>
-        <td align="right"> オーダー情報 </td>
-        <td> <input type="text" name="order" value="" size="20" placeholder="オーダー情報"> </td>
-      </tr>
-      <tr>
-        <td align="right"> 品　名 </td>
-        <td> <input type="text" name="name" value="", size="20" placeholder="品　名"> </td>
+        <td align="right"> 要求元(課) </td>
+        <td>
+          <select id="section" name="section">
+            <option value="---課を選択してください---">---課を選択してください---</option>
+            {{ range $i := .section }}
+              <option value={{ $i }}>{{ $i }}</option>
+            {{ end }}
+          </select>
+        </td>
       </tr>
       <tr>
         <td align="right"> 型　式 </td>

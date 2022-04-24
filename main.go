@@ -39,8 +39,16 @@ func main() {
 
 		p := v1.Group("paper")
 		{
-			p.GET("/add/form", paper.CreateForm)
-			p.POST("/add", paper.Create)
+			l := p.Group("label")
+			{
+				l.GET("/form", paper.CreateForm)
+				l.POST("/post", paper.Create)
+			}
+			a := p.Group("allocate")
+			{
+				a.GET("/form", paper.CreateAllocateForm)
+				a.POST("/post", paper.CreateAllocate)
+			}
 		}
 	}
 

@@ -49,7 +49,7 @@ func Create(c *gin.Context) {
 		return
 	}
 	var m api.AddressMap
-	if err := m.Read(); err != nil {
+	if err := api.UnmarshalJSON(m, api.ADDRESSFILE); err != nil {
 		c.IndentedJSON(http.StatusBadRequest,
 			gin.H{"msg": err.Error(), "error": err})
 		return
