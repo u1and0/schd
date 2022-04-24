@@ -1,17 +1,28 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/ctrl"
 )
 
 // FILE : DB file path
-const FILE = "test/sample.json"
+const (
+	FILE    = "test/sample.json"
+	ADDRESS = "db/住所録.json"
+)
 
 var data = ctrl.Data{}
+
+type (
+	AddressMap map[string]Address
+	Address    [5]string
+)
 
 func init() {
 	if err := data.ReadJSON(FILE); err != nil {
@@ -84,4 +95,31 @@ func Put(c *gin.Context) {
 func List(c *gin.Context) {
 	rows := data.Stack().Unstack().Verbose(data)
 	c.IndentedJSON(http.StatusOK, rows)
+}
+
+// FetchAddress : 住所録をJSONで返す
+func FetchAddress(c *gin.Context) {
+	var m AddressMap
+	// Open file
+	f, err := os.Open(ADDRESS)
+	defer f.Close()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// Read file
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Printf("%#v", b)
+	// As JSON
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Printf("%#v", m)
+	c.IndentedJSON(http.StatusOK, m)
 }

@@ -35,6 +35,15 @@
         <td align="right"> 包装年月日 </td>
         <td> <input type="text" name="wrap-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
       </tr>
+      <tr>
+        <td align="right"> 宛　先 </td>
+        <td>
+          <select id="to-address">
+            <option value="---宛先を選択してください---"></option>
+            <!-- main.js/fetchAddress() によって内容が補完される -->
+          </select>
+        </td>
+      </tr>
       <tbody>
     </table>
     <input type="submit" id="submit" value="ダウンロード">
@@ -44,6 +53,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/i18n/jquery.ui.datepicker-ja.min.js"></script>
+  <script type="text/javascript" src="/static/main.js"></script>
   <script>
     $(function() {
       $(".datepicker").datepicker();

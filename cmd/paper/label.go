@@ -21,10 +21,11 @@ type (
 		Title string `json:"件名" form:"title"`
 		Order string `json:"オーダー情報" form:"order"`
 		// FITTING string `json:"order" form:"order"`
-		Name     string    `json:"品名" form:"name"`
-		Type     string    `json:"型式" form:"type"`
-		Quantity int       `json:"数量" form:"quantity"`
-		WrapDate time.Time `json:"包装年月日" form:"wrap-date" time_format:"2006/01/02"`
+		Name      string    `json:"品名" form:"name"`
+		Type      string    `json:"型式" form:"type"`
+		Quantity  int       `json:"数量" form:"quantity"`
+		WrapDate  time.Time `json:"包装年月日" form:"wrap-date" time_format:"2006/01/02"`
+		ToAddress string    `json:"荷受人" form:"to-address"`
 	}
 	Cell struct {
 		要求番号  string
@@ -72,6 +73,9 @@ func Create(c *gin.Context) {
 		f.SetCellValue(sheetName, cell, num)
 	}
 	for _, cell := range []string{"D9", "D21"} {
+		f.SetCellValue(sheetName, cell, o.WrapDate.Format(LAYOUT))
+	}
+	for _, cell := range []string{"H4", "H16"} {
 		f.SetCellValue(sheetName, cell, o.WrapDate.Format(LAYOUT))
 	}
 

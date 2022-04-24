@@ -23,6 +23,7 @@ func main() {
 			d.DELETE("/:id", api.Delete)
 			d.PUT("/:id", api.Put)
 			d.GET("/list", api.List)
+			d.GET("/address", api.FetchAddress)
 		}
 
 		v := v1.Group("/view")
@@ -35,6 +36,7 @@ func main() {
 			v.POST("/:id/update", api.Refresh)
 			v.GET("/:id/delete", api.Remove)
 		}
+
 		p := v1.Group("paper")
 		{
 			p.GET("/add/form", paper.CreateForm)
