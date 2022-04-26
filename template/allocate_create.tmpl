@@ -18,43 +18,48 @@
       <!-- </tr> -->
       <tr>
         <td align="right"> 要求年月日 </td>
-        <td> <input type="text" name="wrap-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+        <td> <input type="text" name="allocate-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
       </tr>
       <tr>
         <td align="right"> 要求元(課) </td>
         <td>
           <select id="section" name="section">
             <option value="---課を選択してください---">---課を選択してください---</option>
-            {{ range $i := .section }}
-              <option value={{ $i }}>{{ $i }}</option>
+            <!-- golang template機能によりdb/課.jsonのキーが保管される -->
+            {{ range $i,$v := .section }}
+              <option value="{{ $i }}">{{ $i }}</option>
             {{ end }}
           </select>
         </td>
       </tr>
       <tr>
         <td align="right">輸送便の別</td>
-          <select id="to-address" name="to-address">
+        <td>
+          <select name="type">
             <option value="---輸送区分を選択してください---">---輸送区分を選択してください---</option>
             <option value="仕立便">仕立便</option>
             <option value="常用便">常用便</option>
             <option value="混載便">混載便</option>
             <option value="宅急便">宅急便</option>
           </select>
+        </td>
       </tr>
       <tr>
         <td align="right"> 車　種 </td>
-          <select id="to-address" name="to-address">
+        <td>
+          <select name="car">
             <option value="---車種を選択してください---">---車種を選択してください---</option>
             <option value="トラック">トラック</option>
             <option value="トレーラ">トレーラ</option>
             <option value="混載便">混載便</option>
             <option value="宅急便">宅急便</option>
           </select>
+        </td>
       </tr>
       <tr>
         <td align="right"> 台　車 </td>
         <td>
-          <select id="to-address" name="to-address">
+          <select name="car-type">
             <option value="---宛先を選択してください---">---宛先を選択してください---</option>
             <option value="幌車">幌車</option>
             <option value="平車">平車</option>
@@ -64,13 +69,13 @@
       </tr>
       <tr>
         <td align="right"> t　数 </td>
-        <td> <input type="number" name="quantity" value="", size="20" placeholder="0"> </td>
+        <td> <input type="number" name="t" value="", size="20" placeholder="0"> </td>
       </tr>
       <tr>
         <td align="right">機　能</td>
         <td>
-          <select id="to-address" name="to-address">
-            <option value="---宛先を選択してください---">---宛先を選択してください---</option>
+          <select name="to-address">
+            <option value="---機能を選択してください---">---機能を選択してください---</option>
             <option value="エアサス">エアサス</option>
             <option value="ウィング">ウィング</option>
             <option value="エアサス+ウィング">エアサス+ウィング</option>
@@ -78,13 +83,8 @@
         </td>
       </tr>
       <tr>
-        <td align="right"> 宛　先 </td>
-        <td>
-          <select id="to-address" name="to-address">
-            <option value="---宛先を選択してください---">---宛先を選択してください---</option>
-            <!-- main.js/fetchAddress() によって内容が補完される -->
-          </select>
-        </td>
+        <td align="right">生産命令番号</td>
+        <td> <input type="text" name="order" value="", size="20" placeholder="761-001"> </td>
       </tr>
       <tbody>
     </table>

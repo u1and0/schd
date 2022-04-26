@@ -48,13 +48,13 @@ func Create(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": msg, "error": err})
 		return
 	}
+	// 住所録から選択した宛先の住所を引く
 	var m api.AddressMap
 	if err := api.UnmarshalJSON(m, api.ADDRESSFILE); err != nil {
 		c.IndentedJSON(http.StatusBadRequest,
 			gin.H{"msg": err.Error(), "error": err})
 		return
 	}
-	fmt.Printf("%#v", o)
 
 	// template XLSX
 	f, err := excelize.OpenFile("template/template.xlsx")
@@ -87,8 +87,12 @@ func Create(c *gin.Context) {
 		f.SetCellValue(sheetName, cell, a.String())
 	}
 
+	downloadFile("外装ラベル.xlsx", f, c)
+}
+
+func downloadFile(fs string, f *excelize.File, c *gin.Context) {
 	// Save file
-	filepath := "result/result.xlsx"
+	filepath := "./result.xlsx"
 	if err := f.SaveAs(filepath); err != nil {
 		fmt.Println(err)
 		return
@@ -105,7 +109,7 @@ func Create(c *gin.Context) {
 		ar := zip.NewWriter(w)
 		defer ar.Close()
 		c.Writer.Header().Set("Content-Disposition", "attachmnt; filename=download.zip")
-		f, _ := ar.Create("外装ラベル.xlsx")
+		f, _ := ar.Create(fs)
 		io.Copy(f, buf)
 		return false
 	})
