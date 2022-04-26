@@ -15,6 +15,7 @@ import (
 )
 
 const (
+	// ALPATH : 配車要求票を保存するルートディレクトリ
 	ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
 )
 
@@ -101,13 +102,15 @@ func CreateAllocate(c *gin.Context) {
 	to := "適当な宛先"
 	f.SetCellValue(sheetName, "F8", from+to)
 	// 送り先
-	var m api.AddressMap
+	m := new(api.AddressMap)
 	if err := api.UnmarshalJSON(m, api.ADDRESSFILE); err != nil {
 		c.IndentedJSON(http.StatusBadRequest,
 			gin.H{"msg": err.Error(), "error": err})
 		return
 	}
-	a := strings.Join(m[to], "\n")
+	fmt.Printf("a:%v\n", api.ADDRESSFILE)
+	fmt.Printf("m:%v\n", m)
+	a := strings.Join((*m)[to], "\n")
 	f.SetCellValue(sheetName, "F13", a)
 
 	// f.SaveAs(reqNo.Dir + reqNo.Base + ".xlsx")
@@ -127,22 +130,26 @@ func getRequestNo(sec string) (y Y, err error) {
 			base := filepath.Base(path)
 			baseBool := strings.HasPrefix(base, prefix)
 			extBool := filepath.Ext(path) == surfix
-			fmt.Println(path)
 			// baseBool かつ extBool => prefixで始まり、xlsxで終わるファイルのみ対象
+			// strconvする前でないとディレクトリ検知してbaseのスライスできなくてpanic
+			// ifが階層化してしまうが後で最適化する
 			if baseBool && extBool {
 				// strconv できるかつ
 				if _, err := strconv.Atoi(base[5:10]); err == nil {
-					y.Base = base // TB00-76045....xlsx
-					y.Dir = filepath.Dir(path)
+					m, _ := strconv.Atoi(base[5:10]) // 76045
+					// 最も大きい数値がある場所を保存ディレクトリとする
+					// max int
+					if n < m {
+						n = m
+						y.Dir = filepath.Dir(path)
+					}
 				}
 			}
 			return nil
 		})
-	n, err = strconv.Atoi(y.Base[5:10]) // 76045
 	if err != nil {
 		return
 	}
-	fmt.Println(n)
 	y.Base = prefix + strconv.Itoa(n+1) + surfix
 	return
 }

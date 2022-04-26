@@ -49,8 +49,8 @@ func Create(c *gin.Context) {
 		return
 	}
 	// 住所録から選択した宛先の住所を引く
-	var m api.AddressMap
-	if err := api.UnmarshalJSON(m, api.ADDRESSFILE); err != nil {
+	m := new(api.AddressMap)
+	if err := api.UnmarshalJSON(&m, api.ADDRESSFILE); err != nil {
 		c.IndentedJSON(http.StatusBadRequest,
 			gin.H{"msg": err.Error(), "error": err})
 		return
@@ -82,7 +82,7 @@ func Create(c *gin.Context) {
 	for _, cell := range []string{"D9", "D21"} {
 		f.SetCellValue(sheetName, cell, o.WrapDate.Format(LAYOUT))
 	}
-	a := m[o.ToAddress]
+	a := (*m)[o.ToAddress]
 	for _, cell := range []string{"H4", "H16"} {
 		f.SetCellValue(sheetName, cell, a.String())
 	}
