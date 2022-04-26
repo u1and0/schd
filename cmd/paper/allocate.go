@@ -30,7 +30,7 @@ type (
 		Car      string    `json:"車種" form:"car"`
 		Cartype  string    `json:"台車" form:"car-type"`
 		T        int       `json:"t数" form:"t"`
-		Function string    `json:"機能" form:"section"`
+		Function string    `json:"機能" form:"function"`
 		Order    string    `json:"生産命令番号" form:"order"`
 	}
 	// Y 要求票番号と保存されているディレクトリ
@@ -79,22 +79,24 @@ func CreateAllocate(c *gin.Context) {
 	f.SetCellValue(sheetName, "F3", time.Now().Format("2006年1月2日"))
 	f.SetCellValue(sheetName, "F4", o.Section)
 	// 輸送便の別
-	var s string
-	switch o.Type {
-	case "仕立便":
-		s = `☑仕立便　☐常用便
+	var p string
+	if o.Type == "仕立便" {
+		p = `☑仕立便　☐常用便
 ☐混載便　☐宅配便`
-	case "常用便":
-		s = `☐仕立便　☑常用便
+	} else if o.Type == "常用便" {
+		p = `☐仕立便　☑常用便
 ☐混載便　☐宅配便`
-	case "混載便":
-		s = `☐仕立便　☐常用便
+	} else if o.Type == "混載便" {
+		p = `☐仕立便　☐常用便
 ☑混載便　☐宅配便`
-	case "宅配便":
-		s = `☐仕立便　☐常用便
+	} else if o.Type == "宅配便" {
+		p = `☐仕立便　☐常用便
 ☐混載便　☑宅配便`
 	}
-	f.SetCellValue(sheetName, "F5", s)
+	fmt.Printf("s: %v\n", p)
+	/* not work!!*/
+
+	f.SetCellValue(sheetName, "F5", p)
 	// 生産命令番号
 	f.SetCellValue(sheetName, "F7", o.Order)
 	// 輸送区間
@@ -112,7 +114,9 @@ func CreateAllocate(c *gin.Context) {
 	fmt.Printf("m:%v\n", m)
 	a := strings.Join((*m)[to], "\n")
 	f.SetCellValue(sheetName, "F13", a)
-
+	// t数 台車 機能
+	t := fmt.Sprintf("%st%s(%s)", strconv.Itoa(o.T), o.Cartype, o.Function)
+	f.SetCellValue(sheetName, "F6", t)
 	// f.SaveAs(reqNo.Dir + reqNo.Base + ".xlsx")
 	downloadFile(sheetName+".xlsx", f, c)
 }
