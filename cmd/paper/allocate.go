@@ -17,6 +17,7 @@ import (
 const (
 	// ALPATH : 配車要求票を保存するルートディレクトリ
 	ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
+	LAYOUT = "2006年1月2日"
 )
 
 type (
@@ -32,6 +33,32 @@ type (
 		T        int       `json:"t数" form:"t"`
 		Function string    `json:"機能" form:"section"`
 		Order    string    `json:"生産命令番号" form:"order"`
+		Load
+		Arrive
+		Size
+		Insulance      string `json:"保険" form:"insulance"`
+		InsulancePrice int    `json:"保険額" form:"insulance-price"`
+		Article        string `json:"記事" form:"article"`
+	}
+	Load struct {
+		Date   time.Time `json:"積込作業月日" form:"load-date" time_format:"2006/01/02"`
+		Hour   int       `json:"積込指定時" form:"load-hour"`
+		Minute int       `json:"積込指定分" form:"load-minute"`
+	}
+	Arrive struct {
+		Date   time.Time `json:"到着作業月日" form:"arrive-date" time_format:"2006/01/02"`
+		Hour   int       `json:"到着指定時" form:"arrive-hour"`
+		Minute int       `json:"到着指定分" form:"arrive-minute"`
+	}
+	// Size 荷姿・寸法・重量
+	Size struct {
+		Package  []string `json:"荷姿" form:"package"`
+		Width    []int    `json:"幅" form:"width"`
+		Length   []int    `json:"長さ" form:"length"`
+		Hight    []int    `json:"高さ" form:"hight"`
+		Mass     []int    `json:"重量" form:"mass"`
+		Method   []string `json:"荷下ろし方法" form:"method"`
+		Quantity []int    `json:"数量" form:"quantity"`
 	}
 	// Y 要求票番号と保存されているディレクトリ
 	Y struct {
@@ -47,7 +74,16 @@ func CreateAllocateForm(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.HTML(http.StatusOK, "allocate_create.tmpl", gin.H{"section": (*section)})
+	var hours []int
+	for i := 0; i < 24; i++ {
+		hours = append(hours, i)
+	}
+	minutes := []int{0, 15, 30, 45}
+	c.HTML(http.StatusOK, "allocate_create.tmpl", gin.H{
+		"section": (*section),
+		"hours":   hours,
+		"minutes": minutes,
+	})
 }
 
 // CreateAllocate : xlsx に転記する
@@ -63,20 +99,19 @@ func CreateAllocate(c *gin.Context) {
 	// template XLSX
 	f, err := excelize.OpenFile("template/template.xlsx")
 	if err != nil {
-		fmt.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
 		return
 	}
 	sheetName := "入力画面"
 	// 要求番号
 	reqNo, err := getRequestNo(o.Section)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest,
-			gin.H{"msg": err.Error(), "error": err})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
 		return
 	}
 	f.SetCellValue(sheetName, "F2", reqNo.Base)
 	// 要求年月日
-	f.SetCellValue(sheetName, "F3", time.Now().Format("2006年1月2日"))
+	f.SetCellValue(sheetName, "F3", time.Now().Format(LAYOUT))
 	f.SetCellValue(sheetName, "F4", o.Section)
 	// 輸送便の別
 	s := o.Type
@@ -104,17 +139,31 @@ func CreateAllocate(c *gin.Context) {
 	// 送り先
 	m := new(api.AddressMap)
 	if err := api.UnmarshalJSON(m, api.ADDRESSFILE); err != nil {
-		c.IndentedJSON(http.StatusBadRequest,
-			gin.H{"msg": err.Error(), "error": err})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
 		return
 	}
-	fmt.Printf("a:%v\n", api.ADDRESSFILE)
-	fmt.Printf("m:%v\n", m)
 	a := strings.Join((*m)[to], "\n")
 	f.SetCellValue(sheetName, "F13", a)
 	// t数 台車 機能
 	t := fmt.Sprintf("%st%s(%s)", strconv.Itoa(o.T), o.Cartype, o.Function)
 	f.SetCellValue(sheetName, "F6", t)
+	// 積込/到着作業月日/時刻
+	f.SetCellValue(sheetName, "F9", o.Load.Date.Format(LAYOUT))
+	f.SetCellValue(sheetName, "F10", fmt.Sprintf("%d時%d分", o.Load.Hour, o.Load.Minute))
+	f.SetCellValue(sheetName, "F11", o.Arrive.Date.Format(LAYOUT))
+	f.SetCellValue(sheetName, "F12", fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute))
+	// 保険要否
+	s = `☑要　☐不要`
+	if o.Insulance == "契約済み" {
+		s = `☐要　☑不要`
+	}
+	f.SetCellValue(sheetName, "F18", s)
+	n := ""
+	if o.InsulancePrice > 0 {
+		n = strconv.Itoa(o.InsulancePrice)
+	}
+	f.SetCellValue(sheetName, "F19", n)
+	// 送り状番号
 
 	// f.SaveAs(reqNo.Dir + reqNo.Base + ".xlsx")
 	downloadFile(sheetName+".xlsx", f, c)

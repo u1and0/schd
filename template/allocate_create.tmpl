@@ -3,6 +3,7 @@
 <head>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
@@ -24,7 +25,7 @@
         <td align="right"> 要求元(課) </td>
         <td>
           <select id="section" name="section">
-            <option value="---課を選択してください---">---課を選択してください---</option>
+            <option value="">---課を選択してください---</option>
             <!-- golang template機能によりdb/課.jsonのキーが保管される -->
             {{ range $i,$v := .section }}
               <option value="{{ $i }}">{{ $i }}</option>
@@ -36,7 +37,7 @@
         <td align="right">輸送便の別</td>
         <td>
           <select name="type">
-            <option value="---輸送区分を選択してください---">---輸送区分を選択してください---</option>
+            <option value="">---輸送区分を選択してください---</option>
             <option value="仕立便">仕立便</option>
             <option value="常用便">常用便</option>
             <option value="混載便">混載便</option>
@@ -86,8 +87,95 @@
         <td align="right">生産命令番号</td>
         <td> <input type="text" name="order" value="", size="20" placeholder="761-001"> </td>
       </tr>
-      <tbody>
+      <tr>
+        <td align="right">積込作業月日</td>
+        <td> <input type="text" name="load-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+      </tr>
+      <tr>
+        <td align="right">積込作業時刻</td>
+        <td>
+          <select name="load-hour">
+            {{ range .hours }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>
+          <select name="load-minute">
+            {{ range .minutes }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">到着指定月日</td>
+        <td> <input type="text" name="arrive-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+      </tr>
+      <tr>
+        <td align="right">到着指定時刻</td>
+        <td>
+          <select name="arrive-hour">
+            {{ range .hours }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>
+          <select name="arrive-minute">
+            {{ range .minutes }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">保　険</td>
+        <td>
+          <select name="insulance">
+            <option value="契約済み">契約済み</option>
+            <option value="契約が必要">契約が必要</option>
+          </select>
+        </td>
+      </tr>
+      </tbody>
     </table>
+
+    <table>
+    <thead>
+      <tr>
+        <th>荷姿</th>
+        <th>幅</th>
+        <th>長さ</th>
+        <th>高さ</th>
+        <th>重量</th>
+        <th>荷下ろし方法</th>
+        <th>数量</th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td> <input type="text" name="package" value="" list="package-list" size="10" placeholder="木箱"> </td>
+      <datalist id="package-list">
+        <option value="木箱">
+        <option value="ダンボール">
+        <option value="ビニールシート">
+        <option value="パレット">
+        <option value="コンテナ">
+      </datalist>
+      <td> <input type="number" name="width" value="" class="small-number" placeholder="0"> </td>
+      <td> <input type="number" name="length" value="" class="small-number" placeholder="0"> </td>
+      <td> <input type="number" name="hight" value="" class="small-number" placeholder="0"> </td>
+      <td> <input type="number" name="mass" value="" class="small-number" placeholder="0"> </td>
+      <td> <input type="text" name="method" value="" list="method-list" size="10" placeholder="フォーク"> </td>
+      <datalist id="method-list">
+        <option value="フォーク">
+        <option value="クレーン">
+        <option value="フォーク・クレーン不要">
+      </datalist>
+      <td> <input type="number" name="quantity" value="" class="small-number" placeholder="0"> </td>
+    </tr>
+    </tbody>
+    </table>
+
+
+
     <input type="submit" id="download" value="ダウンロード">
   </form>
 
