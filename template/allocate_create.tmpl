@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -137,6 +138,13 @@
       </tbody>
     </table>
 
+    <hr>
+    <div>
+      <p> 荷姿情報を登録してください。外装ラベルに反映されます。</p>
+      <input type="button" onclick="_appendRow()" title="行追加" class="fas" value="&#xf055">
+      <input type="button" onclick="_removeRow()" title="行削除" class="fas" value="&#xf057">
+    </div>
+
     <table id="load-table">
     <thead>
       <tr>
@@ -151,7 +159,7 @@
     </thead>
     <tbody>
     <tr>
-      <td> <input type="text" name="package" value="" list="package-list" size="10" placeholder="木箱"> </td>
+      <td> <input type="text" name="package" value="" list="package-list" size="10" placeholder="入力してください"> </td>
       <datalist id="package-list">
         <option value="木箱">
         <option value="ダンボール">
@@ -163,7 +171,7 @@
       <td> <input type="number" name="length" value="" class="small-number" placeholder="0"> </td>
       <td> <input type="number" name="hight" value="" class="small-number" placeholder="0"> </td>
       <td> <input type="number" name="mass" value="" class="small-number" placeholder="0"> </td>
-      <td> <input type="text" name="method" value="" list="method-list" size="10" placeholder="フォーク"> </td>
+      <td> <input type="text" name="method" value="" list="method-list" size="10" placeholder="入力してください"> </td>
       <datalist id="method-list">
         <option value="フォーク">
         <option value="クレーン">
@@ -173,13 +181,8 @@
     </tr>
     </tbody>
     </table>
-    <div>
-      <button onclick="_appendRow()">行追加</button>
-      <button onclick="_removeRow()">行削除</button>
-    </div>
 
-
-    <input type="submit" id="download" value="ダウンロード">
+    <button title="ダウンロード" class="fas fa-download" type="submit"> </button>
   </form>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
