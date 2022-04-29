@@ -69,7 +69,8 @@ function fetchAddress(url) {
                         return [2 /*return*/];
                     Object.keys(address).forEach(function (key) {
                         var elem = document.querySelector("#to-address");
-                        elem.append("<option value=".concat(key, ">").concat(key, "</option>"));
+                        if (elem !== null)
+                            elem.append("<option value=".concat(key, ">").concat(key, "</option>"));
                     });
                     return [3 /*break*/, 3];
                 case 2:
@@ -82,19 +83,46 @@ function fetchAddress(url) {
     });
 }
 var tbl = document.getElementById("load-table");
-function appendRow() {
+function _appendRow() {
     if (tbl === null)
         return;
     var tr = document.createElement("tr");
-    for (var i = 0; i < 7; i++) {
+    var names = [
+        "package",
+        "width",
+        "length",
+        "hight",
+        "mass",
+        "method",
+        "quantity",
+    ];
+    for (var _i = 0, names_1 = names; _i < names_1.length; _i++) {
+        var th = names_1[_i];
         var td = document.createElement("td");
         var inp = document.createElement("input");
+        if (th === "package") {
+            inp.setAttribute("name", th);
+            inp.setAttribute("list", "package-list");
+            inp.setAttribute("size", "10");
+            inp.setAttribute("placeholder", "木箱");
+        }
+        else if (th === "method") {
+            inp.setAttribute("name", th);
+            inp.setAttribute("list", "method-list");
+            inp.setAttribute("size", "10");
+            inp.setAttribute("placeholder", "クレーン");
+        }
+        else {
+            inp.setAttribute("name", "width");
+            inp.setAttribute("class", "small-number");
+            inp.setAttribute("placeholder", "0");
+        }
         td.append(inp);
         tr.append(td);
     }
     tbl.appendChild(tr);
 }
-function removeRow() {
+function _removeRow() {
     if (tbl === null)
         return;
     var l = tbl.rows.length;

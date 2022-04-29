@@ -25,7 +25,7 @@ async function fetchAddress(url: string) {
     if (address === null) return;
     Object.keys(address).forEach((key: string) => {
       const elem = document.querySelector("#to-address");
-      elem.append(`<option value=${key}>${key}</option>`);
+      if (elem !== null) elem.append(`<option value=${key}>${key}</option>`);
     });
   } catch (error) {
     console.error(`Error occured (${error})`);
@@ -34,20 +34,44 @@ async function fetchAddress(url: string) {
 
 const tbl = document.getElementById("load-table") as HTMLTableElement;
 
-function appendRow() {
+function _appendRow() {
   if (tbl === null) return;
   const tr = document.createElement("tr");
-  for (let i = 0; i < 7; i++) {
+  const names: Array<string> = [
+    "package",
+    "width",
+    "length",
+    "hight",
+    "mass",
+    "method",
+    "quantity",
+  ];
+  for (const th of names) {
     const td = document.createElement("td");
     const inp = document.createElement("input");
+    if (th === "package") {
+      inp.setAttribute("name", th);
+      inp.setAttribute("list", "package-list");
+      inp.setAttribute("size", "10");
+      inp.setAttribute("placeholder", "木箱");
+    } else if (th === "method") {
+      inp.setAttribute("name", th);
+      inp.setAttribute("list", "method-list");
+      inp.setAttribute("size", "10");
+      inp.setAttribute("placeholder", "フォーク");
+    } else {
+      inp.setAttribute("name", "width");
+      inp.setAttribute("class", "small-number");
+      inp.setAttribute("placeholder", "0");
+    }
     td.append(inp);
     tr.append(td);
   }
-  tbl.appendChild(tr)
+  tbl.appendChild(tr);
 }
 
-function removeRow() {
+function _removeRow() {
   if (tbl === null) return;
-  const l = tbl.rows.length;
+  const l: number = tbl.rows.length;
   tbl.deleteRow(l - 1);
 }
