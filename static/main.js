@@ -65,9 +65,10 @@ function fetchAddress(url) {
                     return [4 /*yield*/, fetchLocatePath(url)];
                 case 1:
                     address = _a.sent();
+                    if (address === null)
+                        return [2 /*return*/];
                     Object.keys(address).forEach(function (key) {
-                        // const elem = document.getElementById("to-address")
-                        var elem = document.querySelector('#to-address');
+                        var elem = document.querySelector("#to-address");
                         elem.append("<option value=".concat(key, ">").concat(key, "</option>"));
                     });
                     return [3 /*break*/, 3];
@@ -79,4 +80,23 @@ function fetchAddress(url) {
             }
         });
     });
+}
+var tbl = document.getElementById("load-table");
+function appendRow() {
+    if (tbl === null)
+        return;
+    var tr = document.createElement("tr");
+    for (var i = 0; i < 7; i++) {
+        var td = document.createElement("td");
+        var inp = document.createElement("input");
+        td.append(inp);
+        tr.append(td);
+    }
+    tbl.appendChild(tr);
+}
+function removeRow() {
+    if (tbl === null)
+        return;
+    var l = tbl.rows.length;
+    tbl.deleteRow(l - 1);
 }

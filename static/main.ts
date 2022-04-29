@@ -22,12 +22,32 @@ async function fetchAddress(url: string) {
   try {
     // 住所録.js から住所一覧をselect option に加える;
     const address = await fetchLocatePath(url);
-    Object.keys(address).forEach((key: string) =>{
-      // const elem = document.getElementById("to-address")
-      const elem = document.querySelector('#to-address')
-      elem.append(`<option value=${key}>${key}</option>`)
+    if (address === null) return;
+    Object.keys(address).forEach((key: string) => {
+      const elem = document.querySelector("#to-address");
+      elem.append(`<option value=${key}>${key}</option>`);
     });
   } catch (error) {
     console.error(`Error occured (${error})`);
   }
+}
+
+const tbl = document.getElementById("load-table") as HTMLTableElement;
+
+function appendRow() {
+  if (tbl === null) return;
+  const tr = document.createElement("tr");
+  for (let i = 0; i < 7; i++) {
+    const td = document.createElement("td");
+    const inp = document.createElement("input");
+    td.append(inp);
+    tr.append(td);
+  }
+  tbl.appendChild(tr)
+}
+
+function removeRow() {
+  if (tbl === null) return;
+  const l = tbl.rows.length;
+  tbl.deleteRow(l - 1);
 }

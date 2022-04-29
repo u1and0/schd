@@ -98,7 +98,7 @@
             {{ range .hours }}
               <option value={{ . }}>{{ . }}</option>
             {{end}}
-          </select>
+          </select>: <!--時刻表示のコロン-->
           <select name="load-minute">
             {{ range .minutes }}
               <option value={{ . }}>{{ . }}</option>
@@ -117,7 +117,7 @@
             {{ range .hours }}
               <option value={{ . }}>{{ . }}</option>
             {{end}}
-          </select>
+          </select>: <!--時刻表示のコロン-->
           <select name="arrive-minute">
             {{ range .minutes }}
               <option value={{ . }}>{{ . }}</option>
@@ -137,7 +137,7 @@
       </tbody>
     </table>
 
-    <table>
+    <table id="load-table">
     <thead>
       <tr>
         <th>荷姿</th>
@@ -173,7 +173,10 @@
     </tr>
     </tbody>
     </table>
-
+    <div>
+      <button onclick="appendRow()">行追加</button>
+      <button onclick="removeRow()">行削除</button>
+    </div>
 
 
     <input type="submit" id="download" value="ダウンロード">
