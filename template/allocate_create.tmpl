@@ -141,8 +141,6 @@
     <hr>
     <div>
       <p> 荷姿情報を登録してください。外装ラベルに反映されます。</p>
-      <input type="button" onclick="_appendRow()" title="行追加" class="fas" value="&#xf055">
-      <input type="button" onclick="_removeRow()" title="行削除" class="fas" value="&#xf057">
     </div>
 
     <table id="load-table">
@@ -178,6 +176,8 @@
         <option value="フォーク・クレーン不要">
       </datalist>
       <td> <input type="number" name="quantity" value="" class="small-number" placeholder="0"> </td>
+      <td> <input type="button" onclick="_appendRow(this)" title="行追加" class="fas" value="&#xf055"> </td>
+      <td> <input type="button" onclick="_removeRow(this)" title="行削除" class="fas " value="&#xf057"> </td>
     </tr>
     </tbody>
     </table>
@@ -190,6 +190,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/i18n/jquery.ui.datepicker-ja.min.js"></script>
   <script type="text/javascript" src="/static/main.js"></script>
+  <script type="text/javascript" src="/static/jq.js"></script>
   <script>
     $(function() {
       $(".datepicker").datepicker();
