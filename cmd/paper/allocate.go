@@ -18,6 +18,8 @@ const (
 	// ALPATH : 配車要求票を保存するルートディレクトリ
 	ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
 	LAYOUT = "2006年1月2日"
+	// 別紙記載に分割する行数制限
+	MAXLINE = 4
 )
 
 type (
@@ -84,6 +86,16 @@ func (s *Size) Compile() PackageCount {
 		}
 	}
 	return p
+}
+
+// ToString : 表示
+func (s *Size) ToString() string {
+	var ss []string
+	l := len(s.Package)
+	for i := 0; i < l; i++ {
+		ss = append(ss, fmt.Sprintf("%dx%dx%dmm %dkg", s.Width[i], s.Length[i], s.Hight[i], s.Mass[i]))
+	}
+	return strings.Join(ss, ", ")
 }
 
 // ToString : 表示
@@ -201,9 +213,10 @@ func CreateAllocate(c *gin.Context) {
 	f.SetCellValue(sheetName, "F19", n)
 	// 寸法質量
 	l := len(o.Package)
-	if l < 4 { // 3行までなら配車要求票に記載
+	if l < MAXLINE { // 3行までなら配車要求票に記載
 		p := o.Size.Compile()
 		fmt.Println(p)
+		f.SetCellValue(sheetName, "F15", o.Size.ToString())
 		f.SetCellValue(sheetName, "F16", p.ToString())
 		f.SetCellValue(sheetName, "F17", o.Size.Sum())
 	} else { // 4行以上の場合は別紙に記載
