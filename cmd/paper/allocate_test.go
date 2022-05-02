@@ -21,13 +21,18 @@ func init() {
 }
 
 func TestSize_Sum(t *testing.T) {
+	actual := s.Sum()
+	expected := 13
+	if actual != expected {
+		t.Fatalf("got: %v want: %v", actual, expected)
+	}
 }
 
 func TestSize_Compile(t *testing.T) {
 	actual := s.Compile()
 	expected := p
 	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got: %#vwant: %#v", actual, expected)
+		t.Fatalf("got: %#v want: %#v", actual, expected)
 	}
 }
 
