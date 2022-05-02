@@ -65,7 +65,42 @@ type (
 		Base string
 		Dir  string
 	}
+	PackageCount map[string]int
+	Stringfy     interface {
+		ToString() string
+	}
 )
+
+// Compile : 荷姿によって数量をカウントする
+func (s *Size) Compile() PackageCount {
+	p := make(PackageCount, len(s.Package))
+	for i, k := range s.Package {
+		if _, ok := p[k]; !ok {
+			p[k] = s.Quantity[i]
+		} else {
+			p[k] += s.Quantity[i]
+		}
+	}
+	return p
+}
+
+// ToString : 表示
+func (p *PackageCount) ToString() string {
+	var ss []string
+	for k, v := range *p {
+		ss = append(ss, fmt.Sprintf("%s(%s)", k, strconv.Itoa(v)))
+	}
+	return strings.Join(ss, "\n")
+}
+
+// Sum : 荷姿によらず数量を合計する
+func (s *Size) Sum() (n int) {
+	l := len(s.Quantity)
+	for i := 0; i < l; i++ {
+		n += s.Quantity[i]
+	}
+	return
+}
 
 // CreateAllocateForm : xlsxに転記するフォームの表示
 func CreateAllocateForm(c *gin.Context) {
@@ -163,7 +198,20 @@ func CreateAllocate(c *gin.Context) {
 		n = strconv.Itoa(o.InsulancePrice)
 	}
 	f.SetCellValue(sheetName, "F19", n)
-	// 送り状番号
+	// 寸法質量
+	l := len(o.Package)
+	if l < 4 { // 3行までなら配車要求票に記載
+		p := o.Size.Compile()
+		nisugata := p.ToString()
+		f.SetCellValue(sheetName, "F15", nisugata)
+		f.SetCellValue(sheetName, "F16", o.Size.Sum())
+	} else { // 4行以上の場合は別紙に記載
+		c := 11
+		for i := 0; i < l; i++ {
+			n := strconv.Itoa(c + i)
+			f.SetCellValue("配車別紙", "F"+n, o.Package[i])
+		}
+	}
 
 	// f.SaveAs(reqNo.Dir + reqNo.Base + ".xlsx")
 	downloadFile(sheetName+".xlsx", f, c)
