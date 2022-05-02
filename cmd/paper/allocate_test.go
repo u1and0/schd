@@ -16,7 +16,6 @@ func init() {
 	p = PackageCount{
 		"りんご": 4,
 		"みかん": 8,
-		"すいか": 1,
 	}
 }
 
@@ -30,7 +29,7 @@ func TestSize_Sum(t *testing.T) {
 
 func TestSize_Compile(t *testing.T) {
 	actual := s.Compile()
-	expected := p
+	expected := PackageCount{"みかん": 8, "りんご": 4, "すいか": 1}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("got: %#v want: %#v", actual, expected)
 	}
@@ -38,10 +37,9 @@ func TestSize_Compile(t *testing.T) {
 
 func TestPackageCount_String(t *testing.T) {
 	actual := p.ToString()
-	expected := `りんご(4)
-みかん(8)
-すいか(1)`
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got: %#v want: %#v", actual, expected)
+	expected1 := `りんご(4), みかん(8)`
+	expected2 := `みかん(8), りんご(4)`
+	if actual != expected1 && actual != expected2 {
+		t.Fatalf("got: %v want: %v or %v", actual, expected1, expected2)
 	}
 }

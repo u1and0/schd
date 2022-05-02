@@ -92,7 +92,7 @@ func (p *PackageCount) ToString() string {
 	for k, v := range *p {
 		ss = append(ss, fmt.Sprintf("%s(%s)", k, strconv.Itoa(v)))
 	}
-	return strings.Join(ss, "\n")
+	return strings.Join(ss, ", ")
 }
 
 // Sum : 荷姿によらず数量を合計する
@@ -203,9 +203,9 @@ func CreateAllocate(c *gin.Context) {
 	l := len(o.Package)
 	if l < 4 { // 3行までなら配車要求票に記載
 		p := o.Size.Compile()
-		nisugata := p.ToString()
-		f.SetCellValue(sheetName, "F15", nisugata)
-		f.SetCellValue(sheetName, "F16", o.Size.Sum())
+		fmt.Println(p)
+		f.SetCellValue(sheetName, "F16", p.ToString())
+		f.SetCellValue(sheetName, "F17", o.Size.Sum())
 	} else { // 4行以上の場合は別紙に記載
 		c := 11
 		for i := 0; i < l; i++ {
