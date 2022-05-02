@@ -65,8 +65,10 @@ type (
 		Base string
 		Dir  string
 	}
+	// PackageCount : 荷姿カウンタ
 	PackageCount map[string]int
-	Stringfy     interface {
+	// Stringfy 表示
+	Stringfy interface {
 		ToString() string
 	}
 )
@@ -95,9 +97,8 @@ func (p *PackageCount) ToString() string {
 
 // Sum : 荷姿によらず数量を合計する
 func (s *Size) Sum() (n int) {
-	l := len(s.Quantity)
-	for i := 0; i < l; i++ {
-		n += s.Quantity[i]
+	for _, q := range s.Quantity {
+		n += q
 	}
 	return
 }
