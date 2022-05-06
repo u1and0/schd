@@ -47,6 +47,185 @@
       <tbody>
     </table>
     <input type="submit" id="download" value="ダウンロード">
+
+    <hr>
+    <div>
+      <p>配車情報を入力してください。配車要求表に反映されます。</p>
+    </div>
+
+    <table class="table table-striped">
+      <tbody>
+        <!-- 要求番号はPOST時の所属選択を元にdirectory check -> file glob -> 要求番号確定 -->
+      <!-- <tr> -->
+      <!--   <td align="right"> 要求番号 </td> -->
+      <!--   <td> <input type="text" name="title" value="" size="20" placeholder="TA00-70001"> </td> -->
+      <!-- </tr> -->
+      <tr>
+        <td align="right"> 要求年月日 </td>
+        <td> <input type="text" name="allocate-date" value="{{ .today }}" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+      </tr>
+      <tr>
+        <td align="right"> 要求元(課) </td>
+        <td>
+          <select id="section" name="section">
+            <option value="">---課を選択してください---</option>
+            <!-- golang template機能によりdb/課.jsonのキーが保管される -->
+            {{ range $i,$v := .section }}
+              <option value="{{ $i }}">{{ $i }}</option>
+            {{ end }}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">輸送便の別</td>
+        <td>
+          <select name="type">
+            <option value="">---輸送区分を選択してください---</option>
+            <option value="仕立便">仕立便</option>
+            <option value="常用便">常用便</option>
+            <option value="混載便">混載便</option>
+            <option value="宅配便">宅配便</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right"> 車　種 </td>
+        <td>
+          <select name="car">
+            <option value="">---車種を選択してください---</option>
+            <option value="トラック">トラック</option>
+            <option value="トレーラ">トレーラ</option>
+            <option value="混載便">混載便</option>
+            <option value="宅配便">宅配便</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right"> 台　車 </td>
+        <td>
+          <select name="car-type">
+            <option value="">---宛先を選択してください---</option>
+            <option value="幌車">幌車</option>
+            <option value="平車">平車</option>
+            <option value="箱車">箱車</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right"> t　数 </td>
+        <td> <input type="number" name="t" value="", size="20" placeholder="0" min=0> </td>
+      </tr>
+      <tr>
+        <td align="right">機　能</td>
+        <td>
+          <select name="function">
+            <option value="">---機能を選択してください---</option>
+            <option value="エアサス">エアサス</option>
+            <option value="ウィング">ウィング</option>
+            <option value="エアサス+ウィング">エアサス+ウィング</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">生産命令番号</td>
+        <td> <input type="text" name="order" value="", size="20" placeholder="761-001"> </td>
+      </tr>
+      <tr>
+        <td align="right">積込作業月日</td>
+        <td> <input type="text" name="load-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+      </tr>
+      <tr>
+        <td align="right">積込作業時刻</td>
+        <td>
+          <select name="load-hour">
+            {{ range .hours }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>: <!--時刻表示のコロン-->
+          <select name="load-minute">
+            {{ range .minutes }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">到着指定月日</td>
+        <td> <input type="text" name="arrive-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+      </tr>
+      <tr>
+        <td align="right">到着指定時刻</td>
+        <td>
+          <select name="arrive-hour">
+            {{ range .hours }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>: <!--時刻表示のコロン-->
+          <select name="arrive-minute">
+            {{ range .minutes }}
+              <option value={{ . }}>{{ . }}</option>
+            {{end}}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">保　険</td>
+        <td>
+          <select name="insulance">
+            <option value="契約済み">契約済み</option>
+            <option value="契約が必要">契約が必要</option>
+          </select>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <div>
+      <p> 荷姿情報を登録してください。外装ラベルに反映されます。</p>
+    </div>
+
+    <table id="load-table">
+    <thead>
+      <tr>
+        <th>荷姿</th>
+        <th>幅</th>
+        <th>長さ</th>
+        <th>高さ</th>
+        <th>重量</th>
+        <th>荷下ろし方法</th>
+        <th>数量</th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td> <input type="text" name="package" value="" list="package-list" size="10" placeholder="入力してください"> </td>
+      <datalist id="package-list">
+        <option value="木箱">
+        <option value="段ボール">
+        <option value="ﾋﾞﾆｰﾙｼｰﾄ">
+        <option value="パレット">
+        <option value="コンテナ">
+        <!-- 上記以外の入力値は配車別紙でカウントされない, 配車別紙に"その他"の欄追加要望 -->
+      </datalist>
+      <td> <input type="number" name="width" value="" class="small-number" placeholder="0" min=0> </td>
+      <td> <input type="number" name="length" value="" class="small-number" placeholder="0" min=0> </td>
+      <td> <input type="number" name="hight" value="" class="small-number" placeholder="0" min=0> </td>
+      <td> <input type="number" name="mass" value="" class="small-number" placeholder="0" min=0> </td>
+      <td> <input type="text" name="method" value="" list="method-list" size="10" placeholder="入力してください"> </td>
+      <datalist id="method-list">
+        <option value="フォーク">
+        <option value="クレーン">
+        <option value="フォーク・クレーン不要">
+      </datalist>
+      <td> <input type="number" name="quantity" value="1" class="small-number" min=1> </td>
+      <td> <input type="button" onclick="_appendRow(this)" title="行追加" class="fas" value="&#xf055"> </td>
+      <td> <input type="button" onclick="_removeRow(this)" title="行削除" class="fas " value="&#xf057"> </td>
+    </tr>
+    </tbody>
+    </table>
+
+    <button title="ダウンロード" class="fas fa-download" type="submit"> </button>
   </form>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
