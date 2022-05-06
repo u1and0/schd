@@ -13,11 +13,12 @@ func main() {
 	r.LoadHTMLGlob("template/*.tmpl")
 
 	// API
+	r.GET( "/index" , api.Index)
 	v1 := r.Group("api/v1")
 	{
 		d := v1.Group("/data")
 		{
-			d.GET("/", api.Index)
+			d.GET("/", api.All)
 			d.GET("/:id", api.Get)
 			d.POST("/add", api.Post)
 			d.DELETE("/:id", api.Delete)

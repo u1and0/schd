@@ -36,8 +36,8 @@ func init() {
 	}
 }
 
-// Index : show all data
-func Index(c *gin.Context) {
+// All : show all data
+func All(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, data)
 }
 
