@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/api"
 	"github.com/u1and0/schd/cmd/paper"
@@ -13,7 +15,9 @@ func main() {
 	r.LoadHTMLGlob("template/*.tmpl")
 
 	// API
-	r.GET( "/index" , api.Index)
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
+	})
 	v1 := r.Group("api/v1")
 	{
 		d := v1.Group("/data")
