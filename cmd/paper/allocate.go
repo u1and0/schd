@@ -196,34 +196,76 @@ func CreateAllocate(c *gin.Context) {
 	t := fmt.Sprintf("%st%s(%s)", strconv.Itoa(o.T), o.Cartype, o.Function)
 	f.SetCellValue(sheetName, "F6", t)
 	// 積込/到着作業月日/時刻
-	f.SetCellValue(sheetName, "F9", o.Load.Date.Format(LAYOUT))
-	f.SetCellValue(sheetName, "F10", fmt.Sprintf("%d時%d分", o.Load.Hour, o.Load.Minute))
-	f.SetCellValue(sheetName, "F11", o.Arrive.Date.Format(LAYOUT))
-	f.SetCellValue(sheetName, "F12", fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute))
+	x := map[string]interface{}{
+		"F9":  o.Load.Date.Format(LAYOUT),
+		"F10": fmt.Sprintf("%d時%d分", o.Load.Hour, o.Load.Minute),
+		"F11": o.Arrive.Date.Format(LAYOUT),
+		"F12": fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute),
+	}
+	for cell, value := range x {
+		if err = f.SetCellValue(sheetName, cell, value); err != nil {
+			fmt.Println(err)
+		}
+	}
 	// 保険要否
-	s = `☑要　☐不要`
-	if o.Insulance == "契約済み" {
-		s = `☐要　☑不要`
+	x = map[string]interface{}{
+		"F18": `☐要　☑不要`, // 保険
+		"F19": "",       // 保険額
 	}
-	f.SetCellValue(sheetName, "F18", s)
-	n := ""
-	if o.InsulancePrice > 0 {
-		n = strconv.Itoa(o.InsulancePrice)
+	if o.Insulance != "契約済み" {
+		x = map[string]interface{}{
+			"F18": `☐要　☑不要`,         // 保険
+			"F19": o.InsulancePrice, // 保険額
+		}
 	}
-	f.SetCellValue(sheetName, "F19", n)
+	for cell, value := range x {
+		if err = f.SetCellValue(sheetName, cell, value); err != nil {
+			fmt.Println(err)
+		}
+	}
 	// 寸法質量
 	l := len(o.Package)
 	if l < MAXLINE { // 3行までなら配車要求票に記載
 		p := o.Size.Compile()
 		fmt.Println(p)
-		f.SetCellValue(sheetName, "F15", o.Size.ToString())
-		f.SetCellValue(sheetName, "F16", p.ToString())
-		f.SetCellValue(sheetName, "F17", o.Size.Sum())
+		x := map[string]interface{}{
+			"F15": o.Size.ToString(), // 重量・長さなど
+			"F16": p.ToString(),      // 荷姿(個数)
+			"F17": o.Size.Sum(),      // 総個数
+		}
+		for cell, value := range x {
+			if err = f.SetCellValue(sheetName, cell, value); err != nil {
+				fmt.Println(err)
+			}
+		}
 	} else { // 4行以上の場合は別紙に記載
+		x := map[string]interface{}{
+			"F15": "別紙参照",
+			"F16": "別紙参照",
+			"F17": o.Size.Sum(),
+		}
+		for cell, value := range x {
+			// 重量・長さなど 荷姿(個数) 総個数
+			if err = f.SetCellValue(sheetName, cell, value); err != nil {
+				fmt.Println(err)
+			}
+		}
+		sheetName := "配車別紙"
 		c := 11
 		for i := 0; i < l; i++ {
 			n := strconv.Itoa(c + i)
-			f.SetCellValue("配車別紙", "F"+n, o.Package[i])
+			x := map[string]interface{}{
+				"F" + n: o.Package[i],
+				"G" + n: fmt.Sprintf("%dx%dx%d", o.Width[i], o.Length[i], o.Hight[i]),
+				"J" + n: o.Mass[i],
+				"K" + n: o.Method[i],
+				"L" + n: o.Quantity[i],
+			}
+			for cell, value := range x {
+				if err = f.SetCellValue(sheetName, cell, value); err != nil {
+					fmt.Println(err)
+				}
+			}
 		}
 	}
 

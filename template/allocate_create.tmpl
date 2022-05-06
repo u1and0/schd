@@ -71,7 +71,7 @@
       </tr>
       <tr>
         <td align="right"> t　数 </td>
-        <td> <input type="number" name="t" value="", size="20" placeholder="0"> </td>
+        <td> <input type="number" name="t" value="", size="20" placeholder="0" min=0> </td>
       </tr>
       <tr>
         <td align="right">機　能</td>
@@ -160,22 +160,23 @@
       <td> <input type="text" name="package" value="" list="package-list" size="10" placeholder="入力してください"> </td>
       <datalist id="package-list">
         <option value="木箱">
-        <option value="ダンボール">
-        <option value="ビニールシート">
+        <option value="段ボール">
+        <option value="ﾋﾞﾆｰﾙｼｰﾄ">
         <option value="パレット">
         <option value="コンテナ">
+        <!-- 上記以外の入力値は配車別紙でカウントされない, 配車別紙に"その他"の欄追加要望 -->
       </datalist>
-      <td> <input type="number" name="width" value="" class="small-number" placeholder="0"> </td>
-      <td> <input type="number" name="length" value="" class="small-number" placeholder="0"> </td>
-      <td> <input type="number" name="hight" value="" class="small-number" placeholder="0"> </td>
-      <td> <input type="number" name="mass" value="" class="small-number" placeholder="0"> </td>
+      <td> <input type="number" name="width" value="" class="small-number" placeholder="0" min=0> </td>
+      <td> <input type="number" name="length" value="" class="small-number" placeholder="0" min=0> </td>
+      <td> <input type="number" name="hight" value="" class="small-number" placeholder="0" min=0> </td>
+      <td> <input type="number" name="mass" value="" class="small-number" placeholder="0" min=0> </td>
       <td> <input type="text" name="method" value="" list="method-list" size="10" placeholder="入力してください"> </td>
       <datalist id="method-list">
         <option value="フォーク">
         <option value="クレーン">
         <option value="フォーク・クレーン不要">
       </datalist>
-      <td> <input type="number" name="quantity" value="" class="small-number" placeholder="0"> </td>
+      <td> <input type="number" name="quantity" value="1" class="small-number" min=1> </td>
       <td> <input type="button" onclick="_appendRow(this)" title="行追加" class="fas" value="&#xf055"> </td>
       <td> <input type="button" onclick="_removeRow(this)" title="行削除" class="fas " value="&#xf057"> </td>
     </tr>
