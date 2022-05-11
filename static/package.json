@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@types/node": "^17.0.29"
+  },
+  "dependencies": {
+    "dom-lib": "^3.1.2"
+  }
+}

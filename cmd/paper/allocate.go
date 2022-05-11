@@ -18,6 +18,8 @@ const (
 	// ALPATH : 配車要求票を保存するルートディレクトリ
 	ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
 	LAYOUT = "2006年1月2日"
+	// 別紙記載に分割する行数制限
+	MAXLINE = 4
 )
 
 type (
@@ -65,7 +67,53 @@ type (
 		Base string
 		Dir  string
 	}
+	// PackageCount : 荷姿カウンタ
+	PackageCount map[string]int
+	// Stringfy 表示
+	Stringfy interface {
+		ToString() string
+	}
 )
+
+// Compile : 荷姿によって数量をカウントする
+func (s *Size) Compile() PackageCount {
+	p := make(PackageCount, len(s.Package))
+	for i, k := range s.Package {
+		if _, ok := p[k]; !ok {
+			p[k] = s.Quantity[i]
+		} else {
+			p[k] += s.Quantity[i]
+		}
+	}
+	return p
+}
+
+// ToString : 表示
+func (s *Size) ToString() string {
+	var ss []string
+	l := len(s.Package)
+	for i := 0; i < l; i++ {
+		ss = append(ss, fmt.Sprintf("%dx%dx%dmm %dkg", s.Width[i], s.Length[i], s.Hight[i], s.Mass[i]))
+	}
+	return strings.Join(ss, ", ")
+}
+
+// ToString : 表示
+func (p *PackageCount) ToString() string {
+	var ss []string
+	for k, v := range *p {
+		ss = append(ss, fmt.Sprintf("%s(%s)", k, strconv.Itoa(v)))
+	}
+	return strings.Join(ss, ", ")
+}
+
+// Sum : 荷姿によらず数量を合計する
+func (s *Size) Sum() (n int) {
+	for _, q := range s.Quantity {
+		n += q
+	}
+	return
+}
 
 // CreateAllocateForm : xlsxに転記するフォームの表示
 func CreateAllocateForm(c *gin.Context) {
@@ -80,6 +128,7 @@ func CreateAllocateForm(c *gin.Context) {
 	}
 	minutes := []int{0, 15, 30, 45}
 	c.HTML(http.StatusOK, "allocate_create.tmpl", gin.H{
+		"today":   time.Now().Format(LAYOUT),
 		"section": (*section),
 		"hours":   hours,
 		"minutes": minutes,
@@ -148,22 +197,78 @@ func CreateAllocate(c *gin.Context) {
 	t := fmt.Sprintf("%st%s(%s)", strconv.Itoa(o.T), o.Cartype, o.Function)
 	f.SetCellValue(sheetName, "F6", t)
 	// 積込/到着作業月日/時刻
-	f.SetCellValue(sheetName, "F9", o.Load.Date.Format(LAYOUT))
-	f.SetCellValue(sheetName, "F10", fmt.Sprintf("%d時%d分", o.Load.Hour, o.Load.Minute))
-	f.SetCellValue(sheetName, "F11", o.Arrive.Date.Format(LAYOUT))
-	f.SetCellValue(sheetName, "F12", fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute))
+	x := map[string]interface{}{
+		"F9":  o.Load.Date.Format(LAYOUT),
+		"F10": fmt.Sprintf("%d時%d分", o.Load.Hour, o.Load.Minute),
+		"F11": o.Arrive.Date.Format(LAYOUT),
+		"F12": fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute),
+	}
+	for cell, value := range x {
+		if err = f.SetCellValue(sheetName, cell, value); err != nil {
+			fmt.Println(err)
+		}
+	}
 	// 保険要否
-	s = `☑要　☐不要`
-	if o.Insulance == "契約済み" {
-		s = `☐要　☑不要`
+	x = map[string]interface{}{
+		"F18": `☐要　☑不要`, // 保険
+		"F19": "",       // 保険額
 	}
-	f.SetCellValue(sheetName, "F18", s)
-	n := ""
-	if o.InsulancePrice > 0 {
-		n = strconv.Itoa(o.InsulancePrice)
+	if o.Insulance != "契約済み" {
+		x = map[string]interface{}{
+			"F18": `☐要　☑不要`,         // 保険
+			"F19": o.InsulancePrice, // 保険額
+		}
 	}
-	f.SetCellValue(sheetName, "F19", n)
-	// 送り状番号
+	for cell, value := range x {
+		if err = f.SetCellValue(sheetName, cell, value); err != nil {
+			fmt.Println(err)
+		}
+	}
+	// 寸法質量
+	l := len(o.Package)
+	if l < MAXLINE { // 3行までなら配車要求票に記載
+		p := o.Size.Compile()
+		fmt.Println(p)
+		x := map[string]interface{}{
+			"F15": o.Size.ToString(), // 重量・長さなど
+			"F16": p.ToString(),      // 荷姿(個数)
+			"F17": o.Size.Sum(),      // 総個数
+		}
+		for cell, value := range x {
+			if err = f.SetCellValue(sheetName, cell, value); err != nil {
+				fmt.Println(err)
+			}
+		}
+	} else { // 4行以上の場合は別紙に記載
+		x := map[string]interface{}{
+			"F15": "別紙参照",
+			"F16": "別紙参照",
+			"F17": o.Size.Sum(),
+		}
+		for cell, value := range x {
+			// 重量・長さなど 荷姿(個数) 総個数
+			if err = f.SetCellValue(sheetName, cell, value); err != nil {
+				fmt.Println(err)
+			}
+		}
+		sheetName := "配車別紙"
+		c := 11
+		for i := 0; i < l; i++ {
+			n := strconv.Itoa(c + i)
+			x := map[string]interface{}{
+				"F" + n: o.Package[i],
+				"G" + n: fmt.Sprintf("%dx%dx%d", o.Width[i], o.Length[i], o.Hight[i]),
+				"J" + n: o.Mass[i],
+				"K" + n: o.Method[i],
+				"L" + n: o.Quantity[i],
+			}
+			for cell, value := range x {
+				if err = f.SetCellValue(sheetName, cell, value); err != nil {
+					fmt.Println(err)
+				}
+			}
+		}
+	}
 
 	// f.SaveAs(reqNo.Dir + reqNo.Base + ".xlsx")
 	downloadFile(sheetName+".xlsx", f, c)
