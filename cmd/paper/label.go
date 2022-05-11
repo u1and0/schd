@@ -70,7 +70,7 @@ func Create(c *gin.Context) {
 		f.SetCellValue(sheetName, cell, o.Name)
 	}
 	for _, cell := range []string{"D7", "D19"} {
-		f.SetCellValue(sheetName, cell, o.Name)
+		f.SetCellValue(sheetName, cell, o.Type)
 	}
 	num := strconv.Itoa(o.Quantity) + "SE"
 	for _, cell := range []string{"D8", "D20"} {

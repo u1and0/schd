@@ -128,7 +128,7 @@ func CreateAllocateForm(c *gin.Context) {
 	}
 	minutes := []int{0, 15, 30, 45}
 	c.HTML(http.StatusOK, "allocate_create.tmpl", gin.H{
-		"today":   time.Now().Format(LAYOUT),
+		"today":   time.Now().Format("2006/01/02"),
 		"section": (*section),
 		"hours":   hours,
 		"minutes": minutes,
