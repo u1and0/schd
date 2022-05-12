@@ -47,6 +47,7 @@ func main() {
 			d.PUT("/:id", api.Put)
 			d.GET("/list", api.List)
 			d.GET("/address", api.FetchAddress)
+			d.GET("/allocate", api.FetchAllocate)
 		}
 
 		v := v1.Group("/view")
