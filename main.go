@@ -1,14 +1,32 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/api"
 	"github.com/u1and0/schd/cmd/paper"
 )
 
+const (
+	// VERSION : schd version
+	VERSION = "v0.1.0"
+)
+
+var (
+	showVersion bool
+)
+
 func main() {
+	flag.BoolVar(&showVersion, "v", false, "Show version")
+	flag.Parse()
+	if showVersion {
+		fmt.Println("schd version", VERSION)
+		os.Exit(0) // Exit with version info
+	}
 	// Router
 	r := gin.Default()
 	r.Static("/static", "./static")
