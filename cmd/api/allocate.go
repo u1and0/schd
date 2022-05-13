@@ -22,6 +22,8 @@ const (
 	LAYOUT = "2006年1月2日"
 	// ALPATH : 配車要求票を保存するルートディレクトリ
 	ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
+	// for win
+	// ALPATH = "../../../../../../../../../2_Common/04_社内標準/_配車要求表_輸送指示書"
 )
 
 type (
@@ -32,17 +34,21 @@ type (
 		Date      time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
 		Section   string    `json:"型式" form:"section"`
 		Type      string    `json:"輸送便の別" form:"type"`
-		Car       string    `json:"車種" form:"car"`
-		Cartype   string    `json:"台車" form:"car-type"`
-		T         int       `json:"t数" form:"t"`
-		Function  string    `json:"機能" form:"section"`
-		Order     string    `json:"生産命令番号" form:"order"`
-		To        `json:"宛先情報 form:"to"`
+		Car       `json:"車両情報"`
+		Order     string `json:"生産命令番号" form:"order"`
+		To        `json:"宛先情報" form:"to"`
 		Load      `json:"積込情報" form:"load"`
 		Arrive    `json:"到着情報" form:"arrive"`
 		Package   `json:"物品情報" form:"package"`
 		Insulance `json:"保険情報" form:"insulance"`
 		Article   string `json:"記事" form:"article"`
+	}
+	// Car : 車両情報
+	Car struct {
+		Type     string `json:"車種" form:"type"`     // トラック, トレーラ
+		Truck    string `json:"台車" form:"truck"`    // 平車、箱車
+		T        int    `json:"t数" form:"t"`        // 4t, 10t
+		Function string `json:"機能" form:"function"` // エアサス
 	}
 	// To : 宛先
 	To struct {
