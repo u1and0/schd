@@ -48,6 +48,8 @@ func main() {
 			d.GET("/list", api.List)
 			d.GET("/address", api.FetchAddress)
 			d.GET("/allocate", api.FetchAllocate)
+			d.GET("/allocate/:id", api.FetchAllocateID)
+			d.GET("/allocate/search", api.SearchAllocate)
 		}
 
 		v := v1.Group("/view")

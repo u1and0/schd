@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/u1and0/schd/cmd/ctrl"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -28,7 +29,7 @@ const (
 
 type (
 	// Allocations list of Allocation
-	Allocations map[string]Allocation
+	Allocations map[ctrl.ID]Allocation
 	// Allocation 配車要求に必要な情報 htmlから入力
 	Allocation struct {
 		Date      time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
@@ -115,7 +116,7 @@ func init() {
 					f, _ := excelize.OpenFile(path)
 					// idをファイル名から抽出するか、
 					// シートから抽出するかどちらでもよい
-					id := filename[:10]
+					id := ctrl.ID(filename[:10])
 					// id, err := f.GetCellValue("入力画面", "F2")
 					// if err != nil {
 					// 	fmt.Printf("%s: %v\n", filename, err.Error())
@@ -175,6 +176,11 @@ func FetchAllocate(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, allocations)
 }
 
+func FetchAllocateID(c *gin.Context) {
+	id := ctrl.ID(c.Param("id"))
+	c.IndentedJSON(http.StatusOK, allocations[id])
+}
+
 // Parse : Parsing Excel file value
 func (a *Allocation) Parse(f *excelize.File) {
 	var (
@@ -189,7 +195,7 @@ func (a *Allocation) Parse(f *excelize.File) {
 	a.Section, _ = f.GetCellValue(sheetName, "F4")
 	a.Type, _ = f.GetCellValue(sheetName, "F5")
 	// s, _ = f.GetCellValue(sheetName, "F6")
-	a.Cartype, _ = f.GetCellValue(sheetName, "F6")
+	a.Car.Type, _ = f.GetCellValue(sheetName, "F6")
 	// ss := strings.Split(s, `(`) // [ 4t平車, ｴｱｻｽ) ]
 	// a.Function = ss[1]
 	// st := strings.Split(ss[0], `t`) // [ 4, 平車 ]
@@ -231,4 +237,13 @@ func (a *Allocation) Parse(f *excelize.File) {
 		}
 	}
 	a.Article, _ = f.GetCellValue(sheetName, "F20")
+}
+
+// Concat : convert search struct
+func (as *Allocations) Concat() Allocator {
+	allocator := make(Allocator, len(*as))
+	for id, a := range *as {
+		allocator[id] = fmt.Sprintf("%v", a)
+	}
+	return allocator
 }
