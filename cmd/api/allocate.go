@@ -29,32 +29,34 @@ type (
 	Allocations map[string]Allocation
 	// Allocation 配車要求に必要な情報 htmlから入力
 	Allocation struct {
-		Date           time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
-		Section        string    `json:"型式" form:"section"`
-		Type           string    `json:"輸送便の別" form:"type"`
-		Car            string    `json:"車種" form:"car"`
-		Cartype        string    `json:"台車" form:"car-type"`
-		T              int       `json:"t数" form:"t"`
-		Function       string    `json:"機能" form:"section"`
-		Order          string    `json:"生産命令番号" form:"order"`
-		To             `json:"宛先情報 form:"to"`
-		Load           `json:"積込情報" form:"load"`
-		Arrive         `json:"到着情報" form:"arrive"`
-		Package        `json:"物品情報" form:"package"`
-		Insulance      string `json:"保険" form:"insulance"`
-		InsulancePrice int    `json:"保険額" form:"insulance-price"`
-		Article        string `json:"記事" form:"article"`
+		Date      time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
+		Section   string    `json:"型式" form:"section"`
+		Type      string    `json:"輸送便の別" form:"type"`
+		Car       string    `json:"車種" form:"car"`
+		Cartype   string    `json:"台車" form:"car-type"`
+		T         int       `json:"t数" form:"t"`
+		Function  string    `json:"機能" form:"section"`
+		Order     string    `json:"生産命令番号" form:"order"`
+		To        `json:"宛先情報 form:"to"`
+		Load      `json:"積込情報" form:"load"`
+		Arrive    `json:"到着情報" form:"arrive"`
+		Package   `json:"物品情報" form:"package"`
+		Insulance `json:"保険情報" form:"insulance"`
+		Article   string `json:"記事" form:"article"`
 	}
+	// To : 宛先
 	To struct {
 		Name    string `json:"送り元宛先" form:"to-name"`
 		Address string `json:"宛先住所" form:"to-address"`
 	}
+	// Load : 積み込み
 	Load struct {
 		Date   time.Time `json:"積込作業月日" form:"load-date" time_format:"2006/01/02"`
 		Hour   int       `json:"積込指定時" form:"load-hour"`
 		Minute int       `json:"積込指定分" form:"load-minute"`
 		Time   time.Time `json:"積込指定時刻" form:"load-time"`
 	}
+	// Arrive : 到着
 	Arrive struct {
 		Date   time.Time `json:"到着作業月日" form:"arrive-date" time_format:"2006/01/02"`
 		Hour   int       `json:"到着指定時" form:"arrive-hour"`
@@ -71,6 +73,11 @@ type (
 		Mass     []int    `json:"重量" form:"mass"`
 		Method   []string `json:"荷下ろし方法" form:"method"`
 		Quantity []int    `json:"数量" form:"quantity"`
+	}
+	// Insulance : 保険要否
+	Insulance struct {
+		Need  string `json:"保険要否" form:"insulance-bool"`
+		Price int    `json:"保険額" form:"insulance-price"`
 	}
 	// Y 要求票番号と保存されているディレクトリ
 	Y struct {
@@ -207,6 +214,15 @@ func (a *Allocation) Parse(f *excelize.File) (err error) {
 		return
 	}
 	a.To.Address, _ = f.GetCellValue(sheetName, "F13")
-	a.To.Address, _ = f.GetCellValue(sheetName, "F13")
+	a.Package.Name, _ = f.GetCellValue(sheetName, "F14")
+	a.Insulance.Need, _ = f.GetCellValue(sheetName, "F18")
+	s, _ = f.GetCellValue(sheetName, "F19")
+	if s != "" {
+		a.Insulance.Price, err = strconv.Atoi(s)
+		if err != nil {
+			return
+		}
+	}
+	a.Article, _ = f.GetCellValue(sheetName, "F20")
 	return nil
 }

@@ -122,10 +122,10 @@ func CreateAllocate(c *gin.Context) {
 		"F18": `☐要　☑不要`, // 保険
 		"F19": "",       // 保険額
 	}
-	if o.Insulance != "契約済み" {
+	if o.Insulance.Need != "契約済み" {
 		x = map[string]interface{}{
-			"F18": `☐要　☑不要`,         // 保険
-			"F19": o.InsulancePrice, // 保険額
+			"F18": `☐要　☑不要`,          // 保険
+			"F19": o.Insulance.Price, // 保険額
 		}
 	}
 	for cell, value := range x {
