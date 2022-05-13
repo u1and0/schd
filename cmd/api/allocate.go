@@ -243,7 +243,7 @@ func (a *Allocation) Parse(f *excelize.File) {
 func (as *Allocations) Concat() Allocator {
 	allocator := make(Allocator, len(*as))
 	for id, a := range *as {
-		allocator[id] = fmt.Sprintf("%v", a)
+		allocator[id] = fmt.Sprintf("%s%v", id, a)
 	}
 	return allocator
 }
