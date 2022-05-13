@@ -107,18 +107,16 @@ func init() {
 				// baseBool かつ extBool => prefixで始まり、xlsxで終わるファイルのみ対象
 				if baseBool && extBool {
 					f, _ := excelize.OpenFile(path)
-					// id := filename[:10]
 					// idをファイル名から抽出するか、
 					// シートから抽出するかどちらでもよい
-					id, err := f.GetCellValue("入力画面", "F2")
-					if err != nil {
-						fmt.Printf("%s: %v\n", filename, err.Error())
-					}
+					id := filename[:10]
+					// id, err := f.GetCellValue("入力画面", "F2")
+					// if err != nil {
+					// 	fmt.Printf("%s: %v\n", filename, err.Error())
+					// }
+
 					// Excel セル抽出してAllocate型に充てる
-					err = allocation.Parse(f)
-					if err != nil {
-						fmt.Printf("%s: %v\n", filename, err.Error())
-					}
+					allocation.Parse(f)
 					allocations[id] = *allocation
 				}
 				return nil
@@ -172,12 +170,15 @@ func FetchAllocate(c *gin.Context) {
 }
 
 // Parse : Parsing Excel file value
-func (a *Allocation) Parse(f *excelize.File) (err error) {
-	sheetName := "入力画面"
+func (a *Allocation) Parse(f *excelize.File) {
+	var (
+		err       error
+		sheetName = "入力画面"
+	)
 	s, _ := f.GetCellValue(sheetName, "F3")
 	a.Date, err = time.Parse("2006年1月2日", s)
 	if err != nil {
-		return
+		fmt.Printf("%v\n", err.Error())
 	}
 	a.Section, _ = f.GetCellValue(sheetName, "F4")
 	a.Type, _ = f.GetCellValue(sheetName, "F5")
@@ -188,7 +189,7 @@ func (a *Allocation) Parse(f *excelize.File) (err error) {
 	// st := strings.Split(ss[0], `t`) // [ 4, 平車 ]
 	// a.T, err = strconv.Atoi(st[0])
 	// if err != nil {
-	// 	return
+	// fmt.Printf("%v\n", err.Error())
 	// }
 	// a.Cartype = st[1]
 	a.Order, _ = f.GetCellValue(sheetName, "F7")
@@ -196,22 +197,22 @@ func (a *Allocation) Parse(f *excelize.File) (err error) {
 	s, _ = f.GetCellValue(sheetName, "F9")
 	a.Load.Date, err = time.Parse("1月2日", s)
 	if err != nil {
-		return
+		fmt.Printf("%v\n", err.Error())
 	}
 	s, _ = f.GetCellValue(sheetName, "F10")
 	a.Load.Time, err = time.Parse("15時04分", s)
 	if err != nil {
-		return
+		fmt.Printf("%v\n", err.Error())
 	}
 	s, _ = f.GetCellValue(sheetName, "F11")
 	a.Arrive.Date, err = time.Parse("1月2日", s)
 	if err != nil {
-		return
+		fmt.Printf("%v\n", err.Error())
 	}
 	s, _ = f.GetCellValue(sheetName, "F12")
 	a.Arrive.Time, err = time.Parse("15時04分", s)
 	if err != nil {
-		return
+		fmt.Printf("%v\n", err.Error())
 	}
 	a.To.Address, _ = f.GetCellValue(sheetName, "F13")
 	a.Package.Name, _ = f.GetCellValue(sheetName, "F14")
@@ -220,9 +221,8 @@ func (a *Allocation) Parse(f *excelize.File) (err error) {
 	if s != "" {
 		a.Insulance.Price, err = strconv.Atoi(s)
 		if err != nil {
-			return
+			fmt.Printf("%v\n", err.Error())
 		}
 	}
 	a.Article, _ = f.GetCellValue(sheetName, "F20")
-	return nil
 }
