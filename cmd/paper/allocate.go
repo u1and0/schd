@@ -134,14 +134,14 @@ func CreateAllocate(c *gin.Context) {
 		}
 	}
 	// 寸法質量
-	l := len(o.Package)
+	l := len(o.Style)
 	if l < MAXLINE { // 3行までなら配車要求票に記載
-		p := o.Size.Compile()
+		p := o.Package.Compile()
 		fmt.Println(p)
 		x := map[string]interface{}{
-			"F15": o.Size.ToString(), // 重量・長さなど
-			"F16": p.ToString(),      // 荷姿(個数)
-			"F17": o.Size.Sum(),      // 総個数
+			"F15": o.Package.ToString(), // 重量・長さなど
+			"F16": p.ToString(),         // 荷姿(個数)
+			"F17": o.Package.Sum(),      // 総個数
 		}
 		for cell, value := range x {
 			if err = f.SetCellValue(sheetName, cell, value); err != nil {
@@ -152,7 +152,7 @@ func CreateAllocate(c *gin.Context) {
 		x := map[string]interface{}{
 			"F15": "別紙参照",
 			"F16": "別紙参照",
-			"F17": o.Size.Sum(),
+			"F17": o.Package.Sum(),
 		}
 		for cell, value := range x {
 			// 重量・長さなど 荷姿(個数) 総個数
@@ -165,7 +165,7 @@ func CreateAllocate(c *gin.Context) {
 		for i := 0; i < l; i++ {
 			n := strconv.Itoa(c + i)
 			x := map[string]interface{}{
-				"F" + n: o.Package[i],
+				"F" + n: o.Style[i],
 				"G" + n: fmt.Sprintf("%dx%dx%d", o.Width[i], o.Length[i], o.Hight[i]),
 				"J" + n: o.Mass[i],
 				"K" + n: o.Method[i],

@@ -1,4 +1,4 @@
-package paper
+package api
 
 import (
 	"reflect"
@@ -6,12 +6,12 @@ import (
 )
 
 var (
-	s Size
+	s Package
 	p PackageCount
 )
 
 func init() {
-	s.Package = []string{"みかん", "りんご", "みかん", "すいか"}
+	s.Style = []string{"みかん", "りんご", "みかん", "すいか"}
 	s.Width = []int{10, 20, 30, 40}
 	s.Length = []int{100, 200, 300, 400}
 	s.Hight = []int{1000, 2000, 3000, 4000}
