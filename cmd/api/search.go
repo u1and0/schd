@@ -15,12 +15,21 @@ type (
 
 // SearchAllocate : allocate info search from query
 func SearchAllocate(c *gin.Context) {
+	var contain bool
 	result := make(Allocations, len(allocations))
 	q := c.Query("q")
 	allocator := allocations.Concat()
+	keywd := strings.Split(q, " ")
 	for id, s := range allocator {
-		if strings.Contains(s, q) {
-			result[id] = allocations[id]
+		// keywdのうちすべて含んでいればtrue
+		for _, k := range keywd {
+			if !strings.Contains(s, k) {
+				contain = false //bool 逆？
+			}
+			if contain {
+				result[id] = allocations[id]
+			}
+
 		}
 	}
 	c.IndentedJSON(http.StatusOK, result)
