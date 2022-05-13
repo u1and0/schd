@@ -78,22 +78,30 @@ type (
 )
 
 func init() {
-	filepath.Walk(ALPATH,
-		func(path string, info os.FileInfo, err error) error {
-			filename := filepath.Base(path)
-			baseBool := strings.HasPrefix(filename, "TA00-") ||
-				strings.HasPrefix(filename, "TB00-") ||
-				strings.HasPrefix(filename, "DD00-")
-			extBool := filepath.Ext(path) == ".xlsx"
-			// baseBool かつ extBool => prefixで始まり、xlsxで終わるファイルのみ対象
-			if baseBool && extBool {
-				f, _ := excelize.OpenFile(path)
-				id := filename[:10]
-				err = allocations.Parse(f, id)
-				fmt.Println(filename, err)
-			}
-			return nil
-		})
+	go func() {
+		filepath.Walk(ALPATH,
+			func(path string, info os.FileInfo, err error) error {
+				var (
+					allocation = new(Allocation)
+					filename   = filepath.Base(path)
+					baseBool   = strings.HasPrefix(filename, "TA00-") ||
+						strings.HasPrefix(filename, "TB00-") ||
+						strings.HasPrefix(filename, "DD00-")
+					extBool = filepath.Ext(path) == ".xlsx"
+				)
+				// baseBool かつ extBool => prefixで始まり、xlsxで終わるファイルのみ対象
+				if baseBool && extBool {
+					f, _ := excelize.OpenFile(path)
+					id := filename[:10]
+					err = allocation.Parse(f)
+					if err != nil {
+						fmt.Printf("%s: %v\n", filename, err.Error())
+					}
+					allocations[id] = *allocation
+				}
+				return nil
+			})
+	}()
 }
 
 // Compile : 荷姿によって数量をカウントする
@@ -141,8 +149,7 @@ func FetchAllocate(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, allocations)
 }
 
-func (as *Allocations) Parse(f *excelize.File, id string) error {
-	a := new(Allocation)
+func (a *Allocation) Parse(f *excelize.File) error {
 	sheetName := "入力画面"
 	s, err := f.GetCellValue(sheetName, "F3")
 	if err != nil {
@@ -152,6 +159,5 @@ func (as *Allocations) Parse(f *excelize.File, id string) error {
 	if err != nil {
 		return err
 	}
-	(*as)[id] = *a
 	return err
 }
