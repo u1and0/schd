@@ -52,6 +52,7 @@ func main() {
 				a.GET("/", api.FetchAllocate)
 				a.GET("/:id", api.FetchAllocateID)
 				a.GET("/search", api.SearchAllocate)
+				a.GET("/list", api.FetchAllocateList)
 			}
 		}
 

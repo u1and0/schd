@@ -241,14 +241,13 @@ func (a *Allocation) Parse(f *excelize.File) {
 }
 
 // Concat : convert search struct
-func (as *Allocations) Concat() Searchers {
-	searchers := make(Searchers, len(*as))
+func (as *Allocations) Concat() (s Searchers) {
 	for id, val := range *as {
 		a := new(Searcher)
 		a.ID = id
 		a.Body = fmt.Sprintf("%s %v", id, val)
 		a.Date = val.Date
-		searchers = append(searchers, *a)
+		s = append(s, *a)
 	}
-	return searchers
+	return
 }

@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 
@@ -14,12 +15,19 @@ type (
 	Searchers []Searcher
 	// Searcher : struct for Searcher
 	Searcher struct {
-		ID    ctrl.ID
-		Body  string
-		Date  time.Time
-		Match int
+		ID    ctrl.ID   `json:"id"`
+		Body  string    `json:"body"`
+		Date  time.Time `json:"date"`
+		Match int       `json:"match"`
 	}
 )
+
+// FetchAllocateList : returns Searcher list
+func FetchAllocateList(c *gin.Context) {
+	searchers := allocations.Concat()
+	sort.Sort(searchers)
+	c.IndentedJSON(http.StatusOK, searchers)
+}
 
 // SearchAllocate : allocate info search from query
 func SearchAllocate(c *gin.Context) {
@@ -46,3 +54,7 @@ func ContainsAll(s string, keywords ...string) bool {
 	}
 	return true
 }
+
+func (s Searchers) Len() int           { return len(s) }
+func (s Searchers) Less(i, j int) bool { return s[i].Date.After(s[j].Date) }
+func (s Searchers) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
