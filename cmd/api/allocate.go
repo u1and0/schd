@@ -22,7 +22,8 @@ const (
 	// LAYOUT : time parse layout
 	LAYOUT = "2006年1月2日"
 	// ALPATH : 配車要求票を保存するルートディレクトリ
-	ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
+	ALPATH = "./test"
+	// ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
 	// for win
 	// ALPATH = "../../../../../../../../../2_Common/04_社内標準/_配車要求表_輸送指示書"
 )
@@ -240,10 +241,14 @@ func (a *Allocation) Parse(f *excelize.File) {
 }
 
 // Concat : convert search struct
-func (as *Allocations) Concat() Allocator {
-	allocator := make(Allocator, len(*as))
-	for id, a := range *as {
-		allocator[id] = fmt.Sprintf("%v", a)
+func (as *Allocations) Concat() Searchers {
+	searchers := make(Searchers, len(*as))
+	for id, val := range *as {
+		a := new(Searcher)
+		a.ID = id
+		a.Body = fmt.Sprintf("%s %v", id, val)
+		a.Date = val.Date
+		searchers = append(searchers, *a)
 	}
-	return allocator
+	return searchers
 }
