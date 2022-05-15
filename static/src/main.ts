@@ -1,12 +1,20 @@
 main();
 
+type Searcher = {
+  id: string;
+  body: string;
+  date: string;
+  match: number;
+};
+
 function main() {
-  const url = new URL(window.location.href);
-  fetchAddress(url.origin + "/api/v1/data/address");
-}
+  const url: URL = new URL(window.location.href);
+  const urll: string = url.origin + "/api/v1/data";
+  fetchAddress(urll + "/address");
+  fetchAllocate(urll + "/allocate/list");}
 
 // fetchの返り値のPromiseを返す
-async function fetchLocatePath(url: string) {
+async function fetchPath(url: string): Promise<any>{
   return await fetch(url)
     .then((response) => {
       return response.json();
@@ -18,10 +26,15 @@ async function fetchLocatePath(url: string) {
     });
 }
 
+async function fetchAllocate(url:string){
+  const allocateList = await fetchPath(url);
+  console.log(allocateList);
+}
+
 async function fetchAddress(url: string) {
   try {
     // 住所録.js から住所一覧をselect option に加える;
-    const address = await fetchLocatePath(url);
+    const address = await fetchPath(url);
     if (address === null) return;
     Object.keys(address).forEach((key: string) => {
       const elem = document.querySelector("#to-address");
