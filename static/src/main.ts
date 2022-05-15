@@ -27,8 +27,16 @@ async function fetchPath(url: string): Promise<any>{
 }
 
 async function fetchAllocate(url:string){
-  const allocateList = await fetchPath(url);
-  console.log(allocateList);
+  const searchers = await fetchPath(url);
+  const keywords = ["DD", "りんご"]
+  for (const searcher of searchers){
+    for (const keyword of keywords){
+      if (searcher["body"].includes(keyword)){
+        searcher.match+=1
+      }
+    }
+  }
+  console.log(searchers);
 }
 
 async function fetchAddress(url: string) {

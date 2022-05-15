@@ -29,8 +29,16 @@ function fetchPath(url) {
 }
 function fetchAllocate(url) {
     return __awaiter(this, void 0, void 0, function* () {
-        const allocateList = yield fetchPath(url);
-        console.log(allocateList);
+        const searchers = yield fetchPath(url);
+        const keywords = ["DD", "りんご"];
+        for (const searcher of searchers) {
+            for (const keyword of keywords) {
+                if (searcher["body"].includes(keyword)) {
+                    searcher.match += 1;
+                }
+            }
+        }
+        console.log(searchers);
     });
 }
 function fetchAddress(url) {
