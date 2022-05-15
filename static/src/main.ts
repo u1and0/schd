@@ -1,3 +1,5 @@
+import { Fzf } from '../node_modules/fzf/dist/fzf.es.js'
+
 main();
 
 type Searcher = {
@@ -8,6 +10,23 @@ type Searcher = {
 };
 
 function main() {
+  /*fzf*/
+  const list = [
+    "go",
+    "fzf",
+    "never read",
+    "tokyo",
+    "Yokohama",
+    "Japan",
+    "Kyoto",
+    "ringo",
+  ];
+  const fzf = new Fzf(list);
+
+  const entries = fzf.find("go");
+  const ranking = entries.map((entry) => entry.item).join(", ");
+  console.log(ranking); // => go, ringo
+  /*fzf*/
   const url: URL = new URL(window.location.href);
   const urll: string = url.origin + "/api/v1/data";
   fetchAddress(urll + "/address");
@@ -44,7 +63,7 @@ async function fetchAllocate(url: string) {
     if (keyI > keyJ) return -1;
     return 0;
   });
-  const matched: Searcher[] = searchers.filter((e:Searcher) => e.match > 0);
+  const matched: Searcher[] = searchers.filter((e: Searcher) => e.match > 0);
   for (const m of matched) {
     console.log(m.body);
   }

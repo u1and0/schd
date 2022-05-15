@@ -1,8 +1,10 @@
 {
   "devDependencies": {
-    "@types/node": "^17.0.29"
+    "@types/node": "^17.0.29",
+    "fzf": "^0.5.1"
   },
   "dependencies": {
     "dom-lib": "^3.1.2"
-  }
+  },
+  "type": "module"
 }
