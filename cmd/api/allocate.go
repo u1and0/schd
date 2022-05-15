@@ -243,13 +243,18 @@ func (a *Allocation) Parse(f *excelize.File) {
 // Concat : convert search struct
 func (as *Allocations) Concat() Searchers {
 	var (
-		i int
-		s = make(Searchers, len(*as))
+		i     int
+		s     = make(Searchers, len(*as))
+		trims = []string{`{`, `}`, `[`, `]`}
 	)
 	for id, val := range *as {
+		body := fmt.Sprintf("%s %v", id, val)
+		for _, trim := range trims {
+			body = strings.ReplaceAll(body, trim, "")
+		}
 		s[i] = Searcher{
 			ID:   id,
-			Body: fmt.Sprintf("%s %v", id, val),
+			Body: body,
 			Date: val.Date,
 		}
 		i++
