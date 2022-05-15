@@ -30,7 +30,7 @@ function fetchPath(url) {
 function fetchAllocate(url) {
     return __awaiter(this, void 0, void 0, function* () {
         const searchers = yield fetchPath(url);
-        const keywords = ["DD", "りんご"];
+        const keywords = ["TB00"];
         for (const searcher of searchers) {
             for (const keyword of keywords) {
                 if (searcher["body"].includes(keyword)) {
@@ -47,7 +47,10 @@ function fetchAllocate(url) {
                 return -1;
             return 0;
         });
-        console.log(searchers);
+        const matched = searchers.filter((e) => e.match > 0);
+        for (const m of matched) {
+            console.log(m.body);
+        }
     });
 }
 function fetchAddress(url) {

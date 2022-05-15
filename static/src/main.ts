@@ -11,10 +11,11 @@ function main() {
   const url: URL = new URL(window.location.href);
   const urll: string = url.origin + "/api/v1/data";
   fetchAddress(urll + "/address");
-  fetchAllocate(urll + "/allocate/list");}
+  fetchAllocate(urll + "/allocate/list");
+}
 
 // fetchの返り値のPromiseを返す
-async function fetchPath(url: string): Promise<any>{
+async function fetchPath(url: string): Promise<any> {
   return await fetch(url)
     .then((response) => {
       return response.json();
@@ -26,24 +27,27 @@ async function fetchPath(url: string): Promise<any>{
     });
 }
 
-async function fetchAllocate(url:string){
+async function fetchAllocate(url: string) {
   const searchers = await fetchPath(url);
-  const keywords = ["DD", "りんご"]
-  for (const searcher of searchers){
-    for (const keyword of keywords){
-      if (searcher["body"].includes(keyword)){
-        searcher.match+=1
+  const keywords = ["TB00"];
+  for (const searcher of searchers) {
+    for (const keyword of keywords) {
+      if (searcher["body"].includes(keyword)) {
+        searcher.match += 1;
       }
     }
   }
-  searchers.sort((i: Searcher,j: Searcher) => {
-    const keyI = i.match
-    const keyJ = j.match
-    if (keyI<keyJ) return 1;
-    if (keyI>keyJ) return -1;
-    return 0
-  })
-  console.log(searchers);
+  searchers.sort((i: Searcher, j: Searcher) => {
+    const keyI = i.match;
+    const keyJ = j.match;
+    if (keyI < keyJ) return 1;
+    if (keyI > keyJ) return -1;
+    return 0;
+  });
+  const matched: Searcher[] = searchers.filter((e:Searcher) => e.match > 0);
+  for (const m of matched) {
+    console.log(m.body);
+  }
 }
 
 async function fetchAddress(url: string) {
