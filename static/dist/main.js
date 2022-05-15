@@ -38,6 +38,15 @@ function fetchAllocate(url) {
                 }
             }
         }
+        searchers.sort((i, j) => {
+            const keyI = i.match;
+            const keyJ = j.match;
+            if (keyI < keyJ)
+                return 1;
+            if (keyI > keyJ)
+                return -1;
+            return 0;
+        });
         console.log(searchers);
     });
 }
