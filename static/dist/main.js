@@ -1,22 +1,6 @@
 import { Fzf } from '../node_modules/fzf/dist/fzf.es.js';
 main();
 function main() {
-    /*fzf*/
-    const list = [
-        "go",
-        "fzf",
-        "never read",
-        "tokyo",
-        "Yokohama",
-        "Japan",
-        "Kyoto",
-        "ringo",
-    ];
-    const fzf = new Fzf(list);
-    const entries = fzf.find("go");
-    const ranking = entries.map((entry) => entry.item).join(", ");
-    console.log(ranking); // => go, ringo
-    /*fzf*/
     const url = new URL(window.location.href);
     const urll = url.origin + "/api/v1/data";
     fetchAddress(urll + "/address");
@@ -34,27 +18,16 @@ async function fetchPath(url) {
 }
 async function fetchAllocate(url) {
     const searchers = await fetchPath(url);
-    const keywords = ["TB00"];
-    for (const searcher of searchers) {
-        for (const keyword of keywords) {
-            if (searcher["body"].includes(keyword)) {
-                searcher.match += 1;
-            }
-        }
-    }
-    searchers.sort((i, j) => {
-        const keyI = i.match;
-        const keyJ = j.match;
-        if (keyI < keyJ)
-            return 1;
-        if (keyI > keyJ)
-            return -1;
-        return 0;
+    /* fzf */
+    const fzf = new Fzf(searchers, {
+        selector: (item) => item.body,
     });
-    const matched = searchers.filter((e) => e.match > 0);
-    for (const m of matched) {
-        console.log(m.body);
+    const entries = fzf.find("2022666りんご");
+    const ranking = entries.map((entry) => entry.item.body);
+    for (const r of ranking) {
+        console.log(r);
     }
+    /* fzf */
 }
 async function fetchAddress(url) {
     try {
