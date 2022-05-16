@@ -22,9 +22,12 @@ $(document).ready(
       const value = document.getElementById("search-form").value;
       const result = fzfSearch(searchers, value);
       for (const r of result){
-        console.log(r);
-        $("#search-result").append($("<option>").html(r).val(r))
+        $("#search-result").append($("<option>").html(r.body).val(r.id))
       }
     });
-  }),
+    $("#search-result").change(function () {
+      const val = $("#search-result").val()
+      console.log(val);
+    });
+  })
 );

@@ -17,7 +17,6 @@ async function main() {
   searchers = await fetchPath(
     urll + "/allocate/list",
   );
-  console.log("searchers: ", searchers);
 }
 
 // fetchの返り値のPromiseを返す
@@ -37,9 +36,8 @@ export function fzfSearch(list: Searcher[], keyword: string): string[] {
   const fzf = new Fzf(list, {
     selector: (item: Searcher) => item.body,
   });
-  // const input = document.querySelector("#search-form");
   const entries = fzf.find(keyword);
-  const ranking = entries.map((entry: Fzf) => entry.item.body);
+  const ranking = entries.map((entry: Fzf) => entry.item);
   return ranking;
 }
 

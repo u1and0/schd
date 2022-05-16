@@ -6,7 +6,6 @@ async function main() {
     const urll = url.origin + "/api/v1/data";
     fetchAddress(urll + "/address");
     searchers = await fetchPath(urll + "/allocate/list");
-    console.log("searchers: ", searchers);
 }
 // fetchの返り値のPromiseを返す
 async function fetchPath(url) {
@@ -22,9 +21,8 @@ export function fzfSearch(list, keyword) {
     const fzf = new Fzf(list, {
         selector: (item) => item.body,
     });
-    // const input = document.querySelector("#search-form");
     const entries = fzf.find(keyword);
-    const ranking = entries.map((entry) => entry.item.body);
+    const ranking = entries.map((entry) => entry.item);
     return ranking;
 }
 async function fetchAddress(url) {

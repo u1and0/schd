@@ -245,7 +245,9 @@ func (as *Allocations) Concat() Searchers {
 	var (
 		i     int
 		s     = make(Searchers, len(*as))
-		trims = []string{`{`, `}`, `[`, `]`}
+		trims = []string{`{`, `}`, `[`, `]`, "☑", "☐要　", "☐不要 ",
+			"☐仕立便　", "☐常用便\n", "☐混載便　", "☐宅配便 ",
+			"+0000 ", "UTC ", "00:00:00 ", "0000-", "0001-"}
 	)
 	for id, val := range *as {
 		body := fmt.Sprintf("%s %v", id, val)
