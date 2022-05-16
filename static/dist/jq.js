@@ -18,10 +18,12 @@ function _removeRow(x) {
 $(document).ready(
   $(function () {
     $("#search-form").keyup(function () {
+      $("#search-result > option").remove(); // init option
       const value = document.getElementById("search-form").value;
       const result = fzfSearch(searchers, value);
       for (const r of result){
         console.log(r);
+        $("#search-result").append($("<option>").html(r).val(r))
       }
     });
   }),

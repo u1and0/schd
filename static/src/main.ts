@@ -17,8 +17,6 @@ async function main() {
   searchers = await fetchPath(
     urll + "/allocate/list",
   );
-  // const keyword = "りんご";
-  // const result = fzfSearch(searchers, keyword);
   console.log("searchers: ", searchers);
 }
 

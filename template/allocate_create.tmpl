@@ -10,7 +10,15 @@
 <body>
   <h3>配車要求　作成</h3>
   配車要求　作成 の説明
-  <input name="search-form" id="search-form" type="text" placeholder="検索キーワードを入力" size="20" class="hover">
+
+  <div>
+    <label for="search-form">配車要求検索</label>
+    <input name="search-form" id="search-form" type="text" placeholder="検索キーワードを入力" size="20" class="hover">
+  </div>
+  <div>
+    <select name="search-result" id="search-result" class="select-box" size="10" ></select>
+  </div>
+
   </form>
   <form name="create-form" method="POST" action="/api/v1/paper/allocate/post">
     <table class="table table-striped">
