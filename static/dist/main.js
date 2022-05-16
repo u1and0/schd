@@ -1,14 +1,14 @@
 import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
+export let searchers;
 main();
 async function main() {
     const url = new URL(window.location.href);
     const urll = url.origin + "/api/v1/data";
     fetchAddress(urll + "/address");
-    const searchers = await fetchPath(urll + "/allocate/list");
-    const keyword = "ZRA-16";
-    const result = fzfSearch(searchers, keyword);
+    searchers = await fetchPath(urll + "/allocate/list");
+    // const keyword = "りんご";
+    // const result = fzfSearch(searchers, keyword);
     console.log("searchers: ", searchers);
-    console.log("result: ", result);
 }
 // fetchの返り値のPromiseを返す
 async function fetchPath(url) {
@@ -20,16 +20,13 @@ async function fetchPath(url) {
         return Promise.reject(new Error(`{${response.status}: ${response.statusText}`));
     });
 }
-function fzfSearch(list, keyword) {
+export function fzfSearch(list, keyword) {
     const fzf = new Fzf(list, {
         selector: (item) => item.body,
     });
     // const input = document.querySelector("#search-form");
     const entries = fzf.find(keyword);
     const ranking = entries.map((entry) => entry.item.body);
-    for (const r of ranking) {
-        console.log(r);
-    }
     return ranking;
 }
 async function fetchAddress(url) {

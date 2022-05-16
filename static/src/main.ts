@@ -1,5 +1,6 @@
 import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
 
+export let searchers: Promise<Searcher[]>;
 main();
 
 type Searcher = {
@@ -13,13 +14,12 @@ async function main() {
   const url: URL = new URL(window.location.href);
   const urll: string = url.origin + "/api/v1/data";
   fetchAddress(urll + "/address");
-  const searchers: Promise<Searcher[]> = await fetchPath(
+  searchers = await fetchPath(
     urll + "/allocate/list",
   );
-  const keyword = "りんご";
-  const result = fzfSearch(searchers, keyword);
+  // const keyword = "りんご";
+  // const result = fzfSearch(searchers, keyword);
   console.log("searchers: ", searchers);
-  console.log("result: ", result);
 }
 
 // fetchの返り値のPromiseを返す
@@ -35,16 +35,13 @@ async function fetchPath(url: string): Promise<any> {
     });
 }
 
-function fzfSearch(list: Searcher[], keyword: string): string[] {
+export function fzfSearch(list: Searcher[], keyword: string): string[] {
   const fzf = new Fzf(list, {
-    selector: (item) => item.body,
+    selector: (item: Searcher) => item.body,
   });
   // const input = document.querySelector("#search-form");
   const entries = fzf.find(keyword);
-  const ranking = entries.map((entry) => entry.item.body);
-  for (const r of ranking) {
-    console.log(r);
-  }
+  const ranking = entries.map((entry: Fzf) => entry.item.body);
   return ranking;
 }
 
