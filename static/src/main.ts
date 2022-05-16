@@ -1,4 +1,4 @@
-import { Fzf } from '../node_modules/fzf/dist/fzf.es.js'
+import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
 
 main();
 
@@ -9,11 +9,17 @@ type Searcher = {
   match: number;
 };
 
-function main() {
+async function main() {
   const url: URL = new URL(window.location.href);
   const urll: string = url.origin + "/api/v1/data";
   fetchAddress(urll + "/address");
-  fetchAllocate(urll + "/allocate/list");
+  const searchers: Promise<Searcher[]> = await fetchPath(
+    urll + "/allocate/list",
+  );
+  const keyword = "りんご";
+  const result = fzfSearch(searchers, keyword);
+  console.log("searchers: ", searchers);
+  console.log("result: ", result);
 }
 
 // fetchの返り値のPromiseを返す
@@ -29,18 +35,17 @@ async function fetchPath(url: string): Promise<any> {
     });
 }
 
-async function fetchAllocate(url: string) {
-  const searchers = await fetchPath(url);
-  /* fzf */
-  const fzf = new Fzf(searchers, {
+function fzfSearch(list: Searcher[], keyword: string): string[] {
+  const fzf = new Fzf(list, {
     selector: (item) => item.body,
   });
-    const entries = fzf.find("2022666りんご")
-    const ranking = entries.map((entry) => entry.item.body)
+  // const input = document.querySelector("#search-form");
+  const entries = fzf.find(keyword);
+  const ranking = entries.map((entry) => entry.item.body);
   for (const r of ranking) {
     console.log(r);
   }
-  /* fzf */
+  return ranking;
 }
 
 async function fetchAddress(url: string) {

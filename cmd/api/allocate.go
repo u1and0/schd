@@ -22,8 +22,8 @@ const (
 	// LAYOUT : time parse layout
 	LAYOUT = "2006年1月2日"
 	// ALPATH : 配車要求票を保存するルートディレクトリ
-	ALPATH = "./test"
-	// ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
+	// ALPATH = "./test"
+	ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
 	// for win
 	// ALPATH = "../../../../../../../../../2_Common/04_社内標準/_配車要求表_輸送指示書"
 )
