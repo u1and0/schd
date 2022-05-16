@@ -1,4 +1,4 @@
-import { searchers, fzfSearch } from "./main.js"
+import { url, searchers, fzfSearch, fetchPath } from "./main.js"
 
 function _appendRow(x){
   tr = $(x).closest("tr")
@@ -26,8 +26,8 @@ $(document).ready(
       }
     });
     $("#search-result").change(function () {
-      const val = $("#search-result").val()
-      console.log(val);
+      const id = $("#search-result").val();
+      console.log(id);
     });
   })
 );

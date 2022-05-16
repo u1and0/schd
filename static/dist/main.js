@@ -1,14 +1,14 @@
 import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
+const root = new URL(window.location.href);
+export const url = root.origin + "/api/v1/data";
 export let searchers;
 main();
 async function main() {
-    const url = new URL(window.location.href);
-    const urll = url.origin + "/api/v1/data";
-    fetchAddress(urll + "/address");
-    searchers = await fetchPath(urll + "/allocate/list");
+    fetchAddress(url + "/address");
+    searchers = await fetchPath(url + "/allocate/list");
 }
 // fetchの返り値のPromiseを返す
-async function fetchPath(url) {
+export async function fetchPath(url) {
     return await fetch(url)
         .then((response) => {
         return response.json();

@@ -1,5 +1,7 @@
 import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
 
+const root: URL = new URL(window.location.href);
+export const url: string = root.origin + "/api/v1/data";
 export let searchers: Promise<Searcher[]>;
 main();
 
@@ -11,16 +13,12 @@ type Searcher = {
 };
 
 async function main() {
-  const url: URL = new URL(window.location.href);
-  const urll: string = url.origin + "/api/v1/data";
-  fetchAddress(urll + "/address");
-  searchers = await fetchPath(
-    urll + "/allocate/list",
-  );
+  fetchAddress(url + "/address");
+  searchers = await fetchPath(url + "/allocate/list");
 }
 
 // fetchの返り値のPromiseを返す
-async function fetchPath(url: string): Promise<any> {
+export async function fetchPath(url: string): Promise<any> {
   return await fetch(url)
     .then((response) => {
       return response.json();
