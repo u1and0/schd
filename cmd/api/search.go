@@ -23,22 +23,22 @@ type (
 
 // FetchAllocateList : returns Searcher list
 func FetchAllocateList(c *gin.Context) {
-	searchers := allocations.Concat()
+	searchers := ALLOCATIONS.Concat()
 	sort.Sort(searchers)
 	c.IndentedJSON(http.StatusOK, searchers)
 }
 
 // SearchAllocate : allocate info search from query
 func SearchAllocate(c *gin.Context) {
-	result := make(Allocations, len(allocations))
+	result := make(Allocations, len(ALLOCATIONS))
 	q := c.Query("q")
-	searchers := allocations.Concat()
+	searchers := ALLOCATIONS.Concat()
 	keywd := strings.Split(q, " ")
 	for _, s := range searchers {
 		// sにkeywdが全て含まれていたらresultに加える
 		// 順序関係なし
 		if ContainsAll(s.Body, keywd...) {
-			result[s.ID] = allocations[s.ID]
+			result[s.ID] = ALLOCATIONS[s.ID]
 		}
 	}
 	c.IndentedJSON(http.StatusOK, result)

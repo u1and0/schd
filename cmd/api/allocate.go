@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	allocations = make(Allocations, 2000)
+	// ALLOCATIONS : global allocations map
+	ALLOCATIONS = make(Allocations, 2000)
 )
 
 const (
@@ -120,7 +121,7 @@ func init() {
 
 					// Excel セル抽出してAllocate型に充てる
 					allocation.Parse(f)
-					allocations[id] = *allocation
+					ALLOCATIONS[id] = *allocation
 				}
 				return nil
 			})
@@ -169,13 +170,13 @@ func (p *Package) Sum() (n int) {
 
 // FetchAllocate : returns allocate object by parsing Excel files or gob
 func FetchAllocate(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, allocations)
+	c.IndentedJSON(http.StatusOK, ALLOCATIONS)
 }
 
-// FetchAllocate : returns allocate object by parsing Excel files or gob
+// FetchAllocateID : returns allocate object by parsing Excel files or gob
 func FetchAllocateID(c *gin.Context) {
 	id := ctrl.ID(c.Param("id")) // Cast
-	if allocation, ok := allocations[id]; ok {
+	if allocation, ok := ALLOCATIONS[id]; ok {
 		c.IndentedJSON(http.StatusOK, allocation)
 		return
 	}

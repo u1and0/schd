@@ -1,7 +1,7 @@
 import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
 
 const root: URL = new URL(window.location.href);
-export const url: string = root.origin + "/api/v1/data";
+export const url: string = root.origin + "/api/v1";
 export let searchers: Promise<Searcher[]>;
 main();
 
@@ -13,8 +13,8 @@ type Searcher = {
 };
 
 async function main() {
-  fetchAddress(url + "/address");
-  searchers = await fetchPath(url + "/allocate/list");
+  fetchAddress(url + "/data/address");
+  searchers = await fetchPath(url + "/data/allocate/list");
 }
 
 // fetchの返り値のPromiseを返す

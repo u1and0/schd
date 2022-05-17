@@ -96,11 +96,11 @@
       </tr>
       <tr>
         <td align="right">生産命令番号</td>
-        <td> <input type="text" name="order" value="", size="20" placeholder="761-001"> </td>
+        <td> <input type="text" name="order" value="{{.a.Order}}" size="20" placeholder="761-001"> </td>
       </tr>
       <tr>
         <td align="right">積込作業月日</td>
-        <td> <input type="text" name="load-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+        <td> <input type="text" name="load-date" value="{{ .a.Date.Format "2006/" }}{{ .a.Load.Date.Format "01/02" }}" size="20" placeholder="2006/01/02" class="datepicker"> </td>
       </tr>
       <tr>
         <td align="right">積込作業時刻</td>
@@ -119,7 +119,7 @@
       </tr>
       <tr>
         <td align="right">到着指定月日</td>
-        <td> <input type="text" name="arrive-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+        <td> <input type="text" name="arrive-date" value="{{ .a.Date.Format "2006/" }}{{ .a.Arrive.Date.Format "01/02" }}" size="20" placeholder="2006/01/02" class="datepicker"> </td>
       </tr>
       <tr>
         <td align="right">到着指定時刻</td>

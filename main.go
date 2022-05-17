@@ -76,7 +76,7 @@ func main() {
 			}
 			a := p.Group("allocate")
 			{
-				a.GET("/form", paper.CreateAllocateForm)
+				a.GET("/form/:id", paper.CreateAllocateForm)
 				a.POST("/post", paper.CreateAllocate)
 			}
 		}

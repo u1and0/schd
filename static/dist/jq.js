@@ -24,7 +24,7 @@ $(document).ready(
       for (const r of result){
         $("#search-result").append($("<option>")
           .html(r.body)
-          .val(url + "/allocate/" + r.id));
+          .val(url + "/paper/allocate/form/" + r.id));
       }
     });
     // $("#search-result").change(function () {

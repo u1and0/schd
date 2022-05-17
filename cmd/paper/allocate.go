@@ -22,11 +22,24 @@ const (
 
 // CreateAllocateForm : xlsxに転記するフォームの表示
 func CreateAllocateForm(c *gin.Context) {
-	var hours []int
+	var (
+		hours   []int
+		id      = ctrl.ID(c.Param("id"))
+		minutes = []int{0, 15, 30, 45}
+	)
 	for i := 0; i < 24; i++ {
 		hours = append(hours, i)
 	}
-	minutes := []int{0, 15, 30, 45}
+	if a, ok := api.ALLOCATIONS[id]; ok {
+		c.HTML(http.StatusOK, "allocate_create.tmpl", gin.H{
+			"a":       a,
+			"today":   time.Now().Format("2006/01/02"),
+			"section": ctrl.Config.Section,
+			"hours":   hours,
+			"minutes": minutes,
+		})
+		return
+	}
 	c.HTML(http.StatusOK, "allocate_create.tmpl", gin.H{
 		"today":   time.Now().Format("2006/01/02"),
 		"section": ctrl.Config.Section,

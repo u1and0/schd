@@ -1,11 +1,11 @@
 import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
 const root = new URL(window.location.href);
-export const url = root.origin + "/api/v1/data";
+export const url = root.origin + "/api/v1";
 export let searchers;
 main();
 async function main() {
-    fetchAddress(url + "/address");
-    searchers = await fetchPath(url + "/allocate/list");
+    fetchAddress(url + "/data/address");
+    searchers = await fetchPath(url + "/data/allocate/list");
 }
 // fetchの返り値のPromiseを返す
 export async function fetchPath(url) {
