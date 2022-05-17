@@ -3,7 +3,12 @@ import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
 const root: URL = new URL(window.location.href);
 export const url: string = root.origin + "/api/v1/data";
 export let searchers: Promise<Searcher[]>;
+let allocations:Promise<any>;
 main();
+
+export function callAllocation(){
+  alert(allocations)
+}
 
 type Searcher = {
   id: string;
@@ -15,6 +20,7 @@ type Searcher = {
 async function main() {
   fetchAddress(url + "/address");
   searchers = await fetchPath(url + "/allocate/list");
+  allocations = await fetchPath(url + "/allocates");
 }
 
 // fetchの返り値のPromiseを返す
@@ -35,7 +41,7 @@ export function fzfSearch(list: Searcher[], keyword: string): string[] {
     selector: (item: Searcher) => item.body,
   });
   const entries = fzf.find(keyword);
-  const ranking = entries.map((entry: Fzf) => entry.item);
+  const ranking: string[] = entries.map((entry: Fzf) => entry.item);
   return ranking;
 }
 

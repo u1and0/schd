@@ -167,13 +167,13 @@ func (p *Package) Sum() (n int) {
 	return
 }
 
-// FetchAllocate : returns allocate object by parsing Excel files or gob
-func FetchAllocate(c *gin.Context) {
+// FetchAllocates : returns Allocates object by parsing Excel files
+func FetchAllocates(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, allocations)
 }
 
-// FetchAllocate : returns allocate object by parsing Excel files or gob
-func FetchAllocateID(c *gin.Context) {
+// FetchAllocate : returns Allocate object by parsing Excel files by id
+func FetchAllocate(c *gin.Context) {
 	id := ctrl.ID(c.Param("id")) // Cast
 	if allocation, ok := allocations[id]; ok {
 		c.IndentedJSON(http.StatusOK, allocation)

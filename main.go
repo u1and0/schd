@@ -47,10 +47,10 @@ func main() {
 			d.PUT("/:id", api.Put)
 			d.GET("/list", api.List)
 			d.GET("/address", api.FetchAddress)
+			d.GET("/allocates", api.FetchAllocates)
 			a := d.Group("/allocate")
 			{
-				a.GET("/", api.FetchAllocate)
-				a.GET("/:id", api.FetchAllocateID)
+				a.GET("/:id", api.FetchAllocate)
 				a.GET("/search", api.SearchAllocate)
 				a.GET("/list", api.FetchAllocateList)
 			}
