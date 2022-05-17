@@ -22,12 +22,15 @@ $(document).ready(
       const value = document.getElementById("search-form").value;
       const result = fzfSearch(searchers, value);
       for (const r of result){
-        $("#search-result").append($("<option>").html(r.body).val(r.id))
+        $("#search-result").append($("<option>")
+          .html(r.body)
+          .val(url + "/allocate/" + r.id));
       }
     });
-    $("#search-result").change(function () {
-      const id = $("#search-result").val();
-      console.log(id);
-    });
+    // $("#search-result").change(function () {
+    //   const id = $("#search-result").val();
+    //   const allocate = fetchPath(url + "/allocate/" + id);
+    //   console.log(allocate);
+    // });
   })
 );
