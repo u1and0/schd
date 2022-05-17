@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/ctrl"
@@ -12,19 +11,10 @@ import (
 // FILE : DB file path
 const (
 	FILE        = "test/sample.json"
-	ADDRESSFILE = "db/住所録.json"
 	SECTIONFILE = "db/課.json"
 )
 
 var data = ctrl.Data{}
-
-type (
-	// AddressMap : JSON ファイルから読み取った住所録
-	AddressMap map[string]Address
-	// Address : 1住所あたり5行まで, 1行あたり15文字まで
-	// Excelシートの枠の都合
-	Address []string
-)
 
 func init() {
 	if err := data.ReadJSON(FILE); err != nil {
@@ -101,14 +91,5 @@ func List(c *gin.Context) {
 
 // FetchAddress : 住所録をJSONで返す
 func FetchAddress(c *gin.Context) {
-	var m AddressMap
-	if err := ctrl.UnmarshalJSONfile(m, ADDRESSFILE); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, m)
-}
-
-func (a *Address) String() string {
-	return strings.Join(*a, "\n")
+	c.IndentedJSON(http.StatusOK, ctrl.Config.AddressMap)
 }
