@@ -28,7 +28,7 @@ type (
 // CreateAllocateForm : xlsxに転記するフォームの表示
 func CreateAllocateForm(c *gin.Context) {
 	section := new(Section)
-	if err := ctrl.UnmarshalJSON(section, api.SECTIONFILE); err != nil {
+	if err := ctrl.UnmarshalJSONfile(section, api.SECTIONFILE); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -97,7 +97,7 @@ func CreateAllocate(c *gin.Context) {
 	f.SetCellValue(sheetName, "F8", from+to)
 	// 送り先
 	m := new(api.AddressMap)
-	if err := ctrl.UnmarshalJSON(m, api.ADDRESSFILE); err != nil {
+	if err := ctrl.UnmarshalJSONfile(m, api.ADDRESSFILE); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
 		return
 	}
@@ -186,7 +186,7 @@ func CreateAllocate(c *gin.Context) {
 
 func getRequestNo(sec string) (y api.Y, err error) {
 	section := new(Section)
-	if err := ctrl.UnmarshalJSON(section, api.SECTIONFILE); err != nil {
+	if err := ctrl.UnmarshalJSONfile(section, api.SECTIONFILE); err != nil {
 		return api.Y{}, err
 	}
 	prefix := (*section)[sec]

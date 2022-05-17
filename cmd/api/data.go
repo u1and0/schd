@@ -102,7 +102,7 @@ func List(c *gin.Context) {
 // FetchAddress : 住所録をJSONで返す
 func FetchAddress(c *gin.Context) {
 	var m AddressMap
-	if err := ctrl.UnmarshalJSON(m, ADDRESSFILE); err != nil {
+	if err := ctrl.UnmarshalJSONfile(m, ADDRESSFILE); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

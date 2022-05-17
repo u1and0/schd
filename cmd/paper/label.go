@@ -48,7 +48,7 @@ func Create(c *gin.Context) {
 	}
 	// 住所録から選択した宛先の住所を引く
 	m := new(api.AddressMap)
-	if err := ctrl.UnmarshalJSON(&m, api.ADDRESSFILE); err != nil {
+	if err := ctrl.UnmarshalJSONfile(&m, api.ADDRESSFILE); err != nil {
 		c.IndentedJSON(http.StatusBadRequest,
 			gin.H{"msg": err.Error(), "error": err})
 		return

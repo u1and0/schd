@@ -19,7 +19,7 @@ type ConfigType struct {
 }
 
 func init() {
-	if err := UnmarshalJSON(&Config, CONFIGPATH); err != nil {
+	if err := UnmarshalJSONfile(&Config, CONFIGPATH); err != nil {
 		fmt.Println(err)
 	}
 	fmt.Printf("%#v\n", Config)
@@ -41,8 +41,8 @@ func readFile(fs string) (b []byte, err error) {
 	return
 }
 
-// UnmarshalJSON : some T type
-func UnmarshalJSON(T interface{}, filename string) error {
+// UnmarshalJSONfile : Read json from .json file then unmarshal as some T type
+func UnmarshalJSONfile(T interface{}, filename string) error {
 	b, err := readFile(filename)
 	// As JSON
 	err = json.Unmarshal(b, &T)
