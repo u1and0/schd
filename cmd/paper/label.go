@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/u1and0/schd/cmd/api"
+	"github.com/u1and0/schd/cmd/ctrl"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -45,14 +45,6 @@ func Create(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": msg, "error": err})
 		return
 	}
-	// 住所録から選択した宛先の住所を引く
-	m := new(api.AddressMap)
-	if err := api.UnmarshalJSON(&m, api.ADDRESSFILE); err != nil {
-		c.IndentedJSON(http.StatusBadRequest,
-			gin.H{"msg": err.Error(), "error": err})
-		return
-	}
-
 	// template XLSX
 	f, err := excelize.OpenFile("template/template.xlsx")
 	if err != nil {
@@ -79,7 +71,7 @@ func Create(c *gin.Context) {
 	for _, cell := range []string{"D9", "D21"} {
 		f.SetCellValue(sheetName, cell, o.WrapDate.Format("2006/1/2"))
 	}
-	a := (*m)[o.ToAddress]
+	a := ctrl.Config.AddressMap[o.ToAddress]
 	for _, cell := range []string{"H4", "H16"} {
 		f.SetCellValue(sheetName, cell, a.String())
 	}

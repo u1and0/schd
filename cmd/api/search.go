@@ -15,10 +15,9 @@ type (
 	Searchers []Searcher
 	// Searcher : struct for Searcher
 	Searcher struct {
-		ID    ctrl.ID   `json:"id"`
-		Body  string    `json:"body"`
-		Date  time.Time `json:"date"`
-		Match int       `json:"match"`
+		ID   ctrl.ID   `json:"id"`
+		Body string    `json:"body"`
+		Date time.Time `json:"date"`
 	}
 )
 

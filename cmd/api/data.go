@@ -1,12 +1,8 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"os"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/ctrl"
@@ -15,19 +11,10 @@ import (
 // FILE : DB file path
 const (
 	FILE        = "test/sample.json"
-	ADDRESSFILE = "db/住所録.json"
 	SECTIONFILE = "db/課.json"
 )
 
 var data = ctrl.Data{}
-
-type (
-	// AddressMap : JSON ファイルから読み取った住所録
-	AddressMap map[string]Address
-	// Address : 1住所あたり5行まで, 1行あたり15文字まで
-	// Excelシートの枠の都合
-	Address []string
-)
 
 func init() {
 	if err := data.ReadJSON(FILE); err != nil {
@@ -102,40 +89,7 @@ func List(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, rows)
 }
 
-// ReadFile : read filepath to binary
-func readFile(fs string) (b []byte, err error) {
-	// Open file
-	f, err := os.Open(fs)
-	defer f.Close()
-	if err != nil {
-		return
-	}
-	// Read file
-	b, err = ioutil.ReadAll(f)
-	if err != nil {
-		return
-	}
-	return
-}
-
-// UnmarshalJSON : some T type
-func UnmarshalJSON(T interface{}, fs string) error {
-	b, err := readFile(fs)
-	// As JSON
-	err = json.Unmarshal(b, &T)
-	return err
-}
-
 // FetchAddress : 住所録をJSONで返す
 func FetchAddress(c *gin.Context) {
-	var m AddressMap
-	if err := UnmarshalJSON(m, ADDRESSFILE); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, m)
-}
-
-func (a *Address) String() string {
-	return strings.Join(*a, "\n")
+	c.IndentedJSON(http.StatusOK, ctrl.Config.AddressMap)
 }

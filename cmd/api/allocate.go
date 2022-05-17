@@ -21,11 +21,6 @@ var (
 const (
 	// LAYOUT : time parse layout
 	LAYOUT = "2006年1月2日"
-	// ALPATH : 配車要求票を保存するルートディレクトリ
-	ALPATH = "./test"
-	// ALPATH = "/mnt/2_Common/04_社内標準/_配車要求表_輸送指示書"
-	// for win
-	// ALPATH = "../../../../../../../../../2_Common/04_社内標準/_配車要求表_輸送指示書"
 )
 
 type (
@@ -102,7 +97,7 @@ type (
 
 func init() {
 	go func() {
-		filepath.Walk(ALPATH,
+		filepath.Walk(ctrl.Config.AllocatePath,
 			func(path string, info os.FileInfo, err error) error {
 				var (
 					allocation = new(Allocation)
@@ -245,7 +240,9 @@ func (as *Allocations) Concat() Searchers {
 	var (
 		i     int
 		s     = make(Searchers, len(*as))
-		trims = []string{`{`, `}`, `[`, `]`}
+		trims = []string{`{`, `}`, `[`, `]`, "☑", "☐要　", "☐不要 ",
+			"☐仕立便　", "☐常用便\n", "☐混載便　", "☐宅配便 ",
+			"+0000 ", "UTC ", "00:00:00 ", "0000-", "0001-"}
 	)
 	for id, val := range *as {
 		body := fmt.Sprintf("%s %v", id, val)

@@ -11,26 +11,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/api"
+	"github.com/u1and0/schd/cmd/ctrl"
 	"github.com/xuri/excelize/v2"
 )
 
 const (
-	// 別紙記載に分割する行数制限
+	// MAXLINE 別紙記載に分割する行数制限
 	MAXLINE = 4
-)
-
-type (
-	// Section 所属課のmap db/課.jsonから読み取る
-	Section map[string]string
 )
 
 // CreateAllocateForm : xlsxに転記するフォームの表示
 func CreateAllocateForm(c *gin.Context) {
-	section := new(Section)
-	if err := api.UnmarshalJSON(section, api.SECTIONFILE); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
 	var hours []int
 	for i := 0; i < 24; i++ {
 		hours = append(hours, i)
@@ -38,7 +29,7 @@ func CreateAllocateForm(c *gin.Context) {
 	minutes := []int{0, 15, 30, 45}
 	c.HTML(http.StatusOK, "allocate_create.tmpl", gin.H{
 		"today":   time.Now().Format("2006/01/02"),
-		"section": (*section),
+		"section": ctrl.Config.Section,
 		"hours":   hours,
 		"minutes": minutes,
 	})
@@ -95,12 +86,7 @@ func CreateAllocate(c *gin.Context) {
 	to := "適当な宛先"
 	f.SetCellValue(sheetName, "F8", from+to)
 	// 送り先
-	m := new(api.AddressMap)
-	if err := api.UnmarshalJSON(m, api.ADDRESSFILE); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
-		return
-	}
-	a := strings.Join((*m)[to], "\n")
+	a := strings.Join(ctrl.Config.AddressMap[to], "\n")
 	f.SetCellValue(sheetName, "F13", a)
 	// t数 台車 機能
 	t := fmt.Sprintf("%st%s(%s)", strconv.Itoa(o.T), o.Truck, o.Function)
@@ -184,14 +170,10 @@ func CreateAllocate(c *gin.Context) {
 }
 
 func getRequestNo(sec string) (y api.Y, err error) {
-	section := new(Section)
-	if err := api.UnmarshalJSON(section, api.SECTIONFILE); err != nil {
-		return api.Y{}, err
-	}
-	prefix := (*section)[sec]
+	prefix := ctrl.Config.Section[sec]
 	surfix := ".xlsx"
 	var n int
-	err = filepath.Walk(api.ALPATH,
+	err = filepath.Walk(ctrl.Config.AllocatePath,
 		func(path string, info os.FileInfo, err error) error {
 			base := filepath.Base(path)
 			baseBool := strings.HasPrefix(base, prefix)

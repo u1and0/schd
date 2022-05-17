@@ -1,3 +1,8 @@
+import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
+
+const root: URL = new URL(window.location.href);
+export const url: string = root.origin + "/api/v1/data";
+export let searchers: Promise<Searcher[]>;
 main();
 
 type Searcher = {
@@ -7,15 +12,13 @@ type Searcher = {
   match: number;
 };
 
-function main() {
-  const url: URL = new URL(window.location.href);
-  const urll: string = url.origin + "/api/v1/data";
-  fetchAddress(urll + "/address");
-  fetchAllocate(urll + "/allocate/list");
+async function main() {
+  fetchAddress(url + "/address");
+  searchers = await fetchPath(url + "/allocate/list");
 }
 
 // fetchの返り値のPromiseを返す
-async function fetchPath(url: string): Promise<any> {
+export async function fetchPath(url: string): Promise<any> {
   return await fetch(url)
     .then((response) => {
       return response.json();
@@ -27,27 +30,13 @@ async function fetchPath(url: string): Promise<any> {
     });
 }
 
-async function fetchAllocate(url: string) {
-  const searchers = await fetchPath(url);
-  const keywords = ["TB00"];
-  for (const searcher of searchers) {
-    for (const keyword of keywords) {
-      if (searcher["body"].includes(keyword)) {
-        searcher.match += 1;
-      }
-    }
-  }
-  searchers.sort((i: Searcher, j: Searcher) => {
-    const keyI = i.match;
-    const keyJ = j.match;
-    if (keyI < keyJ) return 1;
-    if (keyI > keyJ) return -1;
-    return 0;
+export function fzfSearch(list: Searcher[], keyword: string): string[] {
+  const fzf = new Fzf(list, {
+    selector: (item: Searcher) => item.body,
   });
-  const matched: Searcher[] = searchers.filter((e:Searcher) => e.match > 0);
-  for (const m of matched) {
-    console.log(m.body);
-  }
+  const entries = fzf.find(keyword);
+  const ranking = entries.map((entry: Fzf) => entry.item);
+  return ranking;
 }
 
 async function fetchAddress(url: string) {
