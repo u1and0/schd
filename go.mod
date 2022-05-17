@@ -2,7 +2,10 @@ module github.com/u1and0/schd
 
 go 1.18
 
-require github.com/gin-gonic/gin v1.7.7
+require (
+	github.com/gin-gonic/gin v1.7.7
+	github.com/xuri/excelize/v2 v2.6.0
+)
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -20,7 +23,6 @@ require (
 	github.com/richardlehane/msoleps v1.0.1 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/xuri/efp v0.0.0-20220407160117-ad0f7a785be8 // indirect
-	github.com/xuri/excelize/v2 v2.6.0 // indirect
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
 	golang.org/x/net v0.0.0-20220421235706-1d1ef9303861 // indirect
