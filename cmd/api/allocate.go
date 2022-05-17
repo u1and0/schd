@@ -172,9 +172,14 @@ func FetchAllocate(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, allocations)
 }
 
+// FetchAllocate : returns allocate object by parsing Excel files or gob
 func FetchAllocateID(c *gin.Context) {
-	id := ctrl.ID(c.Param("id"))
-	c.IndentedJSON(http.StatusOK, allocations[id])
+	id := ctrl.ID(c.Param("id")) // Cast
+	if allocation, ok := allocations[id]; ok {
+		c.IndentedJSON(http.StatusOK, allocation)
+		return
+	}
+	c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%v not found", id)})
 }
 
 // Parse : Parsing Excel file value
