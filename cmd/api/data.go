@@ -1,11 +1,8 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -102,34 +99,10 @@ func List(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, rows)
 }
 
-// ReadFile : read filepath to binary
-func readFile(fs string) (b []byte, err error) {
-	// Open file
-	f, err := os.Open(fs)
-	defer f.Close()
-	if err != nil {
-		return
-	}
-	// Read file
-	b, err = ioutil.ReadAll(f)
-	if err != nil {
-		return
-	}
-	return
-}
-
-// UnmarshalJSON : some T type
-func UnmarshalJSON(T interface{}, fs string) error {
-	b, err := readFile(fs)
-	// As JSON
-	err = json.Unmarshal(b, &T)
-	return err
-}
-
 // FetchAddress : 住所録をJSONで返す
 func FetchAddress(c *gin.Context) {
 	var m AddressMap
-	if err := UnmarshalJSON(m, ADDRESSFILE); err != nil {
+	if err := ctrl.UnmarshalJSON(m, ADDRESSFILE); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

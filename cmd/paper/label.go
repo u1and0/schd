@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/api"
+	"github.com/u1and0/schd/cmd/ctrl"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -47,7 +48,7 @@ func Create(c *gin.Context) {
 	}
 	// 住所録から選択した宛先の住所を引く
 	m := new(api.AddressMap)
-	if err := api.UnmarshalJSON(&m, api.ADDRESSFILE); err != nil {
+	if err := ctrl.UnmarshalJSON(&m, api.ADDRESSFILE); err != nil {
 		c.IndentedJSON(http.StatusBadRequest,
 			gin.H{"msg": err.Error(), "error": err})
 		return
