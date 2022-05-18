@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -92,6 +93,7 @@ type (
 )
 
 func init() {
+	// Append xlsx file fullpath with specific prefix to slice
 	paths := []string{}
 	filepath.Walk(ctrl.Config.AllocatePath,
 		func(path string, info os.FileInfo, err error) error {
@@ -108,6 +110,9 @@ func init() {
 			}
 			return nil
 		})
+	// Sort reverse order
+	sort.Sort(sort.Reverse(sort.StringSlice(paths)))
+	// Unmarshal xlsx file
 	go func(fullpaths []string) {
 		for _, fullpath := range fullpaths {
 			allocation := new(Allocation)
@@ -116,10 +121,12 @@ func init() {
 			filename := filepath.Base(fullpath)
 			id := ctrl.ID(filename[:10])
 			// Excel セル抽出してAllocate型に充てる
-			f, _ := excelize.OpenFile(fullpath)
+			f, err := excelize.OpenFile(fullpath)
 			defer f.Close()
-			allocation.Unmarshal(f)
-			allocations[id] = *allocation
+			if err == nil {
+				allocation.Unmarshal(f)
+				allocations[id] = *allocation
+			}
 		}
 	}(paths)
 }
