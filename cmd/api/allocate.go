@@ -18,11 +18,6 @@ var (
 	allocations = make(Allocations, 2000)
 )
 
-const (
-	// LAYOUT : time parse layout
-	LAYOUT = "2006年1月2日"
-)
-
 type (
 	// Allocations list of Allocation
 	Allocations map[ctrl.ID]Allocation

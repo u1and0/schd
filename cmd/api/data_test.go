@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"os/exec"
 	"reflect"
 	"strings"
@@ -165,39 +164,4 @@ func TestDelete(t *testing.T) {
 		t.Errorf("got: %#v\nwant: %#v", string(actual), expected)
 	}
 	rollbackTestfile()
-}
-
-func TestFetchAddress(t *testing.T) {
-	// Read JSON
-	var expected AddressMap
-	var actual AddressMap
-	f, err := os.Open(TESTADDRESSFILE)
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-	err = json.Unmarshal(b, &expected)
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-	// Fetch JSON
-	resp, err := http.Get(URL + "/address")
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Expected status code  200, got %v", resp.StatusCode)
-	}
-	r, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-	json.Unmarshal(r, &actual)
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("got: %#v\nwant: %#v", actual, expected)
-	}
 }

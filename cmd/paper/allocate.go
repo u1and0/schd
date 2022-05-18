@@ -18,6 +18,8 @@ import (
 const (
 	// MAXLINE 別紙記載に分割する行数制限
 	MAXLINE = 4
+	// LAYOUT : time parse layout
+	LAYOUT = "2006年1月2日"
 )
 
 // CreateAllocateForm : xlsxに転記するフォームの表示
@@ -60,7 +62,7 @@ func CreateAllocate(c *gin.Context) {
 	}
 	f.SetCellValue(sheetName, "F2", reqNo.Base)
 	// 要求年月日
-	f.SetCellValue(sheetName, "F3", time.Now().Format(api.LAYOUT))
+	f.SetCellValue(sheetName, "F3", time.Now().Format(LAYOUT))
 	f.SetCellValue(sheetName, "F4", o.Section)
 	// 輸送便の別
 	s := o.Type
@@ -93,9 +95,9 @@ func CreateAllocate(c *gin.Context) {
 	f.SetCellValue(sheetName, "F6", t)
 	// 積込/到着作業月日/時刻
 	x := map[string]interface{}{
-		"F9":  o.Load.Date.Format(api.LAYOUT),
+		"F9":  o.Load.Date.Format(LAYOUT),
 		"F10": fmt.Sprintf("%d時%d分", o.Load.Hour, o.Load.Minute),
-		"F11": o.Arrive.Date.Format(api.LAYOUT),
+		"F11": o.Arrive.Date.Format(LAYOUT),
 		"F12": fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute),
 	}
 	for cell, value := range x {
