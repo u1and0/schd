@@ -14,7 +14,6 @@ type Searcher = {
 };
 
 async function main() {
-  fetchAddress(url + "/address");
   searchers = await fetchPath(url + "/allocate/list");
   allocations = await fetchPath(url + "/allocates");
 }
@@ -39,18 +38,4 @@ export function fzfSearch(list: Searcher[], keyword: string): string[] {
   const entries = fzf.find(keyword);
   const ranking: string[] = entries.map((entry: Fzf) => entry.item);
   return ranking;
-}
-
-async function fetchAddress(url: string) {
-  try {
-    // 住所録.js から住所一覧をselect option に加える;
-    const address = await fetchPath(url);
-    if (address === null) return;
-    Object.keys(address).forEach((key: string) => {
-      const elem = document.querySelector("#to-address");
-      if (elem !== null) elem.append(`<option value=${key}>${key}</option>`);
-    });
-  } catch (error) {
-    console.error(`Error occured (${error})`);
-  }
 }

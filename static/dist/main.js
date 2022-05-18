@@ -5,7 +5,6 @@ export let searchers;
 export let allocations;
 main();
 async function main() {
-    fetchAddress(url + "/address");
     searchers = await fetchPath(url + "/allocate/list");
     allocations = await fetchPath(url + "/allocates");
 }
@@ -26,20 +25,4 @@ export function fzfSearch(list, keyword) {
     const entries = fzf.find(keyword);
     const ranking = entries.map((entry) => entry.item);
     return ranking;
-}
-async function fetchAddress(url) {
-    try {
-        // 住所録.js から住所一覧をselect option に加える;
-        const address = await fetchPath(url);
-        if (address === null)
-            return;
-        Object.keys(address).forEach((key) => {
-            const elem = document.querySelector("#to-address");
-            if (elem !== null)
-                elem.append(`<option value=${key}>${key}</option>`);
-        });
-    }
-    catch (error) {
-        console.error(`Error occured (${error})`);
-    }
 }
