@@ -1,4 +1,5 @@
 import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
+import { InputSuggest } from "../node_modules/input-suggest/dist/input-suggest.min.js";
 
 const root: URL = new URL(window.location.href);
 export const url: string = root.origin + "/api/v1/data";
@@ -16,6 +17,9 @@ type Searcher = {
 async function main() {
   searchers = await fetchPath(url + "/allocate/list");
   allocations = await fetchPath(url + "/allocates");
+  const textarea = new InputSuggest("textarea");
+  InputSuggest("textarea");
+  textarea.setSuggestions(["foo", "bar", "biz"]);
 }
 
 // fetchの返り値のPromiseを返す
