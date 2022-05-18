@@ -31,8 +31,10 @@ $(document).ready(
       const id = $("#search-result").val();
       const el = allocations[id]
       console.log(el);
-      $("#order").val(el["生産命令番号"])
-      $("#section").val(el["型式"])
+      $("#section").val(el["部署"])
+      $("textarea#to-address").val(el["宛先情報"]["宛先住所"])
+      console.log(el["物品情報"]["物品名称"])
+      $("textarea#package-name").val(el["物品情報"]["物品名称"])
     });
   })
 );
