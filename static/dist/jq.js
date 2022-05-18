@@ -1,4 +1,4 @@
-import { url, searchers, fzfSearch, fetchPath } from "./main.js"
+import { url, searchers, fzfSearch, allocations } from "./main.js"
 
 function _appendRow(x){
   tr = $(x).closest("tr")
@@ -24,13 +24,15 @@ $(document).ready(
       for (const r of result){
         $("#search-result").append($("<option>")
           .html(r.body)
-          .val(url + "/allocate/" + r.id));
+          .val(r.id));
       }
     });
-    // $("#search-result").change(function () {
-    //   const id = $("#search-result").val();
-    //   const allocate = fetchPath(url + "/allocate/" + id);
-    //   console.log(allocate);
-    // });
+    $("#search-result").change(function () {
+      const id = $("#search-result").val();
+      const el = allocations[id]
+      console.log(el);
+      $("#order").val(el["生産命令番号"])
+      $("#section").val(el["型式"])
+    });
   })
 );

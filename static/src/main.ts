@@ -3,12 +3,8 @@ import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
 const root: URL = new URL(window.location.href);
 export const url: string = root.origin + "/api/v1/data";
 export let searchers: Promise<Searcher[]>;
-let allocations:Promise<any>;
+export let allocations;
 main();
-
-export function callAllocation(){
-  alert(allocations)
-}
 
 type Searcher = {
   id: string;
@@ -24,7 +20,7 @@ async function main() {
 }
 
 // fetchの返り値のPromiseを返す
-export async function fetchPath(url: string): Promise<any> {
+async function fetchPath(url: string): Promise<any> {
   return await fetch(url)
     .then((response) => {
       return response.json();
