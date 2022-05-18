@@ -92,35 +92,36 @@ type (
 )
 
 func init() {
-	go func() {
-		filepath.Walk(ctrl.Config.AllocatePath,
-			func(path string, info os.FileInfo, err error) error {
-				var (
-					allocation = new(Allocation)
-					filename   = filepath.Base(path)
-					baseBool   = strings.HasPrefix(filename, "TA00-") ||
-						strings.HasPrefix(filename, "TB00-") ||
-						strings.HasPrefix(filename, "DD00-")
-					extBool = filepath.Ext(path) == ".xlsx"
-				)
-				// baseBool かつ extBool => prefixで始まり、xlsxで終わるファイルのみ対象
-				if baseBool && extBool {
-					f, _ := excelize.OpenFile(path)
-					// idをファイル名から抽出するか、
-					// シートから抽出するかどちらでもよい
-					id := ctrl.ID(filename[:10])
-					// id, err := f.GetCellValue("入力画面", "F2")
-					// if err != nil {
-					// 	fmt.Printf("%s: %v\n", filename, err.Error())
-					// }
-
-					// Excel セル抽出してAllocate型に充てる
-					allocation.Unmarshal(f)
-					allocations[id] = *allocation
-				}
-				return nil
-			})
-	}()
+	paths := []string{}
+	filepath.Walk(ctrl.Config.AllocatePath,
+		func(path string, info os.FileInfo, err error) error {
+			var (
+				filename = filepath.Base(path)
+				baseBool = strings.HasPrefix(filename, "TA00-") ||
+					strings.HasPrefix(filename, "TB00-") ||
+					strings.HasPrefix(filename, "DD00-")
+				extBool = filepath.Ext(path) == ".xlsx"
+			)
+			// baseBool かつ extBool => prefixで始まり、xlsxで終わるファイルのみ対象
+			if baseBool && extBool {
+				paths = append(paths, path)
+			}
+			return nil
+		})
+	go func(fullpaths []string) {
+		for _, fullpath := range fullpaths {
+			allocation := new(Allocation)
+			// idをファイル名から抽出するか、
+			// シートから抽出するかどちらでもよい
+			filename := filepath.Base(fullpath)
+			id := ctrl.ID(filename[:10])
+			// Excel セル抽出してAllocate型に充てる
+			f, _ := excelize.OpenFile(fullpath)
+			defer f.Close()
+			allocation.Unmarshal(f)
+			allocations[id] = *allocation
+		}
+	}(paths)
 }
 
 // Compile : 荷姿によって数量をカウントする
