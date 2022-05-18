@@ -29,7 +29,7 @@ type (
 	// Allocation 配車要求に必要な情報 htmlから入力
 	Allocation struct {
 		Date      time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
-		Section   string    `json:"型式" form:"section"`
+		Section   string    `json:"部署" form:"section"`
 		Type      string    `json:"輸送便の別" form:"type"`
 		Car       `json:"車両情報"`
 		Order     string `json:"生産命令番号" form:"order"`
@@ -69,7 +69,7 @@ type (
 	// Package 荷姿・寸法・重量
 	Package struct {
 		Name     string   `json:"物品名称" form:"package-name"`
-		Style    []string `json:"荷姿" form:"package"`
+		Style    []string `json:"荷姿" form:"style"`
 		Width    []int    `json:"幅" form:"width"`
 		Length   []int    `json:"長さ" form:"length"`
 		Hight    []int    `json:"高さ" form:"hight"`
@@ -167,13 +167,13 @@ func (p *Package) Sum() (n int) {
 	return
 }
 
-// FetchAllocate : returns allocate object by parsing Excel files or gob
-func FetchAllocate(c *gin.Context) {
+// FetchAllocates : returns Allocates object by parsing Excel files
+func FetchAllocates(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, allocations)
 }
 
-// FetchAllocate : returns allocate object by parsing Excel files or gob
-func FetchAllocateID(c *gin.Context) {
+// FetchAllocate : returns Allocate object by parsing Excel files by id
+func FetchAllocate(c *gin.Context) {
 	id := ctrl.ID(c.Param("id")) // Cast
 	if allocation, ok := allocations[id]; ok {
 		c.IndentedJSON(http.StatusOK, allocation)
