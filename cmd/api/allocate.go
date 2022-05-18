@@ -42,6 +42,7 @@ type (
 	}
 	// Car : 車両情報
 	Car struct {
+		String   string `json:"ｸﾗｽ及びﾎﾞﾃﾞｨｰﾀｲﾌﾟ" form:"string"`
 		Type     string `json:"車種" form:"type"`     // トラック, トレーラ
 		Truck    string `json:"台車" form:"truck"`    // 平車、箱車
 		T        int    `json:"t数" form:"t"`        // 4t, 10t
@@ -119,7 +120,7 @@ func init() {
 					// }
 
 					// Excel セル抽出してAllocate型に充てる
-					allocation.Parse(f)
+					allocation.Unmarshal(f)
 					allocations[id] = *allocation
 				}
 				return nil
@@ -182,8 +183,8 @@ func FetchAllocate(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%v not found", id)})
 }
 
-// Parse : Parsing Excel file value
-func (a *Allocation) Parse(f *excelize.File) {
+// Unmarshal : Parsing Excel file value
+func (a *Allocation) Unmarshal(f *excelize.File) {
 	var (
 		err       error
 		sheetName = "入力画面"
@@ -196,15 +197,15 @@ func (a *Allocation) Parse(f *excelize.File) {
 	a.Section, _ = f.GetCellValue(sheetName, "F4")
 	a.Type, _ = f.GetCellValue(sheetName, "F5")
 	// s, _ = f.GetCellValue(sheetName, "F6")
-	a.Car.Type, _ = f.GetCellValue(sheetName, "F6")
-	// ss := strings.Split(s, `(`) // [ 4t平車, ｴｱｻｽ) ]
+	a.Car.String, _ = f.GetCellValue(sheetName, "F6")
+	// ss := strings.Split(a.Car.String, `(`) // [ 4t平車, ｴｱｻｽ) ]
 	// a.Function = ss[1]
 	// st := strings.Split(ss[0], `t`) // [ 4, 平車 ]
 	// a.T, err = strconv.Atoi(st[0])
 	// if err != nil {
-	// fmt.Printf("%v\n", err.Error())
+	// 	fmt.Printf("%v\n", err.Error())
 	// }
-	// a.Cartype = st[1]
+	// a.Truck = st[1]
 	a.Order, _ = f.GetCellValue(sheetName, "F7")
 	a.To.Name, _ = f.GetCellValue(sheetName, "F8")
 	s, _ = f.GetCellValue(sheetName, "F9")
