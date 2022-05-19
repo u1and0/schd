@@ -27,22 +27,14 @@ type (
 		Date      time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
 		Section   string    `json:"部署" form:"section"`
 		Transport string    `json:"輸送便の別" form:"transport"`
-		Car       `json:"車両情報"`
-		Order     string `json:"生産命令番号" form:"order"`
+		Car       string    `json:"クラスボディタイプ" form:"car"`
+		Order     string    `json:"生産命令番号" form:"order"`
 		To        `json:"宛先情報" form:"to"`
 		Load      `json:"積込情報" form:"load"`
 		Arrive    `json:"到着情報" form:"arrive"`
 		Package   `json:"物品情報" form:"package"`
 		Insulance `json:"保険情報" form:"insulance"`
 		Article   string `json:"記事" form:"article"`
-	}
-	// Car : 車両情報
-	Car struct {
-		String   string `json:"ｸﾗｽ及びﾎﾞﾃﾞｨｰﾀｲﾌﾟ" form:"string"`
-		Type     string `json:"車種" form:"type"`     // トラック, トレーラ
-		Truck    string `json:"台車" form:"truck"`    // 平車、箱車
-		T        int    `json:"t数" form:"t"`        // 4t, 10t
-		Function string `json:"機能" form:"function"` // エアサス
 	}
 	// To : 宛先
 	To struct {
@@ -200,16 +192,7 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 	a.Section, _ = f.GetCellValue(sheetName, "F4")
 	s, _ = f.GetCellValue(sheetName, "F5")
 	a.Transport = trimmer(s)
-	// s, _ = f.GetCellValue(sheetName, "F6")
-	a.Car.String, _ = f.GetCellValue(sheetName, "F6")
-	// ss := strings.Split(a.Car.String, `(`) // [ 4t平車, ｴｱｻｽ) ]
-	// a.Function = ss[1]
-	// st := strings.Split(ss[0], `t`) // [ 4, 平車 ]
-	// a.T, err = strconv.Atoi(st[0])
-	// if err != nil {
-	// 	fmt.Printf("%v\n", err.Error())
-	// }
-	// a.Truck = st[1]
+	a.Car, _ = f.GetCellValue(sheetName, "F6")
 	a.Order, _ = f.GetCellValue(sheetName, "F7")
 	a.To.Name, _ = f.GetCellValue(sheetName, "F8")
 	s, _ = f.GetCellValue(sheetName, "F9")

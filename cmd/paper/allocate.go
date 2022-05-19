@@ -91,8 +91,7 @@ func CreateAllocate(c *gin.Context) {
 	a := strings.Join(ctrl.Config.AddressMap[to], "\n")
 	f.SetCellValue(sheetName, "F13", a)
 	// t数 台車 機能
-	t := fmt.Sprintf("%st%s(%s)", strconv.Itoa(o.T), o.Truck, o.Function)
-	f.SetCellValue(sheetName, "F6", t)
+	f.SetCellValue(sheetName, "F6", o.Car)
 	// 積込/到着作業月日/時刻
 	x := map[string]interface{}{
 		"F9":  o.Load.Date.Format(LAYOUT),
