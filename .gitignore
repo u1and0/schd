@@ -6,5 +6,6 @@ README.html
 *.xlsm
 *.xlsx#
 /result/
+/release/
 /db/
 /static/node_modules/

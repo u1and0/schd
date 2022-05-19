@@ -65,7 +65,7 @@ func CreateAllocate(c *gin.Context) {
 	f.SetCellValue(sheetName, "F3", time.Now().Format(LAYOUT))
 	f.SetCellValue(sheetName, "F4", o.Section)
 	// 輸送便の別
-	s := o.Type
+	s := o.Transport
 	switch s {
 	case "仕立便":
 		s = `☑仕立便　☐常用便

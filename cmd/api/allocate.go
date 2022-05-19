@@ -26,7 +26,7 @@ type (
 	Allocation struct {
 		Date      time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
 		Section   string    `json:"部署" form:"section"`
-		Type      string    `json:"輸送便の別" form:"type"`
+		Transport string    `json:"輸送便の別" form:"transport"`
 		Car       `json:"車両情報"`
 		Order     string `json:"生産命令番号" form:"order"`
 		To        `json:"宛先情報" form:"to"`
@@ -198,7 +198,8 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 		fmt.Printf("%v\n", err.Error())
 	}
 	a.Section, _ = f.GetCellValue(sheetName, "F4")
-	a.Type, _ = f.GetCellValue(sheetName, "F5")
+	s, _ = f.GetCellValue(sheetName, "F5")
+	a.Transport = trimmer(s)
 	// s, _ = f.GetCellValue(sheetName, "F6")
 	a.Car.String, _ = f.GetCellValue(sheetName, "F6")
 	// ss := strings.Split(a.Car.String, `(`) // [ 4t平車, ｴｱｻｽ) ]
@@ -244,20 +245,25 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 	a.Article, _ = f.GetCellValue(sheetName, "F20")
 }
 
+func trimmer(s string) string {
+	trims := []string{`{`, `}`, `[`, `]`, "☑", "☐要　", "☐不要 ",
+		"☐仕立便　", "☐常用便\n", "☐混載便　", "　☐宅配便", "☐宅配便 ", "\n☐宅配便",
+		"+0000 ", "UTC ", "00:00:00 ", "0000-", "0001-"}
+	for _, trim := range trims {
+		s = strings.ReplaceAll(s, trim, "")
+	}
+	return s
+}
+
 // Concat : convert search struct
 func (as *Allocations) Concat() Searchers {
 	var (
-		i     int
-		s     = make(Searchers, len(*as))
-		trims = []string{`{`, `}`, `[`, `]`, "☑", "☐要　", "☐不要 ",
-			"☐仕立便　", "☐常用便\n", "☐混載便　", "☐宅配便 ",
-			"+0000 ", "UTC ", "00:00:00 ", "0000-", "0001-"}
+		i int
+		s = make(Searchers, len(*as))
 	)
 	for id, val := range *as {
 		body := fmt.Sprintf("%s %v", id, val)
-		for _, trim := range trims {
-			body = strings.ReplaceAll(body, trim, "")
-		}
+		body = trimmer(body)
 		s[i] = Searcher{
 			ID:   id,
 			Body: body,
