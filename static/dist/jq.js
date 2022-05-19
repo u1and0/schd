@@ -38,5 +38,13 @@ $(document).ready(
       $("textarea#article").val(el["記事"])
       console.log(el["記事"])
     });
+    $("#insulance").change(function () {
+      if ($("#insulance").val() !== "契約済み"){
+        console.log("hey");
+        const t = $("#insulance").closest("tr")
+        console.log(t)
+        t.append("<td>hey</td>")
+      }
+    });
   })
-);
+)
