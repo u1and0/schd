@@ -16,7 +16,7 @@ type Searcher = {
 async function main() {
   searchers = await fetchPath(url + "/allocate/list");
   allocations = await fetchPath(url + "/allocates");
-  addCarListOption(allocations)
+  addCarListOption(allocations);
 }
 
 // fetchの返り値のPromiseを返す
@@ -41,14 +41,18 @@ export function fzfSearch(list: Searcher[], keyword: string): string[] {
   return ranking;
 }
 
-function addCarListOption(obj): void{
-  const select:HTMLElement|null = document.getElementById("car-list")
-  if ( select===null ) { return }
-  Object.values(obj).map((item)=>{
-    const option = document.createElement("option")
-    const s:string = item["クラスボディタイプ"]
-    option.text = s
-    option.value = s
-    select.appendChild(option)
+function addCarListOption(obj): void {
+  const select: HTMLElement | null = document.getElementById("car-list");
+  if (select === null) return;
+  const carList: Array<string> = [];
+  Object.values(obj).map((item: unknown) => {
+    carList.push(item["クラスボディタイプ"]);
+  });
+  // Remove duplicate & sort, then append HTML datalist
+  [...new Set(carList)].sort().map((item) => {
+    const option = document.createElement("option");
+    option.text = item;
+    option.value = item;
+    select.appendChild(option);
   });
 }

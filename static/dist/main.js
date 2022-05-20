@@ -29,24 +29,17 @@ export function fzfSearch(list, keyword) {
 }
 function addCarListOption(obj) {
     const select = document.getElementById("car-list");
-    if (select === null) {
+    if (select === null)
         return;
-    }
+    const carList = [];
     Object.values(obj).map((item) => {
+        carList.push(item["クラスボディタイプ"]);
+    });
+    // Remove duplicate & sort, then append HTML datalist
+    [...new Set(carList)].sort().map((item) => {
         const option = document.createElement("option");
-        const s = item["クラスボディタイプ"];
-        console.log(s);
-        option.text = s;
-        option.value = s;
+        option.text = item;
+        option.value = item;
         select.appendChild(option);
     });
-    // for (const item of Object.values(obj)){
-    //   console.log(item)
-    //   if ( item===null ) { break }
-    //   const i:string = item["クラスボディタイプ"]
-    //   console.log(i)
-    //   option.text = i
-    //   option.value = i
-    //   select.appendChild(option)
-    // }
 }
