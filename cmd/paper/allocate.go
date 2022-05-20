@@ -81,17 +81,18 @@ func CreateAllocate(c *gin.Context) {
 ☐混載便　☑宅配便`
 	}
 	f.SetCellValue(sheetName, "F5", s)
+	// t数 台車 機能 クラス・ボディータイプ
+	f.SetCellValue(sheetName, "F6", o.Car)
 	// 生産命令番号
 	f.SetCellValue(sheetName, "F7", o.Order)
 	// 輸送区間
 	from, _ := f.GetCellValue(sheetName, "F8")
-	to := "適当な宛先"
-	f.SetCellValue(sheetName, "F8", from+to)
+	f.SetCellValue(sheetName, "F8", from+o.To.Name)
 	// 送り先
-	a := strings.Join(ctrl.Config.AddressMap[to], "\n")
-	f.SetCellValue(sheetName, "F13", a)
-	// t数 台車 機能
-	f.SetCellValue(sheetName, "F6", o.Car)
+	// a := strings.Join(ctrl.Config.AddressMap[to], "\n")
+	f.SetCellValue(sheetName, "F13", o.To.Address)
+	// 物品名称
+	f.SetCellValue(sheetName, "F14", o.PackageName)
 	// 積込/到着作業月日/時刻
 	x := map[string]interface{}{
 		"F9":  o.Load.Date.Format(LAYOUT),

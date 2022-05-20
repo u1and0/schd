@@ -24,17 +24,18 @@ type (
 	Allocations map[ctrl.ID]Allocation
 	// Allocation 配車要求に必要な情報 htmlから入力
 	Allocation struct {
-		Date      time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
-		Section   string    `json:"部署" form:"section"`
-		Transport string    `json:"輸送便の別" form:"transport"`
-		Car       string    `json:"クラスボディタイプ" form:"car"`
-		Order     string    `json:"生産命令番号" form:"order"`
-		To        `json:"宛先情報" form:"to"`
-		Load      `json:"積込情報" form:"load"`
-		Arrive    `json:"到着情報" form:"arrive"`
-		Package   `json:"物品情報" form:"package"`
-		Insulance `json:"保険情報" form:"insulance"`
-		Article   string `json:"記事" form:"article"`
+		Date        time.Time `json:"要求年月日" form:"allocate-date" time_format:"2006/01/02"`
+		Section     string    `json:"部署" form:"section"`
+		Transport   string    `json:"輸送便の別" form:"transport"`
+		Car         string    `json:"クラスボディタイプ" form:"car"`
+		Order       string    `json:"生産命令番号" form:"order"`
+		To          `json:"宛先情報" form:"to"`
+		Load        `json:"積込情報" form:"load"`
+		Arrive      `json:"到着情報" form:"arrive"`
+		PackageName string `json:"物品名称" form:"package-name"`
+		Package     `json:"物品情報" form:"package"`
+		Insulance   `json:"保険情報" form:"insulance"`
+		Article     string `json:"記事" form:"article"`
 	}
 	// To : 宛先
 	To struct {
@@ -57,7 +58,6 @@ type (
 	}
 	// Package 荷姿・寸法・重量
 	Package struct {
-		Name     string   `json:"物品名称" form:"package-name"`
 		Style    []string `json:"荷姿" form:"style"`
 		Width    []int    `json:"幅" form:"width"`
 		Length   []int    `json:"長さ" form:"length"`
@@ -216,7 +216,7 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 		fmt.Printf("%v\n", err.Error())
 	}
 	a.To.Address, _ = f.GetCellValue(sheetName, "F13")
-	a.Package.Name, _ = f.GetCellValue(sheetName, "F14")
+	a.PackageName, _ = f.GetCellValue(sheetName, "F14")
 	a.Insulance.Need, _ = f.GetCellValue(sheetName, "F18")
 	s, _ = f.GetCellValue(sheetName, "F19")
 	if s != "" {

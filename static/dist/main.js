@@ -7,7 +7,8 @@ main();
 async function main() {
     searchers = await fetchPath(url + "/allocate/list");
     allocations = await fetchPath(url + "/allocates");
-    addCarListOption(allocations);
+    addListOption(allocations, "car-list", "クラスボディタイプ");
+    addListOption(allocations, "package-list", "物品名称");
 }
 // fetchの返り値のPromiseを返す
 async function fetchPath(url) {
@@ -27,13 +28,13 @@ export function fzfSearch(list, keyword) {
     const ranking = entries.map((entry) => entry.item);
     return ranking;
 }
-function addCarListOption(obj) {
-    const select = document.getElementById("car-list");
+function addListOption(obj, listid, property) {
+    const select = document.getElementById(listid);
     if (select === null)
         return;
     const carList = [];
     Object.values(obj).map((item) => {
-        carList.push(item["クラスボディタイプ"]);
+        carList.push(item[property]);
     });
     // Remove duplicate & sort, then append HTML datalist
     [...new Set(carList)].sort().map((item) => {

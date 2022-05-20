@@ -13,7 +13,7 @@
 
   <div>
     <label for="search-form">配車要求検索</label>
-    <input name="search-form" id="search-form" type="text" placeholder="検索キーワードを入力" size="20" class="hover">
+    <input name="search-form" id="search-form" type="search" placeholder="検索キーワードを入力" size="20" class="hover">
   </div>
   <div>
     <select name="search-result" id="search-result" class="select-box" size="10"></select>
@@ -109,7 +109,9 @@
       </tr>
       <tr>
         <td align="right">物品名称</td>
-        <td> <textarea rows="5" cols="40" id="package-name" name="package-name" placeholder="物品情報"></textarea> </td>
+        <td> <input type="text" id="package-name" name="package-name" value="" list="package-list" size="20" placeholder="制御器 X-YZ-001"> </td>
+        <datalist id="package-list"></datalist>
+        <!-- <td> <textarea rows="5" cols="40" id="package-name" name="package-name" placeholder="物品情報"></textarea> </td> -->
       </tr>
       <tr>
         <td align="right">保　険</td>
