@@ -35,6 +35,7 @@ type (
 		Package   `json:"物品情報" form:"package"`
 		Insulance int    `json:"保険額" form:"insulance"`
 		Article   string `json:"記事" form:"article"`
+		Check     `json:"注意事項"`
 	}
 	// Transport : 輸送情報
 	Transport struct {
@@ -71,6 +72,16 @@ type (
 		Mass     []int    `json:"重量" form:"mass"`
 		Method   []string `json:"荷下ろし方法" form:"method"`
 		Quantity []int    `json:"数量" form:"quantity"`
+	}
+	// Check : 仕立便及び常用便を配車要求する場合の注意事項
+	Check struct {
+		Piling  bool   `json:"平積み" form:"piling"`
+		Fixing  bool   `json:"固定" form:"fixing"`
+		Confirm bool   `json:"確認" form:"confirm"`
+		Bill    bool   `json:"納品書" form:"bill"`
+		Ride    bool   `json:"同乗" form:"ride"`
+		Debt    bool   `json:"借用書" form:"debt"`
+		Misc    string `json:"その他" form:"misc"`
 	}
 	// Y 要求票番号と保存されているディレクトリ
 	Y struct {
