@@ -33,7 +33,7 @@ type (
 		Load      `json:"積込情報" form:"load"`
 		Arrive    `json:"到着情報" form:"arrive"`
 		Package   `json:"物品情報" form:"package"`
-		Insulance `json:"保険情報" form:"insulance"`
+		Insulance int    `json:"保険額" form:"insulance"`
 		Article   string `json:"記事" form:"article"`
 	}
 	// To : 宛先
@@ -65,11 +65,6 @@ type (
 		Mass     []int    `json:"重量" form:"mass"`
 		Method   []string `json:"荷下ろし方法" form:"method"`
 		Quantity []int    `json:"数量" form:"quantity"`
-	}
-	// Insulance : 保険要否
-	Insulance struct {
-		Need  string `json:"保険要否" form:"insulance-bool"`
-		Price int    `json:"保険額" form:"insulance-price"`
 	}
 	// Y 要求票番号と保存されているディレクトリ
 	Y struct {
@@ -217,10 +212,9 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 	}
 	a.To.Address, _ = f.GetCellValue(sheetName, "F13")
 	a.Package.Name, _ = f.GetCellValue(sheetName, "F14")
-	a.Insulance.Need, _ = f.GetCellValue(sheetName, "F18")
-	s, _ = f.GetCellValue(sheetName, "F19")
-	if s != "" {
-		a.Insulance.Price, err = strconv.Atoi(s)
+	// a.Insulance.Need, _ = f.GetCellValue(sheetName, "F18")
+	if s, _ = f.GetCellValue(sheetName, "F19"); s != "" {
+		a.Insulance, err = strconv.Atoi(s)
 		if err != nil {
 			fmt.Printf("%v\n", err.Error())
 		}

@@ -9,3 +9,7 @@ README.html
 /release/
 /db/
 /static/node_modules/
+!/static/dist
+!/static/src
+!/static/*.json
+!/static/*.css

@@ -96,14 +96,16 @@ func CreateAllocate(c *gin.Context) {
 		"F12": fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute),
 		// 送り先
 		"F13": o.To.Address,
+	}
+	if o.Insulance > 0 {
+		cells["F18"] = `☑要　☐不要`    // 保険
+		cells["F19"] = o.Insulance // 保険額
+	} else {
 		// 保険要否
-		"F18": `☐要　☑不要`, // 保険
-		"F19": "",       // 保険額
+		cells["F18"] = `☐要　☑不要` // 保険
+		cells["F19"] = ""       // 保険額
 	}
-	if o.Insulance.Need != "契約済み" {
-		cells["F18"] = `☐要　☑不要`          // 保険
-		cells["F19"] = o.Insulance.Price // 保険額
-	}
+	fmt.Printf("%#v\n", o)
 	if err := cells.SetCellValue(f, sheetName); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
@@ -112,7 +114,6 @@ func CreateAllocate(c *gin.Context) {
 	l := len(o.Style)
 	if l < MAXLINE { // 3行までなら配車要求票に記載
 		p := o.Package.Compile()
-		fmt.Println(p)
 		x := Cells{
 			"F15": o.Package.ToString(), // 重量・長さなど
 			"F16": p.ToString(),         // 荷姿(個数)

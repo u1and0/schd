@@ -25,7 +25,6 @@ type (
 		WrapDate  time.Time `json:"包装年月日" form:"wrap-date" time_format:"2006/01/02"`
 		ToAddress string    `json:"荷受人" form:"to-address"`
 	}
-	Excel excelize.File
 	// Cells : Excel sheet value
 	Cells map[string]interface{}
 )
