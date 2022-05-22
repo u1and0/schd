@@ -38,7 +38,7 @@ type (
 	}
 	// To : 宛先
 	To struct {
-		Name    string `json:"送り元宛先" form:"to-name"`
+		Name    string `json:"輸送区間" form:"to-name"`
 		Address string `json:"宛先住所" form:"to-address"`
 	}
 	// Load : 積み込み
@@ -212,7 +212,6 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 	}
 	a.To.Address, _ = f.GetCellValue(sheetName, "F13")
 	a.Package.Name, _ = f.GetCellValue(sheetName, "F14")
-	// a.Insulance.Need, _ = f.GetCellValue(sheetName, "F18")
 	if s, _ = f.GetCellValue(sheetName, "F19"); s != "" {
 		a.Insulance, err = strconv.Atoi(s)
 		if err != nil {
