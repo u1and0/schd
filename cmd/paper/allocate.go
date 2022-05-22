@@ -60,10 +60,15 @@ func CreateAllocate(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
 		return
 	}
-	f.SetCellValue(sheetName, "F2", reqNo.Base)
-	// 要求年月日
-	f.SetCellValue(sheetName, "F3", time.Now().Format(LAYOUT))
-	f.SetCellValue(sheetName, "F4", o.Section)
+	cells := Cells{
+		"F2": reqNo.Base,
+		"F3": time.Now().Format(LAYOUT), // // 要求年月日
+		"F4": o.Section,
+	}
+	if err := cells.SetCellValue(f, sheetName); err != nil {
+		fmt.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
+	}
 	// 輸送便の別
 	s := o.Transport
 	switch s {
@@ -166,7 +171,26 @@ func CreateAllocate(c *gin.Context) {
 		}
 	}
 
-	// f.SaveAs(reqNo.Dir + reqNo.Base + ".xlsx")
+	// Refresh 付表１　配車要求票 and 付表２　輸送指示書
+	cells = Cells{
+		"T1": "" /*要求番号*/, "T2": "" /*要求年月日*/, "F4": "", /*輸送便の別*/
+		"F5": "" /*クラス・ボディタイプ*/, "L4": "" /*要求元*/, "F6": "", /*生産命令番号*/
+		"F7": "" /*輸送区間*/, "F8": "" /*積込作業日*/, "F9": "", /*到着指定日*/
+		"L8": "" /*積込作業時*/, "L9": "" /*到着指定時*/, "F10": "", /*送り先*/
+		"F11": "" /*物品名称*/, "F12": "" /*重量長さなど*/, "F13": "", /*荷姿*/
+		"F15": "" /*保険*/, "K15": "" /*保険額*/, "O14": "" /*総個数*/, "Q8": "", /*記事*/
+	}
+	err = cells.SetCellValue(f, "付表１　配車要求票")
+	cells = Cells{
+		"T1": "" /*要求番号*/, "T2": "" /*要求年月日*/, "Q3": "", /*要求元*/
+		"F3": "" /*輸送便の別*/, "G4": "" /*クラス・ボディタイプ*/, "F5": "", /*生産命令番号*/
+		"F6": "" /*輸送区間*/, "F7": "", /*積込作業日*/
+		"F8": "" /*到着指定日*/, "L7": "", /*積込指定時*/
+		"L8": "" /*到着指定時*/, "F9": "", /*送り先*/
+		"F10": "" /*重量長さなど*/, "F11": "" /*荷姿*/, "O12": "" /*総個数*/, "Q7": "", /*記事*/
+	}
+	err = cells.SetCellValue(f, "付表２　輸送指示書")
+	f.SaveAs(fmt.Sprintf("%s/%s_%s.xlsx", ctrl.Config.AllocatePath, reqNo.Base, o.Package.Name))
 	downloadFile(sheetName+".xlsx", f, c)
 }
 

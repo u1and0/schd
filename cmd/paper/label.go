@@ -25,11 +25,20 @@ type (
 		WrapDate  time.Time `json:"包装年月日" form:"wrap-date" time_format:"2006/01/02"`
 		ToAddress string    `json:"荷受人" form:"to-address"`
 	}
-	Cell struct {
-		要求番号  string
-		要求年月日 time.Time
-	}
+	Excel excelize.File
+	// Cells : Excel sheet value
+	Cells map[string]interface{}
 )
+
+// SetCellValue : Set all axis-value pairs to Excel sheet
+func (c *Cells) SetCellValue(f *excelize.File, sheetName string) error {
+	for a, v := range *(c) {
+		if err := f.SetCellValue(sheetName, a, v); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 // CreateForm : xlsxに転記するフォームの表示
 func CreateForm(c *gin.Context) {
