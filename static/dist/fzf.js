@@ -18,7 +18,9 @@ $(document).ready(
       const el = allocations[id]
       console.log(el);
       $("#section").val(el["部署"])
-      $("#transport").val(el["輸送便の別"])
+      $("#transport").val(el["輸送情報"]["輸送便の別"])
+      $("#transport-no").val(el["輸送情報"]["伝票番号"])
+      $("#transport-fee").val(el["輸送情報"]["運賃"])
       $("#car").val(el["クラスボディタイプ"])
       $("#to-name").val(el["宛先情報"]["輸送区間"])
       $("textarea#to-address").val(el["宛先情報"]["宛先住所"])

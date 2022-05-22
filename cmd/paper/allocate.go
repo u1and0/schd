@@ -62,11 +62,11 @@ func CreateAllocate(c *gin.Context) {
 		return
 	}
 	cells := Cells{
-		"F2": reqNo.Base,
+		"F2": strings.TrimSuffix(reqNo.Base, ".xlsx"),
 		"F3": time.Now().Format(LAYOUT), // 要求年月日
 		"F4": o.Section,
 		"F5": func() string { // 輸送便の別
-			s := o.Transport
+			s := o.Transport.Name
 			switch s {
 			case "仕立便":
 				s = `☑仕立便　☐常用便
@@ -83,12 +83,9 @@ func CreateAllocate(c *gin.Context) {
 			}
 			return s
 		}(),
-		"F6": o.Car,   // t数 台車 機能 クラス・ボディータイプ
-		"F7": o.Order, // 生産命令番号
-		"F8": func() string { // 輸送区間
-			from, _ := f.GetCellValue(sheetName, "F8")
-			return from + o.To.Name
-		}(),
+		"F6": o.Car,     // t数 台車 機能 クラス・ボディータイプ
+		"F7": o.Order,   // 生産命令番号
+		"F8": o.To.Name, // 輸送区間
 		// 積込/到着作業月日/時刻
 		"F9":  o.Load.Date.Format(LAYOUT),
 		"F10": fmt.Sprintf("%d時%d分", o.Load.Hour, o.Load.Minute),
@@ -96,6 +93,10 @@ func CreateAllocate(c *gin.Context) {
 		"F12": fmt.Sprintf("%d時%d分", o.Arrive.Hour, o.Arrive.Minute),
 		// 送り先
 		"F13": o.To.Address,
+		"F14": o.Package.Name,
+		"F20": o.Article,
+		"F21": o.Transport.No,
+		"F22": o.Transport.Fee,
 	}
 	if o.Insulance > 0 {
 		cells["F18"] = `☑要　☐不要`    // 保険
@@ -159,6 +160,7 @@ func CreateAllocate(c *gin.Context) {
 		"L8": "" /*積込作業時*/, "L9": "" /*到着指定時*/, "F10": "", /*送り先*/
 		"F11": "" /*物品名称*/, "F12": "" /*重量長さなど*/, "F13": "", /*荷姿*/
 		"F15": "" /*保険*/, "K15": "" /*保険額*/, "O14": "" /*総個数*/, "Q8": "", /*記事*/
+		"T12": "" /*伝票番号*/, "K13": "", /*運賃*/
 	}
 	cells.SetCellValue(f, "付表１　配車要求票")
 	cells = Cells{
@@ -171,7 +173,7 @@ func CreateAllocate(c *gin.Context) {
 	}
 	cells.SetCellValue(f, "付表２　輸送指示書")
 	f.SaveAs(fmt.Sprintf("%s/%s_%s.xlsx", ctrl.Config.AllocatePath, reqNo.Base, o.Package.Name))
-	downloadFile(sheetName+".xlsx", f, c)
+	downloadFile(reqNo.Base, f, c)
 }
 
 func getRequestNo(sec string) (y api.Y, err error) {

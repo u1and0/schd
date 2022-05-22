@@ -58,7 +58,7 @@
       </tr>
       <tr>
         <td align="right"> 車　種 </td>
-        <td> <input type="text" id="car" name="car" value="" list="car-list" size="20" placeholder="4t平車(ｴｱｻｽ)"> </td>
+        <td> <input type="text" id="car" name="car" value="" list="car-list" size="20" placeholder="4t平車(ｴｱｻｽ)" title="仕立便の場合&#13;&#10; ⇒クラス(積載量)及びボディータイプ(形状・仕様)を入力(入力例 : 4t平車)"> </td>
         <datalist id="car-list"></datalist>
         </td>
       </tr>
@@ -131,12 +131,19 @@
       <tr>
         <td align="right">記　事</td>
         <td>
-          <textarea rows="8" cols="40" id="article" name="article" placeholder="記事">
+          <textarea rows="8" cols="40" id="article" name="article" placeholder="記事" title="注１）仕立便:輸送会社を指定する場合は会社名を入力&#13;&#10;注２）混載便:輸送会社を指定する場合は会社名を入力&#13;&#10;注３）宅配便:宅配便の会社名を入力&#13;&#10;1. 緩衝材は輸送業者負担とし必要数を入力&#13;&#10;2. 要求事項など，特記すべき事項があれば入力">
             運送会社名、運転手名車のナンバー、運転者携帯電話が分かりましたら品証部まで連絡をお願いします。
           </textarea>
         </td>
       </tr>
       <tr>
+        <td align="right">送り状番号<br>（伝票番号）</td>
+        <td> <input type="text" id="transport-no" name="transport-no" value="" size="20" placeholder="1234-5678-901"> </td>
+      </tr>
+      <tr>
+        <td align="right">運　賃</td>
+        <td> <input type="number" id="transport-fee" name="transport-fee" value="0" title="輸送便の別で宅配便をチェック(✓)した場合，要求元(課)で運賃が&#13;&#10;わかっていれば，その額を入力&#13;&#10;金額を入力　記入例：1,200" placeholder="0" min="0"> </td>
+      </tr>
       </tbody>
     </table>
 
