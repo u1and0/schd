@@ -28,18 +28,18 @@ $(document).ready(
       $("textarea#article").val(el["記事"])
       $("textarea#misc").val(el["注意事項"]["その他"])
 
-      $("#piling").val(el["注意事項"]["平積み"])
-      checkToggle("#piling")
-      $("#fixing").val(el["注意事項"]["固定"])
-      checkToggle("#fixing")
-      $("#confirm").val(el["注意事項"]["確認"])
-      checkToggle("#confirm")
-      $("#bill").val(el["注意事項"]["納品書"])
-      checkToggle("#bill")
-      $("#debt").val(el["注意事項"]["借用書"])
-      checkToggle("#debt")
-      $("#ride").val(el["注意事項"]["同乗"])
-      checkToggle("#ride")
+      const checkboxIDProp = {
+        "#piling": "平積み",
+        "#fixing": "固定",
+        "#confirm": "確認",
+        "#bill": "納品書",
+        "#debt": "借用書",
+        "#ride": "同乗",
+      }
+      Object.entries(checkboxIDProp).forEach(([key, val]) => {
+        $(key).val(el["注意事項"][val]);
+        checkToggle(key);
+      });
     });
   })
 )
