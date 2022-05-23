@@ -152,31 +152,31 @@
       <p>仕立便及び常用便を配車要求する場合，以下を必ず確認してください。</p>
     </div>
 
-    <ul>
-      <li>
+    <ul class="list-group">
+      <label class="list-group-item">
         <input type="checkbox" id="piling" name="piling" value="piling" checked>
-        <label for="piling">平積みする。</label>
-      </li>
-      <li>
+        平積みする。
+      </label>
+      <label class="list-group-item">
         <input type="checkbox" id="fixing" name="fixing" value="fixing" checked>
-        <label for="fixing">積み荷は緩衝材や毛布などで保護し，ベルト荷締機等を用いて荷台に固定する。　</label>
-      </li>
-      <li>
+        積み荷は緩衝材や毛布などで保護し，ベルト荷締機等を用いて荷台に固定する。
+      </label>
+      <label class="list-group-item">
         <input type="checkbox" id="confirm" name="confirm" value="confirm" checked>
-        <label for="confirm">積込み完了時に，要求元担当者が積荷の状態を確認する。確認前には，輸送を開始しない。</label>
-      </li>
-      <li>
+        積込み完了時に，要求元担当者が積荷の状態を確認する。確認前には，輸送を開始しない。
+      </label>
+      <label class="list-group-item">
         <input type="checkbox" id="bill" name="bill" value="bill">
-        <label for="bill">納品書を委託された時は送り先より受領書を受け取る。</label>
-      </li>
-      <li>
+        納品書を委託された時は送り先より受領書を受け取る。
+      </label>
+      <label class="list-group-item">
         <input type="checkbox" id="debt" name="debt" value="debt">
-        <label for="debt">借用書を委託された時は送り先に確実に渡す。</label>
-      </li>
-      <li>
+        借用書を委託された時は送り先に確実に渡す。
+      </label>
+      <label class="list-group-item">
         <input type="checkbox" id="ride" name="ride" value="ride">
-        <label for="ride">社員が同乗します。</label>
-      </li>
+        社員が同乗します。
+      </label>
     </ul>
     <textarea rows="8" cols="40" id="misc" name="misc" placeholder="その他"></textarea>
 
@@ -185,14 +185,14 @@
       <p> 荷姿情報を登録してください。外装ラベルに反映されます。</p>
     </div>
 
-    <table id="load-table">
+    <table id="load-table" class="table table-hover">
     <thead>
       <tr>
         <th>荷姿</th>
-        <th>幅</th>
-        <th>長さ</th>
-        <th>高さ</th>
-        <th>重量</th>
+        <th>幅[mm]</th>
+        <th>長さ[mm]</th>
+        <th>高さ[mm]</th>
+        <th>重量[kg]</th>
         <th>荷下ろし方法</th>
         <th>数量</th>
       </tr>
