@@ -13,3 +13,4 @@ README.html
 !/static/src
 !/static/*.json
 !/static/*.css
+!Makefile
