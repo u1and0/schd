@@ -39,10 +39,15 @@ func CreateAllocateForm(c *gin.Context) {
 
 // CreateAllocate : xlsx に転記する
 func CreateAllocate(c *gin.Context) {
+	// フォームから読み込み
 	o := new(api.Allocation)
 	if err := c.Bind(&o); err != nil {
 		msg := err.Error()
-		c.JSON(http.StatusBadRequest, gin.H{"msg": msg, "error": err})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg":        msg,
+			"error":      err,
+			"Allocation": o,
+		})
 		return
 	}
 	fmt.Printf("Allocation: %#v\n", o)
@@ -97,6 +102,12 @@ func CreateAllocate(c *gin.Context) {
 		"F20": o.Article,
 		"F21": o.Transport.No,
 		"F22": o.Transport.Fee,
+		"G30": checkCircle(o.Check.Piling),
+		"G31": checkCircle(o.Check.Fixing),
+		"G32": checkCircle(o.Check.Confirm),
+		"G33": checkCircle(o.Check.Bill),
+		"G34": checkCircle(o.Check.Debt),
+		"G35": checkCircle(o.Check.Ride),
 	}
 	if o.Insulance > 0 {
 		cells["F18"] = `☑要　☐不要`    // 保険
@@ -207,4 +218,11 @@ func getRequestNo(sec string) (y api.Y, err error) {
 	}
 	y.Base = prefix + strconv.Itoa(n+1) + surfix
 	return
+}
+
+func checkCircle(b bool) string {
+	if b {
+		return "〇"
+	}
+	return ""
 }
