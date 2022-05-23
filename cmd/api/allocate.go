@@ -243,6 +243,25 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 			fmt.Printf("%v\n", err.Error())
 		}
 	}
+	if s, _ := f.GetCellValue(sheetName, "G30"); s == "〇" {
+		a.Check.Piling = true
+	}
+	if s, _ := f.GetCellValue(sheetName, "G31"); s == "〇" {
+		a.Check.Fixing = true
+	}
+	if s, _ := f.GetCellValue(sheetName, "G32"); s == "〇" {
+		a.Check.Confirm = true
+	}
+	if s, _ := f.GetCellValue(sheetName, "G33"); s == "〇" {
+		a.Check.Bill = true
+	}
+	if s, _ := f.GetCellValue(sheetName, "G34"); s == "〇" {
+		a.Check.Debt = true
+	}
+	if s, _ := f.GetCellValue(sheetName, "G35"); s == "〇" {
+		a.Check.Ride = true
+	}
+	a.Check.Misc, _ = f.GetCellValue(sheetName, "B37")
 }
 
 func trimmer(s string) string {

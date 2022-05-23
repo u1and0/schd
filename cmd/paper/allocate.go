@@ -101,13 +101,19 @@ func CreateAllocate(c *gin.Context) {
 		"F14": o.Package.Name,
 		"F20": o.Article,
 		"F21": o.Transport.No,
-		"F22": o.Transport.Fee,
 		"G30": checkCircle(o.Check.Piling),
 		"G31": checkCircle(o.Check.Fixing),
 		"G32": checkCircle(o.Check.Confirm),
 		"G33": checkCircle(o.Check.Bill),
 		"G34": checkCircle(o.Check.Debt),
 		"G35": checkCircle(o.Check.Ride),
+		"G36": checkCircle(o.Check.Misc != ""),
+		"B37": o.Check.Misc,
+	}
+	if o.Transport.Fee > 0 {
+		cells["F22"] = o.Transport.Fee
+	} else {
+		cells["F22"] = ""
 	}
 	if o.Insulance > 0 {
 		cells["F18"] = `☑要　☐不要`    // 保険

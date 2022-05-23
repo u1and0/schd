@@ -17,6 +17,17 @@ async function main() {
   searchers = await fetchPath(url + "/allocate/list");
   allocations = await fetchPath(url + "/allocates");
   addListOption(allocations, "car-list", "クラスボディタイプ");
+  const checkBoxIDs: Array<string> = [
+    "piling",
+    "fixing",
+    "confirm",
+    "bill",
+    "debt",
+    "ride",
+  ];
+  checkBoxIDs.map((id: string) => {
+    checkboxChengeValue(id);
+  });
 }
 
 // fetchの返り値のPromiseを返す
@@ -54,5 +65,16 @@ function addListOption(obj, listid: string, property: string): void {
     option.text = item;
     option.value = item;
     select.appendChild(option);
+  });
+}
+
+function checkboxChengeValue(id: string) {
+  const checkboxes: HTMLElement | null = document.getElementById(id);
+  checkboxes.addEventListener("change", () => {
+    if (checkboxes.checked) {
+      checkboxes.value = "true";
+    } else {
+      checkboxes.value = "false";
+    }
   });
 }
