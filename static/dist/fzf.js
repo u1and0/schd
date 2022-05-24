@@ -18,6 +18,7 @@ $(document).ready(
       const el = allocations[id]
       console.log(el);
       $("#section").val(el["部署"])
+      $("#insulance").val(el["保険額"])
       $("#transport").val(el["輸送情報"]["輸送便の別"])
       $("#transport-no").val(el["輸送情報"]["伝票番号"])
       $("#transport-fee").val(el["輸送情報"]["運賃"])

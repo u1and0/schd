@@ -115,18 +115,9 @@
         <td align="right">物品名称</td>
         <td> <textarea rows="5" cols="40" id="package-name" name="package-name" placeholder="物品情報"></textarea> </td>
       </tr>
-      <!-- <tr> -->
-      <!--   <td align="right">保　険</td> -->
-      <!--   <td> -->
-      <!--     <select id="insulance" name="insulance-need"> -->
-      <!--       <option value="契約済み">契約済み</option> -->
-      <!--       <option value="契約が必要">契約が必要</option> -->
-      <!--     </select> -->
-      <!--   </td> -->
-      <!-- </tr> -->
       <tr>
         <td align="right">保険額</td>
-        <td> <input type="number" name="insulance" value="0" title="保険契約が不要な場合は、保険額を0にしてください" placeholder="保険契約が不要な場合は、保険額を0にしてください" min="0"> </td>
+        <td> <input type="number" id="insulance" name="insulance" value="0" title="保険契約が不要な場合は、保険額を0にしてください" placeholder="保険契約が不要な場合は、保険額を0にしてください" min="0"> </td>
       </tr>
       <tr>
         <td align="right">記　事</td>
@@ -234,7 +225,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/i18n/jquery.ui.datepicker-ja.min.js"></script>
   <script type="module" src="/static/dist/main.js"></script>
   <script type="module" src="/static/dist/fzf.js"></script>
-  <script type="text/javascript" src="/static/dist/jq.js"></script>
+  <script type="text/javascript" src="/static/dist/row.js"></script>
   <script>
     $(function() {
       $(".datepicker").datepicker();
