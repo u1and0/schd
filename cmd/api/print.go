@@ -18,7 +18,7 @@ const (
 )
 
 var (
-	printHistories = []PrintOrder{}
+	printHistories = make([]PrintOrder, 2000)
 )
 
 type (
