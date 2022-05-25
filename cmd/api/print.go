@@ -1,0 +1,82 @@
+package api
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/u1and0/schd/cmd/ctrl"
+	"github.com/xuri/excelize/v2"
+)
+
+const (
+	LAYOUT = "2006年1月2日"
+)
+
+var (
+	printHistories = make([]PrintOrder, 2000)
+)
+
+type (
+	PrintOrder struct {
+		Date      time.Time `json:"要求年月日" form:"date" time_format:"2006年1月2日"`
+		Section   string    `json:"要求元" form:"section"`
+		OrderNo   string    `json:"生産命令番号" form:"order-no"`
+		OrderName string    `json:"清算命令名称" form:"order-name"`
+		Drawing
+		Require []bool `json:"必要箇所" form:"require"`
+	}
+	Drawing struct {
+		No       []string    `json:"図番" form:"draw-no"`
+		Name     []string    `json:"図面名称" form:"draw-name"`
+		Quantity []int       `json:"枚数" form:"quantity"`
+		Deadline []time.Time `json:"要求期限" form:"deadline" time_format:"2006年1月2日"`
+		Misc     []string    `json:"備考" form:"misc"`
+	}
+)
+
+func init() {
+	var filelist []string
+	if err := ctrl.UnmarshalJSONfile(&filelist, "db/printlist.json"); err != nil {
+		fmt.Println(err)
+	}
+
+	go func() {
+		for _, fullpath := range filelist {
+			p := new(PrintOrder)
+			f, err := excelize.OpenFile(fullpath)
+			defer f.Close()
+			if err == nil {
+				p.Unmarshal(f)
+				printHistories = append(printHistories, *p)
+			}
+		}
+	}()
+}
+
+func (p *PrintOrder) Unmarshal(f *excelize.File) {
+	var (
+		err       error
+		sheetName = "入力画面"
+	)
+	t, _ := f.GetCellValue(sheetName, "C5")
+	p.Date, err = time.Parse(LAYOUT, t)
+	if err != nil {
+		fmt.Printf("%v\n", err.Error())
+	}
+	p.Section, _ = f.GetCellValue(sheetName, "C6")
+	p.OrderNo, _ = f.GetCellValue(sheetName, "C7")
+	p.OrderName, _ = f.GetCellValue(sheetName, "C8")
+	for i := 11; i < 19; i++ {
+		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", i))
+		p.Drawing.No = append(p.Drawing.No, s)
+		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
+		p.Drawing.Name = append(p.Drawing.Name, s)
+	}
+}
+
+// FetchPrintHistories : returns printHistories array by parsing Excel files
+func FetchPrintHistories(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, printHistories)
+}

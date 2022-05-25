@@ -54,6 +54,7 @@ func main() {
 				a.GET("/search", api.SearchAllocate)
 				a.GET("/list", api.FetchAllocateList)
 			}
+			d.GET("/print", api.FetchPrintHistories)
 		}
 
 		v := v1.Group("/view")
@@ -69,15 +70,20 @@ func main() {
 
 		p := v1.Group("paper")
 		{
-			l := p.Group("label")
+			l := p.Group("/label")
 			{
 				l.GET("/form", paper.CreateForm)
 				l.POST("/post", paper.Create)
 			}
-			a := p.Group("allocate")
+			a := p.Group("/allocate")
 			{
 				a.GET("/form", paper.CreateAllocateForm)
 				a.POST("/post", paper.CreateAllocate)
+			}
+			f := p.Group("/print")
+			{
+				f.GET("/form", paper.CreatePrintForm)
+				f.POST("/post", paper.CreatePrint)
 			}
 		}
 	}
