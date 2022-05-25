@@ -2,7 +2,9 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,11 +13,12 @@ import (
 )
 
 const (
+	// LAYOUT Excel から読み込む日付フォーマット
 	LAYOUT = "2006年1月2日"
 )
 
 var (
-	printHistories = make([]PrintOrder, 2000)
+	printHistories = []PrintOrder{}
 )
 
 type (
@@ -39,27 +42,48 @@ type (
 func init() {
 	var filelist []string
 	if err := ctrl.UnmarshalJSONfile(&filelist, "db/printlist.json"); err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
-
 	go func() {
 		for _, fullpath := range filelist {
-			p := new(PrintOrder)
-			f, err := excelize.OpenFile(fullpath)
-			defer f.Close()
-			if err == nil {
-				p.Unmarshal(f)
-				printHistories = append(printHistories, *p)
+			// .xlsxファイルのみ対象
+			// .xlsファイルが混じるとpanic
+			if !strings.HasSuffix(fullpath, `.xlsx`) {
+				continue
 			}
+			// ~$ファイルが混じるとpanic
+			if strings.Contains(fullpath, `$`) {
+				continue
+			}
+			p, err := NewPrintOrder(fullpath)
+			if err != nil {
+				fmt.Printf("%s: %v", fullpath, err)
+				continue
+			}
+			fmt.Printf("%s: %#v\n", fullpath, p)
+			printHistories = append(printHistories, *p)
 		}
 	}()
 }
 
-func (p *PrintOrder) Unmarshal(f *excelize.File) {
-	var (
-		err       error
-		sheetName = "入力画面"
-	)
+func NewPrintOrder(fullpath string) (*PrintOrder, error) {
+	sheetName := "入力画面"
+	p := new(PrintOrder)
+	f, err := excelize.OpenFile(fullpath)
+	if err != nil {
+		return p, err
+	}
+	defer f.Close()
+	if f.GetSheetIndex(sheetName) == -1 { //sheetNameがない
+		err := fmt.Errorf("error: sheet %v not exist\n", sheetName)
+		return p, err
+	}
+	p.Unmarshal(f, sheetName)
+	return p, err
+}
+
+func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
+	var err error
 	t, _ := f.GetCellValue(sheetName, "C5")
 	p.Date, err = time.Parse(LAYOUT, t)
 	if err != nil {
