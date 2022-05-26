@@ -3,10 +3,16 @@ const root = new URL(window.location.href);
 export const url = root.origin + "/api/v1/data";
 export let searchers;
 export let allocations;
+export let printHistoriesList;
+export let printHistories;
+// allocations, printHistoriesが使われないページでも
+// ロードされてしまうので、モジュール分割したい
 main();
 async function main() {
     searchers = await fetchPath(url + "/allocate/list");
     allocations = await fetchPath(url + "/allocates");
+    printHistoriesList = await fetchPath(url + "/print/list");
+    printHistories = await fetchPath(url + "/print");
     addListOption(allocations, "car-list", "クラスボディタイプ");
     const checkBoxIDs = [
         "piling",
@@ -21,7 +27,7 @@ async function main() {
     });
 }
 // fetchの返り値のPromiseを返す
-async function fetchPath(url) {
+export async function fetchPath(url) {
     return await fetch(url)
         .then((response) => {
         return response.json();
@@ -34,6 +40,12 @@ export function fzfSearch(list, keyword) {
     const fzf = new Fzf(list, {
         selector: (item) => item.body,
     });
+    const entries = fzf.find(keyword);
+    const ranking = entries.map((entry) => entry.item);
+    return ranking;
+}
+export function fzfSearchList(list, keyword) {
+    const fzf = new Fzf(list);
     const entries = fzf.find(keyword);
     const ranking = entries.map((entry) => entry.item);
     return ranking;
