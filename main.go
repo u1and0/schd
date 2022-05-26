@@ -54,7 +54,11 @@ func main() {
 				a.GET("/search", api.SearchAllocate)
 				a.GET("/list", api.FetchAllocateList)
 			}
-			d.GET("/print", api.FetchPrintHistories)
+			p := d.Group("/print")
+			{
+				p.GET("/", api.FetchPrintHistories)
+				p.GET("/list", api.FetchPrintList)
+			}
 		}
 
 		v := v1.Group("/view")

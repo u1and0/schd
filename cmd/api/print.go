@@ -18,15 +18,16 @@ const (
 )
 
 var (
-	printHistories = make([]PrintOrder, 2000)
+	printHistories = PrintHistories{}
 )
 
 type (
-	PrintOrder struct {
+	PrintHistories []PrintOrder
+	PrintOrder     struct {
 		Date      time.Time `json:"要求年月日" form:"date" time_format:"2006年1月2日"`
 		Section   string    `json:"要求元" form:"section"`
 		OrderNo   string    `json:"生産命令番号" form:"order-no"`
-		OrderName string    `json:"清算命令名称" form:"order-name"`
+		OrderName string    `json:"生産命令名称" form:"order-name"`
 		Drawing
 		Require []bool `json:"必要箇所" form:"require"`
 	}
@@ -100,7 +101,22 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 	}
 }
 
-// FetchPrintHistories : returns printHistories array by parsing Excel files
+// FetchPrintHistories : returns printHistories object by parsing Excel files
 func FetchPrintHistories(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, printHistories)
+}
+
+// FetchPrintList : returns printHistories array by parsing Excel files
+func FetchPrintList(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, printHistories.Concat())
+}
+
+// Concat : convert search struct
+func (p *PrintHistories) Concat() []string {
+	s := make([]string, len(*p))
+	for i, val := range *p {
+		body := fmt.Sprintf("%v", val)
+		s[i] = trimmer(body)
+	}
+	return s
 }

@@ -2,17 +2,22 @@ package paper
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/u1and0/schd/cmd/ctrl"
 )
 
-// CreatePrint: xlsxに転記する
-func CreatePrint(c *gin.Context) {
-	c.HTML(http.StatusOK, "copy_create.tmpl", gin.H{})
+// CreatePrintForm : xlsxに転記する
+func CreatePrintForm(c *gin.Context) {
+	c.HTML(http.StatusOK, "print_create.tmpl", gin.H{
+		"today":   time.Now().Format("2006/01/02"),
+		"section": ctrl.Config.Section,
+	})
 }
 
-// CreatePrintForm : xlsxに転記するフォームの表示
-func CreatePrintForm(c *gin.Context) {
+// CreatePrint : xlsxに転記するフォームの表示
+func CreatePrint(c *gin.Context) {
 	// // フォームから読み込み
 	// o := new(api.PrintOrder)
 	// if err := c.Bind(&o); err != nil {
