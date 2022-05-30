@@ -1,11 +1,20 @@
 import { fzfSearch, type Searcher } from "./fzf.js"
+import { fetchPath, addListOption, checkboxChengeValue, checkToggle } from "./element.js"
 
 declare var $: any;
 const root: URL = new URL(window.location.href);
 const url: string = root.origin + "/api/v1/data";
 let searchers: Promise<Searcher[]>;
-let allocations;
+let allocations: Allocations;
 main();
+
+type Allocation = {
+  unknown: unknown
+}
+type Allocations = {
+  id: string
+  value: Allocation
+}
 
 async function main() {
   searchers = await fetchPath(url + "/allocate/list");
@@ -24,52 +33,12 @@ async function main() {
   });
 }
 
-// fetchの返り値のPromiseを返す
-async function fetchPath(url: string): Promise<any> {
-  return await fetch(url)
-    .then((response) => {
-      return response.json();
-    })
-    .catch((response) => {
-      return Promise.reject(
-        new Error(`{${response.status}: ${response.statusText}`),
-      );
-    });
-}
-
-function addListOption(obj, listid: string, property: string): void {
-  const select: HTMLElement | null = document.getElementById(listid);
-  if (select === null) return;
-  const carList: Array<string> = [];
-  Object.values(obj).map((item: unknown) => {
-    carList.push(item[property]);
-  });
-  // Remove duplicate & sort, then append HTML datalist
-  [...new Set(carList)].sort().map((item) => {
-    const option = document.createElement("option");
-    option.text = item;
-    option.value = item;
-    select.appendChild(option);
-  });
-}
-
-function checkboxChengeValue(id: string) {
-  const checkboxes: HTMLElement | null = document.getElementById(id);
-  if (checkboxes === null) return
-  checkboxes.addEventListener("change", () => {
-    // valueはstringの"true","false"
-    // Boolean のtrue, falseではない。
-    // これはgolangサーバー側でunmarshalするときに"true", "false"という
-    // 文字列をいい感じにサーバー側でbool値として解釈してくれるため。
-    checkboxes.value = checkboxes.checked ? "true" : "false"
-  });
-}
-
 // FZF on keyboard
 $(function() {
   $("#search-form").keyup(function() {
     $("#search-result > option").remove(); // reset option
     const value: string = document.getElementById("search-form").value;
+    if (value === null) return;
     const result: Searcher[] = fzfSearch(searchers, value);
     for (const r of result) {
       $("#search-result").append($("<option>")
@@ -107,11 +76,3 @@ $(function() {
     });
   });
 })
-
-function checkToggle(id: string) {
-  if ($(id).val() === "true") {
-    $(id).prop("checked", true);
-  } else {
-    $(id).prop("checked", false);
-  }
-}

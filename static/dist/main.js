@@ -1,4 +1,5 @@
 import { fzfSearch } from "./fzf.js";
+import { fetchPath, addListOption, checkboxChengeValue, checkToggle } from "./element.js";
 const root = new URL(window.location.href);
 const url = root.origin + "/api/v1/data";
 let searchers;
@@ -20,42 +21,12 @@ async function main() {
         checkboxChengeValue(id);
     });
 }
-async function fetchPath(url) {
-    return await fetch(url)
-        .then((response) => {
-        return response.json();
-    })
-        .catch((response) => {
-        return Promise.reject(new Error(`{${response.status}: ${response.statusText}`));
-    });
-}
-function addListOption(obj, listid, property) {
-    const select = document.getElementById(listid);
-    if (select === null)
-        return;
-    const carList = [];
-    Object.values(obj).map((item) => {
-        carList.push(item[property]);
-    });
-    [...new Set(carList)].sort().map((item) => {
-        const option = document.createElement("option");
-        option.text = item;
-        option.value = item;
-        select.appendChild(option);
-    });
-}
-function checkboxChengeValue(id) {
-    const checkboxes = document.getElementById(id);
-    if (checkboxes === null)
-        return;
-    checkboxes.addEventListener("change", () => {
-        checkboxes.value = checkboxes.checked ? "true" : "false";
-    });
-}
 $(function () {
     $("#search-form").keyup(function () {
         $("#search-result > option").remove();
         const value = document.getElementById("search-form").value;
+        if (value === null)
+            return;
         const result = fzfSearch(searchers, value);
         for (const r of result) {
             $("#search-result").append($("<option>")
@@ -92,11 +63,3 @@ $(function () {
         });
     });
 });
-function checkToggle(id) {
-    if ($(id).val() === "true") {
-        $(id).prop("checked", true);
-    }
-    else {
-        $(id).prop("checked", false);
-    }
-}
