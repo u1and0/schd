@@ -1,17 +1,11 @@
-import { Fzf } from "../node_modules/fzf/dist/fzf.es.js";
+import { fzfSearch, type Searcher } from "./fzf.js"
 
+declare var $: any;
 const root: URL = new URL(window.location.href);
 export const url: string = root.origin + "/api/v1/data";
 export let searchers: Promise<Searcher[]>;
 export let allocations;
 main();
-
-type Searcher = {
-  id: string;
-  body: string;
-  date: string;
-  match: number;
-};
 
 async function main() {
   searchers = await fetchPath(url + "/allocate/list");
@@ -43,15 +37,6 @@ async function fetchPath(url: string): Promise<any> {
     });
 }
 
-export function fzfSearch(list: Searcher[], keyword: string): string[] {
-  const fzf = new Fzf(list, {
-    selector: (item: Searcher) => item.body,
-  });
-  const entries = fzf.find(keyword);
-  const ranking: string[] = entries.map((entry: Fzf) => entry.item);
-  return ranking;
-}
-
 function addListOption(obj, listid: string, property: string): void {
   const select: HTMLElement | null = document.getElementById(listid);
   if (select === null) return;
@@ -70,6 +55,7 @@ function addListOption(obj, listid: string, property: string): void {
 
 function checkboxChengeValue(id: string) {
   const checkboxes: HTMLElement | null = document.getElementById(id);
+  if (checkboxes === null) return
   checkboxes.addEventListener("change", () => {
     if (checkboxes.checked) {
       checkboxes.value = "true";
@@ -77,4 +63,55 @@ function checkboxChengeValue(id: string) {
       checkboxes.value = "false";
     }
   });
+}
+
+// FZF on keyboard
+$(function() {
+  $("#search-form").keyup(function() {
+    $("#search-result > option").remove(); // reset option
+    const value: string = document.getElementById("search-form").value;
+    const result: Searcher[] = fzfSearch(searchers, value);
+    for (const r of result) {
+      $("#search-result").append($("<option>")
+        .html(r.body)
+        .val(r.id));
+    }
+  });
+  $("#search-result").change(function() {
+    const id = $("#search-result").val();
+    const el = allocations[id]
+    console.log(el);
+    $("#section").val(el["部署"])
+    $("#insulance").val(el["保険額"])
+    $("#transport").val(el["輸送情報"]["輸送便の別"])
+    $("#transport-no").val(el["輸送情報"]["伝票番号"])
+    $("#transport-fee").val(el["輸送情報"]["運賃"])
+    $("#car").val(el["クラスボディタイプ"])
+    $("#to-name").val(el["宛先情報"]["輸送区間"])
+    $("textarea#to-address").val(el["宛先情報"]["宛先住所"])
+    $("textarea#package-name").val(el["物品情報"]["物品名称"])
+    $("textarea#article").val(el["記事"])
+    $("textarea#misc").val(el["注意事項"]["その他"])
+
+    const checkboxIDProp = {
+      "#piling": "平積み",
+      "#fixing": "固定",
+      "#confirm": "確認",
+      "#bill": "納品書",
+      "#debt": "借用書",
+      "#ride": "同乗",
+    }
+    Object.entries(checkboxIDProp).forEach(([key, val]) => {
+      $(key).val(el["注意事項"][val]);
+      checkToggle(key);
+    });
+  });
+})
+
+function checkToggle(id) {
+  if ($(id).val() === "true") {
+    $(id).prop("checked", true);
+  } else {
+    $(id).prop("checked", false);
+  }
 }
