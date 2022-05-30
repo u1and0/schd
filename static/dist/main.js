@@ -1,8 +1,8 @@
 import { fzfSearch } from "./fzf.js";
 const root = new URL(window.location.href);
-export const url = root.origin + "/api/v1/data";
-export let searchers;
-export let allocations;
+const url = root.origin + "/api/v1/data";
+let searchers;
+let allocations;
 main();
 async function main() {
     searchers = await fetchPath(url + "/allocate/list");
@@ -49,12 +49,7 @@ function checkboxChengeValue(id) {
     if (checkboxes === null)
         return;
     checkboxes.addEventListener("change", () => {
-        if (checkboxes.checked) {
-            checkboxes.value = "true";
-        }
-        else {
-            checkboxes.value = "false";
-        }
+        checkboxes.value = checkboxes.checked ? "true" : "false";
     });
 }
 $(function () {

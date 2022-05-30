@@ -2,9 +2,9 @@ import { fzfSearch, type Searcher } from "./fzf.js"
 
 declare var $: any;
 const root: URL = new URL(window.location.href);
-export const url: string = root.origin + "/api/v1/data";
-export let searchers: Promise<Searcher[]>;
-export let allocations;
+const url: string = root.origin + "/api/v1/data";
+let searchers: Promise<Searcher[]>;
+let allocations;
 main();
 
 async function main() {
@@ -57,11 +57,11 @@ function checkboxChengeValue(id: string) {
   const checkboxes: HTMLElement | null = document.getElementById(id);
   if (checkboxes === null) return
   checkboxes.addEventListener("change", () => {
-    if (checkboxes.checked) {
-      checkboxes.value = "true";
-    } else {
-      checkboxes.value = "false";
-    }
+    // valueはstringの"true","false"
+    // Boolean のtrue, falseではない。
+    // これはgolangサーバー側でunmarshalするときに"true", "false"という
+    // 文字列をいい感じにサーバー側でbool値として解釈してくれるため。
+    checkboxes.value = checkboxes.checked ? "true" : "false"
   });
 }
 
@@ -108,7 +108,7 @@ $(function() {
   });
 })
 
-function checkToggle(id) {
+function checkToggle(id: string) {
   if ($(id).val() === "true") {
     $(id).prop("checked", true);
   } else {
