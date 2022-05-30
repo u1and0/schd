@@ -88,6 +88,10 @@ func Create(c *gin.Context) {
 }
 
 func downloadFile(fs string, f *excelize.File, c *gin.Context) {
+	// Refresh file
+	if err := f.UpdateLinkedValue(); err != nil {
+		fmt.Printf("%v\n", err)
+	}
 	// Save file
 	filepath := "./result.xlsx"
 	if err := f.SaveAs(filepath); err != nil {
