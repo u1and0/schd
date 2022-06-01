@@ -4,10 +4,12 @@ export const url = root.origin + "/api/v1/data";
 main();
 async function main() {
     const addressMap = await fetchPath(url + "/address");
-    console.log(addressMap);
-    const list = Object.keys(addressMap);
-    const e = document.getElementById("address-list");
-    if (e === null)
-        return;
-    addListOption(e, list);
+    addListOption(document.getElementById("address-list"), Object.keys(addressMap));
+    const text = document.getElementById("to-name");
+    const inputChange = () => {
+        console.log(text.value);
+        const addressText = document.getElementById("to-address");
+        addressText.value = addressMap[text.value];
+    };
+    text?.addEventListener("change", inputChange);
 }

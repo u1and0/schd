@@ -22,9 +22,7 @@ async function main() {
   Object.values(allocations).map((item: Allocation) => {
     list.push(item["クラスボディタイプ"]);
   });
-  const e = document.getElementById("car-list");
-  if (e === null) return;
-  addListOption(e, list);
+  addListOption(document.getElementById("car-list"), list);
   const checkBoxIDs: Array<string> = [
     "piling",
     "fixing",
