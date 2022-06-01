@@ -91,5 +91,5 @@ func List(c *gin.Context) {
 
 // FetchAddress : 住所録をJSONで返す
 func FetchAddress(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, ctrl.Config.AddressMap)
+	c.IndentedJSON(http.StatusOK, addressMap)
 }

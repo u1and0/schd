@@ -18,6 +18,7 @@ import (
 
 var (
 	allocations = make(Allocations, 2000)
+	addressMap  = make(AddressMap, 10)
 )
 
 type (
@@ -95,6 +96,11 @@ type (
 	Stringfy interface {
 		ToString() string
 	}
+	// AddressMap : excelファイルから読み込んだ過去の住所録
+	AddressMap map[string]string
+	// Address : 1住所あたり5行まで, 1行あたり15文字まで
+	// Excelシートの枠の都合
+	// Address []string
 )
 
 func init() {
@@ -114,6 +120,7 @@ func init() {
 				continue
 			}
 			allocations[id] = *a
+			addressMap = setAddressMap(*a)
 		}
 	}()
 }
@@ -309,4 +316,16 @@ func (as *Allocations) Concat() Searchers {
 		i++
 	}
 	return s
+}
+
+// setAddressMap : AllocationsのToフィールドから住所録データを作成する
+// api/init() にてallocations[id]へセット後Allocationをセット後、
+// ファイル名は新しい順にソートされいる前提で処理が行われるので、
+// addressMapに既存の名称があっても住所を上書きしない
+func setAddressMap(a Allocation) AddressMap {
+	name := a.To.Name
+	if _, ok := addressMap[name]; !ok { // 住所上書きしない
+		addressMap[name] = a.To.Address
+	}
+	return addressMap
 }
