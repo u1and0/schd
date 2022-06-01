@@ -11,32 +11,25 @@ export async function fetchPath(url: string): Promise<any> {
     });
 }
 
-
-export function addListOption(obj, listid: string, property: string): void {
-  const select: HTMLElement | null = document.getElementById(listid);
-  if (select === null) return;
-  const carList: Array<string> = [];
-  Object.values(obj).map((item: unknown) => {
-    carList.push(item[property]);
-  });
+export function addListOption(element: HTMLElement, list: string[]): void {
   // Remove duplicate & sort, then append HTML datalist
-  [...new Set(carList)].sort().map((item) => {
+  [...new Set(list)].sort().map((item) => {
     const option = document.createElement("option");
     option.text = item;
     option.value = item;
-    select.appendChild(option);
+    element.appendChild(option);
   });
 }
 
 export function checkboxChengeValue(id: string) {
   const checkboxes: HTMLElement | null = document.getElementById(id);
-  if (checkboxes === null) return
+  if (checkboxes === null) return;
   checkboxes.addEventListener("change", () => {
     // valueはstringの"true","false"
     // Boolean のtrue, falseではない。
     // これはgolangサーバー側でunmarshalするときに"true", "false"という
     // 文字列をいい感じにサーバー側でbool値として解釈してくれるため。
-    checkboxes.value = checkboxes.checked ? "true" : "false"
+    checkboxes.value = checkboxes.checked ? "true" : "false";
   });
 }
 

@@ -7,19 +7,12 @@ export async function fetchPath(url) {
         return Promise.reject(new Error(`{${response.status}: ${response.statusText}`));
     });
 }
-export function addListOption(obj, listid, property) {
-    const select = document.getElementById(listid);
-    if (select === null)
-        return;
-    const carList = [];
-    Object.values(obj).map((item) => {
-        carList.push(item[property]);
-    });
-    [...new Set(carList)].sort().map((item) => {
+export function addListOption(element, list) {
+    [...new Set(list)].sort().map((item) => {
         const option = document.createElement("option");
         option.text = item;
         option.value = item;
-        select.appendChild(option);
+        element.appendChild(option);
     });
 }
 export function checkboxChengeValue(id) {

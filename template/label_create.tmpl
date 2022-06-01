@@ -38,13 +38,16 @@
         <td> <input type="text" name="wrap-date" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
       </tr>
       <tr>
-        <td align="right"> 宛　先 </td>
+        <td align="right">輸送区間</td>
         <td>
-          <select id="to-address" name="to-address">
-            <option value="---宛先を選択してください---">---宛先を選択してください---</option>
-            <!-- main.js/fetchAddress() によって内容が補完される -->
-          </select>
+          <input type="text" name="to-name" value="" placeholder="入力してください" list="address-list" >
+          <!-- api/v1/data/address & main.js/fetchAddress() によって内容が補完される -->
+          <datalist id="address-list"></datalist>
         </td>
+      </tr>
+      <tr>
+        <td align="right"> 宛先住所 </td>
+        <td> <textarea rows="5" cols="40" id="to-address" name="to-address" placeholder="送り先住所"></textarea> </td>
       </tr>
       <tbody>
     </table>
@@ -92,7 +95,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/i18n/jquery.ui.datepicker-ja.min.js"></script>
-  <script type="text/javascript" src="/static/dist/main.js"></script>
+  <script type="module" src="/static/dist/label.js"></script>
   <script type="text/javascript" src="/static/dist/row.js"></script>
   <script>
     $(function() {

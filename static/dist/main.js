@@ -1,14 +1,21 @@
 import { fzfSearch } from "./fzf.js";
-import { fetchPath, addListOption, checkboxChengeValue, checkToggle } from "./element.js";
+import { addListOption, checkboxChengeValue, checkToggle, fetchPath, } from "./element.js";
 const root = new URL(window.location.href);
-const url = root.origin + "/api/v1/data";
+export const url = root.origin + "/api/v1/data";
 let searchers;
 let allocations;
 main();
 async function main() {
     searchers = await fetchPath(url + "/allocate/list");
     allocations = await fetchPath(url + "/allocates");
-    addListOption(allocations, "car-list", "クラスボディタイプ");
+    const list = [];
+    Object.values(allocations).map((item) => {
+        list.push(item["クラスボディタイプ"]);
+    });
+    const e = document.getElementById("car-list");
+    if (e === null)
+        return;
+    addListOption(e, list);
     const checkBoxIDs = [
         "piling",
         "fixing",
