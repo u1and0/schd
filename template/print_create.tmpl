@@ -69,7 +69,7 @@
       </tr>
     </thead>
     <tbody>
-    {{ range .tableRow }}
+      {{ range .tableRow }}
       <tr>
         <td> <input type="text" name="draw-no" value="" size="10" placeholder="SW000000"> </td>
         <td> <input type="text" name="draw-name" value="" size="30" placeholder="製品　外観図" > </td>
@@ -77,7 +77,7 @@
           <td> <input type="text" name="deadline" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
         <td> <input type="text" name="misc" value="" placeholder="提出先: XX株式会社" > </td>
       </tr>
-    {{ end }}
+      {{ end }}
     </tbody>
     </table>
 
@@ -87,54 +87,10 @@
     </div>
 
     <ul class="list-group">
+      {{ range .checkBoxLabel }}
       <label class="list-group-item">
-        <input type="checkbox" name="require" value="" >
-        作業用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="true" checked>
-        外注用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="" >
-        作業引替
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        外注引替
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="true" checked>
-        検査用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        協議用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        承認用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        完成図用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        見積用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        参考用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        仕様書添付用
-      </label>
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
-        要求元控
-      </label>
+        <input type="checkbox" name="require" value="" > {{ . }} </label>
+      {{ end }}
     </ul>
 
     <button title="ダウンロード" class="fas fa-download" type="submit">帳票ダウンロード</button>

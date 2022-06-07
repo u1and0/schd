@@ -24,13 +24,26 @@ async function main() {
     });
     outputElem?.addEventListener("change", (e) => {
         const idx = e.target.value;
-        const val = printHistories[idx];
-        console.log(val);
-        document.getElementById("section").value = val["要求元"];
-        document.getElementById("order-no").value = val["生産命令番号"];
-        document.getElementById("order-name").value = val["生産命令名称"];
-        document.querySelector("input[name='draw-no']").forEach((elem, i) => {
-            elem.value = val["図番"][i];
+        const order = printHistories[idx];
+        console.log(order);
+        document.getElementById("section").value = order["要求元"];
+        document.getElementById("order-no").value = order["生産命令番号"];
+        document.getElementById("order-name").value = order["生産命令名称"];
+        const drawNo = document.querySelectorAll("input[name='draw-no']");
+        drawNo.forEach((elem, i) => {
+            elem.value = order["図番"][i];
+        });
+        const drawName = document.querySelectorAll("input[name='draw-name']");
+        drawName.forEach((elem, i) => {
+            elem.value = order["図面名称"][i];
+        });
+        const drawQuant = document.querySelectorAll("input[name='quantity']");
+        drawQuant.forEach((elem, i) => {
+            elem.value = order["枚数"][i];
+        });
+        const drawMisc = document.querySelectorAll("input[name='misc']");
+        drawMisc.forEach((elem, i) => {
+            elem.value = order["備考"][i];
         });
     });
 }

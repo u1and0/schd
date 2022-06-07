@@ -10,7 +10,6 @@ let printHistories: PrintHistory[];
 main();
 
 type PrintHistory = {
-  "要求年月日": string;
   "要求元": string;
   "生産命令番号": string;
   "生産命令名称": string;
@@ -18,7 +17,6 @@ type PrintHistory = {
   "図番": string[];
   "図面名称": string[];
   "枚数": number[];
-  "要求期限": string[];
   "備考": string[];
 };
 
@@ -42,36 +40,28 @@ async function main() {
     });
   });
 
-  // select要素を選択するたびに各フォームへJSONの値を書込み
   outputElem?.addEventListener("change", (e) => {
     const idx = e.target.value;
-    const val = printHistories[idx];
-    console.log(val);
-    document.getElementById("section").value = val["要求元"];
-    document.getElementById("order-no").value = val["生産命令番号"];
-    document.getElementById("order-name").value = val["生産命令名称"];
-    document.querySelector("input[name='draw-no']").forEach((elem, i) => {
-      elem.value = val["図番"][i];
+    const order: PrintHistory = printHistories[idx];
+    console.log(order);
+    document.getElementById("section").value = order["要求元"];
+    document.getElementById("order-no").value = order["生産命令番号"];
+    document.getElementById("order-name").value = order["生産命令名称"];
+    const drawNo = document.querySelectorAll("input[name='draw-no']");
+    drawNo.forEach((elem: HTMLElement, i: number) => {
+      elem.value = order["図番"][i];
+    });
+    const drawName = document.querySelectorAll("input[name='draw-name']");
+    drawName.forEach((elem: string, i: number) => {
+      elem.value = order["図面名称"][i];
+    });
+    const drawQuant = document.querySelectorAll("input[name='quantity']");
+    drawQuant.forEach((elem: string, i: number) => {
+      elem.value = order["枚数"][i];
+    });
+    const drawMisc = document.querySelectorAll("input[name='misc']");
+    drawMisc.forEach((elem: string, i: number) => {
+      elem.value = order["備考"][i];
     });
   });
 }
-
-// $(function () {
-//   $("#search-result").change(function () {
-//     const i = $("#search-result").val();
-//     const el = printHistories[i];
-//     console.log(el);
-//     $("#section").val(el["要求元"]);
-//     $("#order-no").val(el["生産命令番号"]);
-//     $("#order-name").val(el["生産命令名称"]);
-//     $("input[name='draw-no']").val(el["図番"][0]);
-//     $("input[name='draw-name']").val(el["図面名称"][0]);
-//     // $("#transport-fee").val(el["輸送情報"]["運賃"])
-//     // $("#car").val(el["クラスボディタイプ"])
-//     // $("#to-name").val(el["宛先情報"]["輸送区間"])
-//     // $("textarea#to-address").val(el["宛先情報"]["宛先住所"])
-//     // $("textarea#package-name").val(el["物品情報"]["物品名称"])
-//     // $("textarea#article").val(el["記事"])
-//     // $("textarea#misc").val(el["注意事項"]["その他"])
-//   });
-// });

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/ctrl"
@@ -31,11 +31,11 @@ type (
 		Require []bool `json:"必要箇所" form:"require"`
 	}
 	Drawing struct {
-		No       []string    `json:"図番" form:"draw-no"`
-		Name     []string    `json:"図面名称" form:"draw-name"`
-		Quantity []int       `json:"枚数" form:"quantity"`
-		Deadline []time.Time `json:"要求期限" form:"deadline" time_format:"2006年1月2日"`
-		Misc     []string    `json:"備考" form:"misc"`
+		No       []string `json:"図番" form:"draw-no"`
+		Name     []string `json:"図面名称" form:"draw-name"`
+		Quantity []int    `json:"枚数" form:"quantity"`
+		// Deadline []time.Time `json:"要求期限" form:"deadline" time_format:"2006年1月2日"`
+		Misc []string `json:"備考" form:"misc"`
 	}
 )
 
@@ -93,11 +93,13 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
 		p.Drawing.Name = append(p.Drawing.Name, s)
 		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("D%d", i))
-		p.Drawing.Name = append(p.Drawing.Name, s)
-		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("E%d", i))
-		p.Drawing.Name = append(p.Drawing.Name, s)
+		n, err := strconv.Atoi(s)
+		if err != nil {
+			fmt.Printf("%v\n", err)
+		}
+		p.Drawing.Quantity = append(p.Drawing.Quantity, n)
 		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("F%d", i))
-		p.Drawing.Name = append(p.Drawing.Name, s)
+		p.Drawing.Misc = append(p.Drawing.Misc, s)
 	}
 	// 用途区分及び配布先等
 	for i := 20; i < 32; i++ {
