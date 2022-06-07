@@ -1,8 +1,6 @@
 import { fetchPath } from "./element.js";
 import { fzfSearchList } from "./fzf.js";
 
-declare var $: any;
-
 const root = new URL(window.location.href);
 const url: string = root.origin + "/api/v1/data";
 let printHistoriesList: string[];

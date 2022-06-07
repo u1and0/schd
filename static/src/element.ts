@@ -1,4 +1,3 @@
-// fetchの返り値のPromiseを返す
 export async function fetchPath(url: string): Promise<any> {
   return await fetch(url)
     .then((response) => {
@@ -33,10 +32,12 @@ export function checkboxChengeValue(id: string) {
   });
 }
 
-export function checkToggle(id: string) {
-  if ($(id).val() === "true") {
-    $(id).prop("checked", true);
+export function checkToggle(id: string): void {
+  const elem = document.getElementById(id);
+  if (elem === null) return;
+  if (elem.value === "true") {
+    elem.setAttribute("checked", true);
   } else {
-    $(id).prop("checked", false);
+    elem.setAttribute("checked", false);
   }
 }

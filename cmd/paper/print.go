@@ -46,18 +46,28 @@ func CreatePrint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
 		return
 	}
+	// 必要事項
 	cells := Cells{
 		"C5": o.Date.Format(LAYOUT),
 		"C6": o.Section,
 		"C7": o.OrderNo,
 		"C8": o.OrderName,
 	}
+	// 図番　図面名称
 	for i := 0; i < 8; i++ {
-		cells[fmt.Sprintf("B%d", i+11)] = o.Drawing.No[i]
-		cells[fmt.Sprintf("C%d", i+11)] = o.Drawing.Name[i]
-		cells[fmt.Sprintf("D%d", i+11)] = o.Drawing.Quantity[i]
-		cells[fmt.Sprintf("E%d", i+11)] = o.Drawing.Deadline[i].Format(LAYOUT)
-		cells[fmt.Sprintf("F%d", i+11)] = o.Drawing.Misc[i]
+		j := i + 11
+		cells[fmt.Sprintf("B%d", j)] = o.Drawing.No[i]
+		cells[fmt.Sprintf("C%d", j)] = o.Drawing.Name[i]
+		cells[fmt.Sprintf("D%d", j)] = o.Drawing.Quantity[i]
+		cells[fmt.Sprintf("E%d", j)] = o.Drawing.Deadline[i].Format(LAYOUT)
+		cells[fmt.Sprintf("F%d", j)] = o.Drawing.Misc[i]
+	}
+	// 用途区分及び配布先等
+	for i, b := range o.Require {
+		j := i + 21
+		if !b {
+			cells[fmt.Sprintf("C%d", j)] = "〇"
+		}
 	}
 	sheetName := "複写入力画面"
 	if err := cells.SetCellValue(f, sheetName); err != nil {
