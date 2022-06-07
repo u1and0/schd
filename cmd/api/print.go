@@ -42,7 +42,7 @@ type (
 func init() {
 	var filelist []string
 	if err := ctrl.UnmarshalJSONfile(&filelist, "db/printlist.json"); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	go func() {
 		for _, fullpath := range filelist {

@@ -40,3 +40,19 @@ export function checkToggle(id: string) {
     $(id).prop("checked", false);
   }
 }
+
+export function checkboxChangeValue() {
+  const checkboxes = document.querySelectorAll("input[type='checkbox']");
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      checkbox.value = checkbox.checked ? "true" : "false";
+    });
+  });
+}
+
+export function checkboxesToggle(require: boolean[]) {
+  const checkboxes = document.querySelectorAll("input[type='checkbox']");
+  checkboxes.forEach((checkbox: string, idx: number) => {
+    checkbox.value = require[idx];
+  });
+}
