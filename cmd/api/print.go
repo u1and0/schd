@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u1and0/schd/cmd/ctrl"
@@ -24,18 +25,19 @@ var (
 type (
 	PrintHistories []PrintOrder
 	PrintOrder     struct {
-		Section   string `json:"要求元" form:"section"`
-		OrderNo   string `json:"生産命令番号" form:"order-no"`
-		OrderName string `json:"生産命令名称" form:"order-name"`
+		Date      time.Time `form:"date" time_format:"2006/01/02"`
+		Section   string    `json:"要求元" form:"section"`
+		OrderNo   string    `json:"生産命令番号" form:"order-no"`
+		OrderName string    `json:"生産命令名称" form:"order-name"`
 		Drawing
 		Require []bool `json:"必要箇所" form:"require"`
 	}
 	Drawing struct {
-		No       []string `json:"図番" form:"draw-no"`
-		Name     []string `json:"図面名称" form:"draw-name"`
-		Quantity []int    `json:"枚数" form:"quantity"`
-		// Deadline []time.Time `json:"要求期限" form:"deadline" time_format:"2006年1月2日"`
-		Misc []string `json:"備考" form:"misc"`
+		No       [8]string    `json:"図番" form:"draw-no"`
+		Name     [8]string    `json:"図面名称" form:"draw-name"`
+		Quantity [8]int       `json:"枚数" form:"quantity"`
+		Deadline [8]time.Time `form:"deadline" time_format:"2006/01/02"`
+		Misc     [8]string    `json:"備考" form:"misc"`
 	}
 )
 
@@ -87,19 +89,20 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 	p.OrderNo, _ = f.GetCellValue(sheetName, "C7")
 	p.OrderName, _ = f.GetCellValue(sheetName, "C8")
 	// 図番 図面名称 枚数　要求期限　備考
-	for i := 11; i < 19; i++ {
-		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", i))
-		p.Drawing.No = append(p.Drawing.No, s)
-		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
-		p.Drawing.Name = append(p.Drawing.Name, s)
-		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("D%d", i))
+	for i := 0; i < 8; i++ {
+		j := i + 11
+		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", j))
+		p.Drawing.No[i] = s
+		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("C%d", j))
+		p.Drawing.Name[i] = s
+		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("D%d", j))
 		n, err := strconv.Atoi(s)
 		if err != nil {
 			fmt.Printf("%v\n", err)
 		}
-		p.Drawing.Quantity = append(p.Drawing.Quantity, n)
-		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("F%d", i))
-		p.Drawing.Misc = append(p.Drawing.Misc, s)
+		p.Drawing.Quantity[i] = n
+		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("F%d", j))
+		p.Drawing.Misc[i] = s
 	}
 	// 用途区分及び配布先等
 	for i := 20; i < 32; i++ {
