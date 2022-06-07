@@ -10,13 +10,12 @@ main();
 async function main() {
     searchers = await fetchPath(url + "/allocate/list");
     allocations = await fetchPath(url + "/allocates");
-    printHistoriesList = await fetchPath(url + "/print/list");
-    printHistories = await fetchPath(url + "/print");
     const list = [];
     Object.values(allocations).map((item) => {
         list.push(item["クラスボディタイプ"]);
     });
-    addListOption(document.getElementById("car-list"), list);
+    const carElem = document.getElementById("car-list");
+    addListOption(carElem, list);
     const checkBoxIDs = [
         "piling",
         "fixing",

@@ -22,13 +22,12 @@ type Allocation = { unknown: unknown };
 async function main() {
   searchers = await fetchPath(url + "/allocate/list");
   allocations = await fetchPath(url + "/allocates");
-  printHistoriesList = await fetchPath(url + "/print/list");
-  printHistories = await fetchPath(url + "/print");
   const list: string[] = [];
   Object.values(allocations).map((item: Allocation) => {
     list.push(item["クラスボディタイプ"]);
   });
-  addListOption(document.getElementById("car-list"), list);
+  const carElem = document.getElementById("car-list");
+  addListOption(carElem, list);
   const checkBoxIDs: Array<string> = [
     "piling",
     "fixing",
@@ -43,8 +42,8 @@ async function main() {
 }
 
 // FZF on keyboard
-$(function() {
-  $("#search-form").keyup(function() {
+$(function () {
+  $("#search-form").keyup(function () {
     $("#search-result > option").remove(); // reset option
     const value: string = document.getElementById("search-form").value;
     if (value === null) return;
@@ -57,7 +56,7 @@ $(function() {
       );
     }
   });
-  $("#search-result").change(function() {
+  $("#search-result").change(function () {
     const id = $("#search-result").val();
     const el = allocations[id];
     console.log(el);
