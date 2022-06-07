@@ -1,7 +1,7 @@
 import { fzfSearch } from "./fzf.js";
 import { addListOption, checkboxChengeValue, checkToggle, fetchPath, } from "./element.js";
 const root = new URL(window.location.href);
-export const url = root.origin + "/api/v1/data";
+const url = root.origin + "/api/v1/data";
 export let searchers;
 export let allocations;
 export let printHistoriesList;

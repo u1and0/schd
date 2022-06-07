@@ -24,10 +24,9 @@ var (
 type (
 	PrintHistories []PrintOrder
 	PrintOrder     struct {
-		Date      time.Time `json:"要求年月日" form:"date" time_format:"2006年1月2日"`
-		Section   string    `json:"要求元" form:"section"`
-		OrderNo   string    `json:"生産命令番号" form:"order-no"`
-		OrderName string    `json:"生産命令名称" form:"order-name"`
+		Section   string `json:"要求元" form:"section"`
+		OrderNo   string `json:"生産命令番号" form:"order-no"`
+		OrderName string `json:"生産命令名称" form:"order-name"`
 		Drawing
 		Require []bool `json:"必要箇所" form:"require"`
 	}
@@ -84,20 +83,30 @@ func NewPrintOrder(fullpath string) (*PrintOrder, error) {
 }
 
 func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
-	var err error
-	t, _ := f.GetCellValue(sheetName, "C5")
-	p.Date, err = time.Parse(LAYOUT, t)
-	if err != nil {
-		fmt.Printf("%v\n", err.Error())
-	}
 	p.Section, _ = f.GetCellValue(sheetName, "C6")
 	p.OrderNo, _ = f.GetCellValue(sheetName, "C7")
 	p.OrderName, _ = f.GetCellValue(sheetName, "C8")
+	// 図番 図面名称 枚数　要求期限　備考
 	for i := 11; i < 19; i++ {
 		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", i))
 		p.Drawing.No = append(p.Drawing.No, s)
 		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
 		p.Drawing.Name = append(p.Drawing.Name, s)
+		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("D%d", i))
+		p.Drawing.Name = append(p.Drawing.Name, s)
+		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("E%d", i))
+		p.Drawing.Name = append(p.Drawing.Name, s)
+		s, _ = f.GetCellValue(sheetName, fmt.Sprintf("F%d", i))
+		p.Drawing.Name = append(p.Drawing.Name, s)
+	}
+	// 用途区分及び配布先等
+	for i := 20; i < 32; i++ {
+		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
+		if s != "" {
+			p.Require = append(p.Require, true)
+		} else {
+			p.Require = append(p.Require, false)
+		}
 	}
 }
 

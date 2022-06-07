@@ -69,15 +69,15 @@
       </tr>
     </thead>
     <tbody>
+    {{ range .tableRow }}
       <tr>
         <td> <input type="text" name="draw-no" value="" size="10" placeholder="SW000000"> </td>
         <td> <input type="text" name="draw-name" value="" size="30" placeholder="製品　外観図" > </td>
         <td> <input type="number" name="quantity" value="" class="small-number" placeholder="0" min=0 step=10> </td>
           <td> <input type="text" name="deadline" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
         <td> <input type="text" name="misc" value="" placeholder="提出先: XX株式会社" > </td>
-        <td> <input type="button" onclick="_appendRow(this)" title="行追加" class="fas" value="&#xf055"> </td>
-        <td> <input type="button" onclick="_removeRow(this)" title="行削除" class="fas " value="&#xf057"> </td>
       </tr>
+    {{ end }}
     </tbody>
     </table>
 
@@ -104,12 +104,36 @@
         外注引替
       </label>
       <label class="list-group-item">
-        <input type="checkbox" name="require" value="">
+        <input type="checkbox" name="require" value="true" checked>
         検査用
       </label>
       <label class="list-group-item">
         <input type="checkbox" name="require" value="">
         協議用
+      </label>
+      <label class="list-group-item">
+        <input type="checkbox" name="require" value="">
+        承認用
+      </label>
+      <label class="list-group-item">
+        <input type="checkbox" name="require" value="">
+        完成図用
+      </label>
+      <label class="list-group-item">
+        <input type="checkbox" name="require" value="">
+        見積用
+      </label>
+      <label class="list-group-item">
+        <input type="checkbox" name="require" value="">
+        参考用
+      </label>
+      <label class="list-group-item">
+        <input type="checkbox" name="require" value="">
+        仕様書添付用
+      </label>
+      <label class="list-group-item">
+        <input type="checkbox" name="require" value="">
+        要求元控
       </label>
     </ul>
 

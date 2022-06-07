@@ -8,7 +8,7 @@ import {
 
 declare var $: any;
 const root: URL = new URL(window.location.href);
-export const url: string = root.origin + "/api/v1/data";
+const url: string = root.origin + "/api/v1/data";
 export let searchers: Promise<Searcher[]>;
 export let allocations: Promise<unknown>;
 export let printHistoriesList: Promise<string[]>;

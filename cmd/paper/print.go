@@ -11,8 +11,9 @@ import (
 // CreatePrintForm : xlsxに転記する
 func CreatePrintForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "print_create.tmpl", gin.H{
-		"today":   time.Now().Format("2006/01/02"),
-		"section": ctrl.Config.Section,
+		"today":    time.Now().Format("2006/01/02"),
+		"section":  ctrl.Config.Section,
+		"tableRow": []int{0, 1, 2, 3, 4, 5, 6, 7},
 	})
 }
 
