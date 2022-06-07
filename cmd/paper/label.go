@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/u1and0/schd/cmd/ctrl"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -79,15 +78,19 @@ func Create(c *gin.Context) {
 	for _, cell := range []string{"D9", "D21"} {
 		f.SetCellValue(sheetName, cell, o.WrapDate.Format("2006/1/2"))
 	}
-	a := ctrl.Config.AddressMap[o.ToAddress]
-	for _, cell := range []string{"H4", "H16"} {
-		f.SetCellValue(sheetName, cell, a.String())
-	}
+	// a := ctrl.Config.AddressMap[o.ToAddress]
+	// for _, cell := range []string{"H4", "H16"} {
+	// 	f.SetCellValue(sheetName, cell, a.String())
+	// }
 
 	downloadFile("外装ラベル.xlsx", f, c)
 }
 
 func downloadFile(fs string, f *excelize.File, c *gin.Context) {
+	// Refresh file
+	if err := f.UpdateLinkedValue(); err != nil {
+		fmt.Printf("%v\n", err)
+	}
 	// Save file
 	filepath := "./result.xlsx"
 	if err := f.SaveAs(filepath); err != nil {

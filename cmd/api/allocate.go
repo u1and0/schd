@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,6 +18,7 @@ import (
 
 var (
 	allocations = make(Allocations, 2000)
+	addressMap  = make(AddressMap, 10)
 )
 
 type (
@@ -94,12 +96,39 @@ type (
 	Stringfy interface {
 		ToString() string
 	}
+	// AddressMap : excelファイルから読み込んだ過去の住所録
+	AddressMap map[string]string
+	// Address : 1住所あたり5行まで, 1行あたり15文字まで
+	// Excelシートの枠の都合
+	// Address []string
 )
 
 func init() {
-	// Append xlsx file fullpath with specific prefix to slice
-	paths := []string{}
-	filepath.Walk(ctrl.Config.AllocatePath,
+	fullpaths := GetXlsxPath(ctrl.Config.AllocatePath)
+	// Sort reverse order
+	sort.Sort(sort.Reverse(sort.StringSlice(fullpaths)))
+	// Unmarshal xlsx file
+	go func() {
+		for _, fullpath := range fullpaths {
+			// idをファイル名から抽出するか、
+			// シートから抽出するかどちらでもよい
+			filename := filepath.Base(fullpath)
+			id := ctrl.ID(filename[:10])
+			a, err := NewAllocation(fullpath)
+			if err != nil {
+				fmt.Printf("%s: %v", fullpath, err)
+				continue
+			}
+			allocations[id] = *a
+			addressMap = setAddressMap(*a)
+		}
+	}()
+}
+
+// GetXlsxPath : return xlsx filepath slice under root
+// Append xlsx file fullpath with specific prefix to slice
+func GetXlsxPath(root string) (paths []string) {
+	err := filepath.Walk(root,
 		func(path string, info os.FileInfo, err error) error {
 			var (
 				filename = filepath.Base(path)
@@ -114,25 +143,21 @@ func init() {
 			}
 			return nil
 		})
-	// Sort reverse order
-	sort.Sort(sort.Reverse(sort.StringSlice(paths)))
-	// Unmarshal xlsx file
-	go func(fullpaths []string) {
-		for _, fullpath := range fullpaths {
-			allocation := new(Allocation)
-			// idをファイル名から抽出するか、
-			// シートから抽出するかどちらでもよい
-			filename := filepath.Base(fullpath)
-			id := ctrl.ID(filename[:10])
-			// Excel セル抽出してAllocate型に充てる
-			f, err := excelize.OpenFile(fullpath)
-			defer f.Close()
-			if err == nil {
-				allocation.Unmarshal(f)
-				allocations[id] = *allocation
-			}
-		}
-	}(paths)
+	log.Printf("%v\n", err)
+	return
+}
+
+// NewAllocation : Constructor of Allocation
+// Unmarshal by Excel fullpath
+func NewAllocation(fullpath string) (*Allocation, error) {
+	a := new(Allocation)
+	// Excel セル抽出してAllocate型に充てる
+	f, err := excelize.OpenFile(fullpath)
+	defer f.Close()
+	if err == nil {
+		a.Unmarshal(f)
+	}
+	return a, err
 }
 
 // Compile : 荷姿によって数量をカウントする
@@ -291,4 +316,16 @@ func (as *Allocations) Concat() Searchers {
 		i++
 	}
 	return s
+}
+
+// setAddressMap : AllocationsのToフィールドから住所録データを作成する
+// api/init() にてallocations[id]へセット後Allocationをセット後、
+// ファイル名は新しい順にソートされいる前提で処理が行われるので、
+// addressMapに既存の名称があっても住所を上書きしない
+func setAddressMap(a Allocation) AddressMap {
+	name := a.To.Name
+	if _, ok := addressMap[name]; !ok { // 住所上書きしない
+		addressMap[name] = a.To.Address
+	}
+	return addressMap
 }
