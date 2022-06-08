@@ -29,8 +29,8 @@ type (
 		Section   string    `json:"要求元" form:"section"`
 		OrderNo   string    `json:"生産命令番号" form:"order-no"`
 		OrderName string    `json:"生産命令名称" form:"order-name"`
+		Require   []bool    `json:"必要箇所" form:"require"`
 		Drawing
-		Require []bool `json:"必要箇所" form:"require"`
 	}
 	// Drawing : 図面番号、枚数、期限
 	Drawing struct {
@@ -90,6 +90,7 @@ func NewPrintOrder(fullpath string) (*PrintOrder, error) {
 	return p, err
 }
 
+// Unmarshal : from Excel file to Go Structure PrintOrder
 func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 	p.Section, _ = f.GetCellValue(sheetName, "C6")
 	p.OrderNo, _ = f.GetCellValue(sheetName, "C7")
@@ -111,8 +112,9 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 		p.Drawing.Misc[i] = s
 	}
 	// 用途区分及び配布先等
-	for i := 21; i < 32; i++ {
-		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
+	for i := 0; i < 12; i++ {
+		j := i + 21
+		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("C%d", j))
 		if s != "" {
 			p.Require = append(p.Require, true)
 		} else {

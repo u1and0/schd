@@ -11,7 +11,7 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-// CreatePrintForm : xlsxに転記する
+// CreatePrintForm : xlsxに転記するフォームの表示
 func CreatePrintForm(c *gin.Context) {
 	checkBoxLabel := []string{"作業用 ", "外注用 ", "作業引替 ",
 		"外注引替 ", "検査用 ", "協議用 ", "承認用 ", "完成図用 ",
@@ -19,12 +19,12 @@ func CreatePrintForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "print_create.tmpl", gin.H{
 		"today":         time.Now().Format("2006/01/02"),
 		"section":       ctrl.Config.Section,
-		"tableRow":      []int{0, 1, 2, 3, 4, 5, 6, 7},
+		"tableRow":      [8]int{},
 		"checkBoxLabel": checkBoxLabel,
 	})
 }
 
-// CreatePrint : xlsxに転記するフォームの表示
+// CreatePrint : xlsxに転記する
 func CreatePrint(c *gin.Context) {
 	// フォームから読み込み
 	o := new(api.PrintOrder)
@@ -58,14 +58,16 @@ func CreatePrint(c *gin.Context) {
 		j := i + 11
 		cells[fmt.Sprintf("B%d", j)] = o.Drawing.No[i]
 		cells[fmt.Sprintf("C%d", j)] = o.Drawing.Name[i]
-		cells[fmt.Sprintf("D%d", j)] = o.Drawing.Quantity[i]
-		cells[fmt.Sprintf("E%d", j)] = o.Drawing.Deadline[i].Format(LAYOUT)
+		if o.Drawing.Name[i] != "" {
+			cells[fmt.Sprintf("D%d", j)] = o.Drawing.Quantity[i]
+			cells[fmt.Sprintf("E%d", j)] = o.Drawing.Deadline[i].Format(LAYOUT)
+		}
 		cells[fmt.Sprintf("F%d", j)] = o.Drawing.Misc[i]
 	}
 	// 用途区分及び配布先等
 	for i, b := range o.Require {
 		j := i + 21
-		if !b {
+		if b {
 			cells[fmt.Sprintf("C%d", j)] = "〇"
 		}
 	}
@@ -74,5 +76,5 @@ func CreatePrint(c *gin.Context) {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
 	}
-	downloadFile("P-0-002Q付表1.xlsx", f, c)
+	downloadFile("複写要求票P-0-002Q付表1.xlsx", f, c)
 }
