@@ -1,10 +1,12 @@
 import { fetchPath } from "./element.js";
 import { fzfSearchList } from "./fzf.js";
+import { checkboxChangeValue } from "./element.js";
 const root = new URL(window.location.href);
 const url = root.origin + "/api/v1/data";
 let printHistoriesList;
 let printHistories;
 main();
+checkboxChangeValue();
 async function main() {
     printHistoriesList = await fetchPath(url + "/print/list");
     printHistories = await fetchPath(url + "/print");

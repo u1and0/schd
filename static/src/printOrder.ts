@@ -1,11 +1,13 @@
 import { fetchPath } from "./element.js";
 import { fzfSearchList } from "./fzf.js";
+import { checkboxChangeValue, checkboxesToggle } from "./element.js";
 
 const root = new URL(window.location.href);
 const url: string = root.origin + "/api/v1/data";
 let printHistoriesList: string[];
 let printHistories: PrintHistory[];
 main();
+checkboxChangeValue();
 
 type PrintHistory = {
   "要求元": string;
@@ -61,5 +63,6 @@ async function main() {
     drawMisc.forEach((elem: string, i: number) => {
       elem.value = order["備考"][i];
     });
+    checkboxesToggle(order["必要箇所"]);
   });
 }

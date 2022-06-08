@@ -34,3 +34,11 @@ export function checkToggle(id) {
         elem.setAttribute("checked", false);
     }
 }
+export function checkboxChangeValue() {
+    const checkboxes = document.querySelectorAll("input[type='checkbox']");
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+            checkbox.value = checkbox.checked ? "true" : "false";
+        });
+    });
+}
