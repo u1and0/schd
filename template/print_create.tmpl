@@ -48,17 +48,28 @@
         <td> <input type="text" id="order-no" name="order-no" value="" size="20" placeholder="761-001" > </td>
       </tr>
         <td align="right">生産命令名称</td>
-        <td> <input type="text" id="order-name" name="order-name" value="" size="20" placeholder="製品製造方"> </td>
+        <td> <input type="text" id="order-name" name="order-name" value="" size="60" placeholder="製品製造方"> </td>
       </tr>
       </tbody>
     </table>
 
     <hr>
     <div>
+      <p> 用途区分、配布先にチェックを入れてください。 </p>
+    </div>
+
+    <div class="form-inline">
+      {{ range .checkBoxLabel }}
+      <label class="checkbox-inline"> <input type="checkbox" name="require" value="" > {{ . }} </label>
+      {{ end }}
+    </div>
+
+    <hr>
+    <div>
       <p> 図面番号等を入力してください。 </p>
     </div>
 
-    <table id="print-table" class="table table-hover">
+    <table id="print-table" class="table table-hover table-striped">
     <thead>
       <tr>
         <th>図　番</th>
@@ -80,18 +91,6 @@
       {{ end }}
     </tbody>
     </table>
-
-    <hr>
-    <div>
-      <p> 用途区分、配布先にチェックを入れてください。 </p>
-    </div>
-
-    <ul class="list-group">
-      {{ range .checkBoxLabel }}
-      <label class="list-group-item">
-        <input type="checkbox" name="require" value="" > {{ . }} </label>
-      {{ end }}
-    </ul>
 
     <button title="ダウンロード" class="fas fa-download" type="submit">帳票ダウンロード</button>
   </form>
