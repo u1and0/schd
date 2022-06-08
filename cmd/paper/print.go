@@ -67,7 +67,9 @@ func CreatePrint(c *gin.Context) {
 	// 用途区分及び配布先等
 	for i, b := range o.Require {
 		j := i + 21
-		if b {
+		if b == "true" {
+			/* B%dとの比較が必要 Bはどこから読み取る？？ */
+			/* templateに渡している配列も動的に生成したい */
 			cells[fmt.Sprintf("C%d", j)] = "〇"
 		}
 	}

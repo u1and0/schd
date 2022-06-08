@@ -60,7 +60,7 @@
 
     <div class="form-inline">
       {{ range .checkBoxLabel }}
-      <label class="checkbox-inline"> <input type="checkbox" name="require" value="false" > {{ . }} </label>
+      <label class="checkbox-inline"> <input type="checkbox" name="require[]" value="{{ . }}" > {{ . }} </label>
       {{ end }}
     </div>
 

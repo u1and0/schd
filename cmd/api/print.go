@@ -29,7 +29,7 @@ type (
 		Section   string    `json:"要求元" form:"section"`
 		OrderNo   string    `json:"生産命令番号" form:"order-no"`
 		OrderName string    `json:"生産命令名称" form:"order-name"`
-		Require   []bool    `json:"必要箇所" form:"require"`
+		Require   []string  `json:"必要箇所" form:"require[]"`
 		Drawing
 	}
 	// Drawing : 図面番号、枚数、期限
@@ -116,9 +116,8 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 		j := i + 21
 		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("C%d", j))
 		if s != "" {
-			p.Require = append(p.Require, true)
-		} else {
-			p.Require = append(p.Require, false)
+			c, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", j))
+			p.Require = append(p.Require, c)
 		}
 	}
 }
