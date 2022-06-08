@@ -4,16 +4,15 @@ import { checkboxChangeValue, checkboxesToggle } from "./element.js";
 
 const root = new URL(window.location.href);
 const url: string = root.origin + "/api/v1/data";
-let printHistoriesList: string[];
-let printHistories: PrintHistory[];
 main();
 checkboxChangeValue();
+let printHistories: Map<string, PrintOrder>;
 
-type PrintHistory = {
+type PrintOrder = {
   "要求元": string;
   "生産命令番号": string;
   "生産命令名称": string;
-  "必要箇所": string;
+  "必要箇所": boolean[];
   "図番": string[];
   "図面名称": string[];
   "枚数": number[];
@@ -21,28 +20,32 @@ type PrintHistory = {
 };
 
 async function main() {
-  printHistoriesList = await fetchPath(url + "/print/list");
   printHistories = await fetchPath(url + "/print");
 
-  // formへの入力があるたびにoption書き換え
-  const inputElem = document.getElementById("search-form");
+  const inputElem: HTMLElements = document.getElementById("search-form");
   const outputElem = document.getElementById("search-result");
+  // formへの入力があるたびにoption書き換え
   inputElem?.addEventListener("keyup", () => {
     while (outputElem?.firstChild) { // clear option
       outputElem.removeChild(outputElem.firstChild);
     }
-    const result: string[] = fzfSearchList(printHistoriesList, inputElem.value);
-    result.forEach((line: string, i: number) => {
+    // Map.keys() メソッドがなぜか機能しないのでとりあえずObject.keys()使った。
+    const result: string[] = fzfSearchList(
+      Object.keys(printHistories),
+      inputElem.value,
+    );
+    result.forEach((key: string) => {
       const option = document.createElement("option");
-      option.text = line;
-      option.value = `${i}`;
+      option.text = key;
+      option.value = key;
       outputElem?.append(option);
     });
   });
 
-  outputElem?.addEventListener("change", (e) => {
-    const idx = e.target.value;
-    const order: PrintHistory = printHistories[idx];
+  // fzfの結果を出力したoptionを選択するたびに各フォームの書き換え
+  outputElem?.addEventListener("change", (e: Event) => {
+    const key: string = e.target.value;
+    const order: PrintOrder = printHistories[key];
     console.log(order);
     document.getElementById("section").value = order["要求元"];
     document.getElementById("order-no").value = order["生産命令番号"];

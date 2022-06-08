@@ -3,12 +3,10 @@ import { fzfSearchList } from "./fzf.js";
 import { checkboxChangeValue, checkboxesToggle } from "./element.js";
 const root = new URL(window.location.href);
 const url = root.origin + "/api/v1/data";
-let printHistoriesList;
-let printHistories;
 main();
 checkboxChangeValue();
+let printHistories;
 async function main() {
-    printHistoriesList = await fetchPath(url + "/print/list");
     printHistories = await fetchPath(url + "/print");
     const inputElem = document.getElementById("search-form");
     const outputElem = document.getElementById("search-result");
@@ -16,17 +14,17 @@ async function main() {
         while (outputElem?.firstChild) {
             outputElem.removeChild(outputElem.firstChild);
         }
-        const result = fzfSearchList(printHistoriesList, inputElem.value);
-        result.forEach((line, i) => {
+        const result = fzfSearchList(Object.keys(printHistories), inputElem.value);
+        result.forEach((key) => {
             const option = document.createElement("option");
-            option.text = line;
-            option.value = `${i}`;
+            option.text = key;
+            option.value = key;
             outputElem?.append(option);
         });
     });
     outputElem?.addEventListener("change", (e) => {
-        const idx = e.target.value;
-        const order = printHistories[idx];
+        const key = e.target.value;
+        const order = printHistories[key];
         console.log(order);
         document.getElementById("section").value = order["要求元"];
         document.getElementById("order-no").value = order["生産命令番号"];

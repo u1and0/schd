@@ -19,24 +19,25 @@ const (
 )
 
 var (
-	printHistories = PrintHistories{}
+	printHistories = map[string]PrintOrder{}
 )
 
 type (
-	PrintHistories []PrintOrder
-	PrintOrder     struct {
-		Date      time.Time `form:"date" time_format:"2006/01/02"`
+	// PrintOrder : 複写要求 要求事項
+	PrintOrder struct {
+		Date      time.Time `json:"要求年月日" form:"date" time_format:"2006/01/02"`
 		Section   string    `json:"要求元" form:"section"`
 		OrderNo   string    `json:"生産命令番号" form:"order-no"`
 		OrderName string    `json:"生産命令名称" form:"order-name"`
 		Drawing
 		Require []bool `json:"必要箇所" form:"require"`
 	}
+	// Drawing : 図面番号、枚数、期限
 	Drawing struct {
 		No       [8]string    `json:"図番" form:"draw-no"`
 		Name     [8]string    `json:"図面名称" form:"draw-name"`
 		Quantity [8]int       `json:"枚数" form:"quantity"`
-		Deadline [8]time.Time `form:"deadline" time_format:"2006/01/02"`
+		Deadline [8]time.Time `json:"要求期限" form:"deadline" time_format:"2006/01/02"`
 		Misc     [8]string    `json:"備考" form:"misc"`
 	}
 )
@@ -48,31 +49,37 @@ func init() {
 	}
 	go func() {
 		for _, fullpath := range filelist {
-			// .xlsxファイルのみ対象
-			// .xlsファイルが混じるとpanic
-			if !strings.HasSuffix(fullpath, `.xlsx`) {
-				continue
-			}
-			// ~$ファイルが混じるとpanic
-			if strings.Contains(fullpath, `$`) {
-				continue
-			}
 			p, err := NewPrintOrder(fullpath)
 			if err != nil {
 				fmt.Printf("%s: %v", fullpath, err)
 				continue
 			}
 			fmt.Printf("%s: %#v\n", fullpath, p)
-			printHistories = append(printHistories, *p)
+			printHistories[p.Concat()] = *p
+			// printHistories = append(printHistories, *p)
 		}
 	}()
 }
 
 func NewPrintOrder(fullpath string) (*PrintOrder, error) {
-	sheetName := "入力画面"
-	p := new(PrintOrder)
-	f, err := excelize.OpenFile(fullpath)
+	// .xlsxファイルのみ対象
+	// .xlsファイルが混じるとpanic
+	if !strings.HasSuffix(fullpath, `.xlsx`) {
+		err := fmt.Errorf("error: not xlsx file %s", fullpath)
+		return &PrintOrder{}, err
+	}
+	// ~$ファイルが混じるとpanic
+	if strings.Contains(fullpath, `$`) {
+		err := fmt.Errorf("error: invalid file name %s", fullpath)
+		return &PrintOrder{}, err
+	}
+	var (
+		sheetName = "入力画面"
+		p         = new(PrintOrder)
+		f, err    = excelize.OpenFile(fullpath)
+	)
 	if err != nil {
+		// f.Close()
 		return p, err
 	}
 	defer f.Close()
@@ -120,17 +127,20 @@ func FetchPrintHistories(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, printHistories)
 }
 
-// FetchPrintList : returns printHistories array by parsing Excel files
-func FetchPrintList(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, printHistories.Concat())
-}
+// // FetchPrintList : returns printHistories array by parsing Excel files
+// func FetchPrintList(c *gin.Context) {
+// 	c.IndentedJSON(http.StatusOK, printHistories.Concat())
+// }
 
 // Concat : convert search struct
-func (p *PrintHistories) Concat() []string {
-	s := make([]string, len(*p))
-	for i, val := range *p {
-		body := fmt.Sprintf("%v", val)
-		s[i] = trimmer(body)
-	}
-	return s
+func (p *PrintOrder) Concat() string {
+	body := fmt.Sprintf("%v", p)
+	body = trimmer(body)
+	return body
+	// s := make([]string, len(*p))
+	// for i, val := range *p {
+	// 	body := fmt.Sprintf("%v", val)
+	// 	s[i] = trimmer(body)
+	// }
+	// return s
 }
