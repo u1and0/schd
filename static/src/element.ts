@@ -42,6 +42,7 @@ export function checkToggle(id: string): void {
   }
 }
 
+// checkboxをクリックしたときにvalueをtrue / false 切り換える
 export function checkboxChangeValue() {
   const checkboxes = document.querySelectorAll("input[type='checkbox']");
   checkboxes.forEach((checkbox) => {
@@ -51,9 +52,13 @@ export function checkboxChangeValue() {
   });
 }
 
-export function checkboxesToggle(require: boolean[]) {
+// boolListの値がtrueのとき、checkboxをチェックして、valueをtrueにする
+// boolListの値がtrue以外のとき、checkboxをチェックをはずして、valueをfalseにする
+// eventListenerのコールバック関数内で使う
+export function checkboxesToggle(boolList: boolean[]) {
   const checkboxes = document.querySelectorAll("input[type='checkbox']");
   checkboxes.forEach((checkbox: string, idx: number) => {
-    checkbox.value = require[idx];
+    checkbox.checked = boolList[idx] ? true : false;
+    checkbox.value = boolList[idx] ? "true" : "false";
   });
 }

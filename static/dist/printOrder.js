@@ -1,6 +1,6 @@
 import { fetchPath } from "./element.js";
 import { fzfSearchList } from "./fzf.js";
-import { checkboxChangeValue } from "./element.js";
+import { checkboxChangeValue, checkboxesToggle } from "./element.js";
 const root = new URL(window.location.href);
 const url = root.origin + "/api/v1/data";
 let printHistoriesList;
@@ -47,5 +47,6 @@ async function main() {
         drawMisc.forEach((elem, i) => {
             elem.value = order["備考"][i];
         });
+        checkboxesToggle(order["必要箇所"]);
     });
 }
