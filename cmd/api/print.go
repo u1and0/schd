@@ -56,7 +56,6 @@ func init() {
 			}
 			fmt.Printf("%s: %#v\n", fullpath, p)
 			printHistories[p.Concat()] = *p
-			// printHistories = append(printHistories, *p)
 		}
 	}()
 }
@@ -112,7 +111,7 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 		p.Drawing.Misc[i] = s
 	}
 	// 用途区分及び配布先等
-	for i := 20; i < 32; i++ {
+	for i := 21; i < 32; i++ {
 		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
 		if s != "" {
 			p.Require = append(p.Require, true)
@@ -127,20 +126,9 @@ func FetchPrintHistories(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, printHistories)
 }
 
-// // FetchPrintList : returns printHistories array by parsing Excel files
-// func FetchPrintList(c *gin.Context) {
-// 	c.IndentedJSON(http.StatusOK, printHistories.Concat())
-// }
-
 // Concat : convert search struct
 func (p *PrintOrder) Concat() string {
 	body := fmt.Sprintf("%v", p)
 	body = trimmer(body)
 	return body
-	// s := make([]string, len(*p))
-	// for i, val := range *p {
-	// 	body := fmt.Sprintf("%v", val)
-	// 	s[i] = trimmer(body)
-	// }
-	// return s
 }
