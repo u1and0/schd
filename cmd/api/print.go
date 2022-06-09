@@ -134,13 +134,17 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 		p.Drawing.Misc[i] = s
 	}
 	// 用途区分及び配布先等
-	for i := 0; i < 12; i++ {
-		j := i + 21
-		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("C%d", j))
-		if s != "" {
-			c, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", j))
-			p.Require = append(p.Require, c)
+	i := 21
+	for {
+		label, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", i))
+		if label == "" {
+			break
 		}
+		circle, _ := f.GetCellValue(sheetName, fmt.Sprintf("C%d", i))
+		if circle != "" {
+			p.Require = append(p.Require, label)
+		}
+		i++
 	}
 }
 
