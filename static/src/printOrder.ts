@@ -78,9 +78,7 @@ checkboxes.forEach((checkbox) => {
       if (checkbox.checked) checkedCount++;
     });
     drawQuant.forEach((q, i) => {
-      if (drawNo[i].value !== "") {
-        q.value = checkedCount;
-      }
+      q.value = checkedCount;
     });
   });
 });
