@@ -16,6 +16,8 @@ import (
 const (
 	// LAYOUT Excel から読み込む日付フォーマット
 	LAYOUT = "2006年1月2日"
+	// REQUIRE_ROWS : Excelシートのチェック区分の行数
+	REQUIRE_ROWS = 21
 )
 
 var (
@@ -51,15 +53,15 @@ func init() {
 		log.Printf("%#v", err)
 		return
 	}
-	labelRow := 21
+	i := REQUIRE_ROWS
 	sheetName := "入力画面"
 	for {
-		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", labelRow))
+		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", i))
 		if s == "" {
 			break
 		}
 		CheckBoxLabel = append(CheckBoxLabel, s)
-		labelRow++
+		i++
 	}
 }
 
@@ -134,7 +136,7 @@ func (p *PrintOrder) Unmarshal(f *excelize.File, sheetName string) {
 		p.Drawing.Misc[i] = s
 	}
 	// 用途区分及び配布先等
-	i := 21
+	i := REQUIRE_ROWS
 	for {
 		label, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", i))
 		if label == "" {

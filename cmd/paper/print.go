@@ -3,6 +3,7 @@ package paper
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -62,13 +63,13 @@ func CreatePrint(c *gin.Context) {
 		cells[fmt.Sprintf("F%d", j)] = o.Drawing.Misc[i]
 	}
 	// 用途区分及び配布先等
-	for i, b := range o.Require {
-		j := i + 21
-		if b == "true" {
-			/* B%dとの比較が必要 Bはどこから読み取る？？ */
-			/* templateに渡している配列も動的に生成したい */
-			cells[fmt.Sprintf("C%d", j)] = "〇"
+	for i, label := range api.CheckBoxLabel {
+		i += api.REQUIRE_ROWS
+		reqires := strings.Join(o.Require, "")
+		if strings.Contains(reqires, label) {
+			cells[fmt.Sprintf("C%d", i)] = "〇"
 		}
+		i++
 	}
 	sheetName := "入力画面"
 	if err := cells.SetCellValue(f, sheetName); err != nil {
