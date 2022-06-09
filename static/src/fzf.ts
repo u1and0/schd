@@ -16,3 +16,10 @@ export function fzfSearch(list: Searcher[], keyword: string): Searcher[] {
   return ranking;
 }
 
+export function fzfSearchList(list: string[], keyword: string): string[] {
+  const fzf = new Fzf(list);
+  const entries = fzf.find(keyword);
+  const ranking: string[] = entries.map((entry: Fzf) => entry.item);
+  return ranking;
+}
+

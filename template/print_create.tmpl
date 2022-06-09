@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+  <h3>複写要求票　作成</h3>
+  複写要求票　作成 の説明
+
+  <div>
+    <label for="search-form">複写要求検索</label>
+    <input name="search-form" id="search-form" type="text" placeholder="検索キーワードを入力" size="20" class="hover" >
+    <br>
+    <select name="search-result" id="search-result" class="select-box" size="10"></select>
+  </div>
+
+  <form name="create-form" method="POST" action="/api/v1/paper/print/post">
+    <table class="table table-striped">
+      <tbody>
+        <!-- 要求番号はPOST時の所属選択を元にdirectory check -> file glob -> 要求番号確定 -->
+      <!-- <tr> -->
+      <!--   <td align="right"> 要求番号 </td> -->
+      <!--   <td> <input type="text" name="title" value="" size="20" placeholder="TA00-70001"> </td> -->
+      <!-- </tr> -->
+      <tr>
+        <td align="right"> 要求年月日 </td>
+        <td> <input type="text" name="date" value="{{ .today }}" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+      </tr>
+      <tr>
+        <td align="right"> 要求元(課) </td>
+        <td>
+          <select id="section" name="section">
+            <option value="">---課を選択してください---</option>
+            <!-- golang template機能によりdb/課.jsonのキーが保管される -->
+            {{ range $i,$v := .section }}
+              <option value="{{ $i }}">{{ $i }}</option>
+            {{ end }}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">生産命令番号</td>
+        <td> <input type="text" id="order-no" name="order-no" value="" size="20" placeholder="761-001" > </td>
+      </tr>
+        <td align="right">生産命令名称</td>
+        <td> <input type="text" id="order-name" name="order-name" value="" size="60" placeholder="製品製造方"> </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <div>
+      <p> 用途区分、配布先にチェックを入れてください。 </p>
+    </div>
+
+    <div class="form-inline">
+      {{ range .checkBoxLabel }}
+      <label class="checkbox-inline"> <input type="checkbox" name="require[]" value="{{ . }}" > {{ . }} </label>
+      {{ end }}
+    </div>
+
+    <hr>
+    <div>
+      <p> 図面番号等を入力してください。 </p>
+      <label class="checkbox-inline"> <input type="checkbox" id="sync" > 備考欄同期: このチェックを入れると備考欄がすべて同じになります </label>
+    </div>
+
+    <table id="print-table" class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>図　番</th>
+        <th>図面名称 その他</th>
+        <th>枚　数</th>
+        <th>要求期限</th>
+        <th>備　考</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range .tableRow }}
+      <tr>
+        <td> <input type="text" name="draw-no" value="" size="10" placeholder="SW000000"> </td>
+        <td> <input type="text" name="draw-name" value="" size="30" placeholder="製品　外観図" > </td>
+        <td> <input type="number" name="quantity" value="0" class="small-number" placeholder="0" min=0 > </td>
+          <td> <input type="text" name="deadline" value="" size="20" placeholder="2006/01/02" class="datepicker"> </td>
+        <td> <input type="text" name="misc" value="" placeholder="提出先: XX株式会社" > </td>
+      </tr>
+      {{ end }}
+    </tbody>
+    </table>
+
+    <button title="ダウンロード" class="fas fa-download" type="submit" onclick="alert('入力情報に基づき、帳票を作成します。')">帳票ダウンロード</button>
+  </form>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/i18n/jquery.ui.datepicker-ja.min.js"></script>
+  <script type="module" src="/static/dist/printOrder.js"></script>
+  <script>
+    $(function() {
+      $(".datepicker").datepicker();
+    });
+  </script>
+</body>
+</html>

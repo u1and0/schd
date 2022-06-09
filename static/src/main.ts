@@ -8,9 +8,13 @@ import {
 
 declare var $: any;
 const root: URL = new URL(window.location.href);
-export const url: string = root.origin + "/api/v1/data";
-let searchers: Promise<Searcher[]>;
-let allocations: Allocations;
+const url: string = root.origin + "/api/v1/data";
+export let searchers: Promise<Searcher[]>;
+export let allocations: Promise<unknown>;
+export let printHistoriesList: Promise<string[]>;
+export let printHistories: Promise<unknown>;
+// allocations, printHistoriesが使われないページでも
+// ロードされてしまうので、モジュール分割したい
 main();
 
 type Allocations = Map<string, Allocation>;
@@ -22,7 +26,8 @@ async function main() {
   Object.values(allocations).map((item: Allocation) => {
     list.push(item["クラスボディタイプ"]);
   });
-  addListOption(document.getElementById("car-list"), list);
+  const carElem = document.getElementById("car-list");
+  addListOption(carElem, list);
   const checkBoxIDs: Array<string> = [
     "piling",
     "fixing",

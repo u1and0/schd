@@ -1,9 +1,11 @@
 import { fzfSearch } from "./fzf.js";
 import { addListOption, checkboxChengeValue, checkToggle, fetchPath, } from "./element.js";
 const root = new URL(window.location.href);
-export const url = root.origin + "/api/v1/data";
-let searchers;
-let allocations;
+const url = root.origin + "/api/v1/data";
+export let searchers;
+export let allocations;
+export let printHistoriesList;
+export let printHistories;
 main();
 async function main() {
     searchers = await fetchPath(url + "/allocate/list");
@@ -12,7 +14,8 @@ async function main() {
     Object.values(allocations).map((item) => {
         list.push(item["クラスボディタイプ"]);
     });
-    addListOption(document.getElementById("car-list"), list);
+    const carElem = document.getElementById("car-list");
+    addListOption(carElem, list);
     const checkBoxIDs = [
         "piling",
         "fixing",

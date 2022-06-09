@@ -24,10 +24,19 @@ export function checkboxChengeValue(id) {
     });
 }
 export function checkToggle(id) {
-    if ($(id).val() === "true") {
-        $(id).prop("checked", true);
+    const elem = document.getElementById(id);
+    if (elem === null)
+        return;
+    if (elem.value === "true") {
+        elem.setAttribute("checked", true);
     }
     else {
-        $(id).prop("checked", false);
+        elem.setAttribute("checked", false);
     }
+}
+export function checkboxesToggle(boolList) {
+    const checkboxes = document.querySelectorAll("input[type='checkbox']");
+    checkboxes.forEach((checkbox, idx) => {
+        checkbox.checked = boolList[idx] ? true : false;
+    });
 }

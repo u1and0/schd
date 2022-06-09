@@ -292,7 +292,7 @@ func (a *Allocation) Unmarshal(f *excelize.File) {
 func trimmer(s string) string {
 	trims := []string{`{`, `}`, `[`, `]`, "☑", "☐要　", "☐不要 ",
 		"☐仕立便　", "☐常用便\n", "☐混載便　", "　☐宅配便", "☐宅配便 ", "\n☐宅配便",
-		"+0000 ", "UTC ", "00:00:00 ", "0000-", "0001-"}
+		"+0000 ", "UTC ", "00:00:00 ", "0000-", "0001-", "01-01 "}
 	for _, trim := range trims {
 		s = strings.ReplaceAll(s, trim, "")
 	}
