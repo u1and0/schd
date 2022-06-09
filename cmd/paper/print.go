@@ -13,14 +13,11 @@ import (
 
 // CreatePrintForm : xlsxに転記するフォームの表示
 func CreatePrintForm(c *gin.Context) {
-	checkBoxLabel := []string{"作業用 ", "外注用 ", "作業引替 ",
-		"外注引替 ", "検査用 ", "協議用 ", "承認用 ", "完成図用 ",
-		"見積用 ", "参考用 ", "仕様書添付用 ", "要求元控"}
 	c.HTML(http.StatusOK, "print_create.tmpl", gin.H{
 		"today":         time.Now().Format("2006/01/02"),
 		"section":       ctrl.Config.Section,
 		"tableRow":      [8]int{},
-		"checkBoxLabel": checkBoxLabel,
+		"checkBoxLabel": api.CheckBoxLabel,
 	})
 }
 
@@ -40,7 +37,7 @@ func CreatePrint(c *gin.Context) {
 	fmt.Printf("PrintOrder: %#v\n", o)
 
 	// template XLSX
-	f, err := excelize.OpenFile("template/template.xlsx")
+	f, err := excelize.OpenFile("template/template_print.xlsx")
 	defer f.Close()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})
@@ -73,7 +70,7 @@ func CreatePrint(c *gin.Context) {
 			cells[fmt.Sprintf("C%d", j)] = "〇"
 		}
 	}
-	sheetName := "複写入力画面"
+	sheetName := "入力画面"
 	if err := cells.SetCellValue(f, sheetName); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error(), "error": err})

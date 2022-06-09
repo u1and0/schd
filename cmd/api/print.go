@@ -20,6 +20,7 @@ const (
 
 var (
 	printHistories = map[string]PrintOrder{}
+	CheckBoxLabel  []string
 )
 
 type (
@@ -42,6 +43,27 @@ type (
 	}
 )
 
+// Make CheckBoxLabel
+func init() {
+	f, err := excelize.OpenFile("template/template_print.xlsx")
+	defer f.Close()
+	if err != nil {
+		log.Printf("%#v", err)
+		return
+	}
+	labelRow := 21
+	sheetName := "入力画面"
+	for {
+		s, _ := f.GetCellValue(sheetName, fmt.Sprintf("B%d", labelRow))
+		if s == "" {
+			break
+		}
+		CheckBoxLabel = append(CheckBoxLabel, s)
+		labelRow++
+	}
+}
+
+// Excel history parse
 func init() {
 	var filelist []string
 	if err := ctrl.UnmarshalJSONfile(&filelist, "db/printlist.json"); err != nil {
