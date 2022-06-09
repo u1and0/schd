@@ -47,7 +47,7 @@ outputElem?.addEventListener("change", (e) => {
     });
     checkboxesToggle(order["必要箇所"]);
 });
-const checkboxes = document.querySelectorAll("input[type='checkbox']");
+const checkboxes = document.querySelectorAll("input[name='require[]']");
 checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (e) => {
         let checkedCount = 0;
@@ -57,6 +57,17 @@ checkboxes.forEach((checkbox) => {
         });
         drawQuant.forEach((q, i) => {
             q.value = checkedCount;
+        });
+    });
+});
+const miscElems = document.querySelectorAll("input[name='misc']");
+const syncCheck = document.querySelector("#sync");
+miscElems.forEach((elem) => {
+    elem.addEventListener("change", (e) => {
+        const v = e.target.value;
+        miscElems.forEach((m) => {
+            if (syncCheck.checked)
+                m.value = v;
         });
     });
 });
